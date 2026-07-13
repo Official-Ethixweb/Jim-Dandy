@@ -4,19 +4,11 @@ import Button from "@components/ui/Button.astro";
 import AnimatedCounter from "@components/ui/AnimatedCounter";
 import YearsBadge from "@components/ui/YearsBadge.astro";
 import RotatingHeadline from "./RotatingHeadline";
-import heroPhoto from "@assets/photos/hero-technician-clean.webp";
+import heroPhoto from "@assets/photos/hero-technician.webp";
 import { business } from "@data/site";
 ---
 
 <section class="relative overflow-hidden bg-navy-800">
-  <svg width="0" height="0" class="absolute" aria-hidden="true">
-    <defs>
-      <clipPath id="hero-mirror-clip" clipPathUnits="objectBoundingBox">
-        <path d="M0.275,0 L1,0 L1,1 L0.064,1 A0.128,0.128 0 0 1 -0.05,0.846 Z" />
-      </clipPath>
-    </defs>
-  </svg>
-
   <div
     class="pointer-events-none absolute inset-0 opacity-40"
     style="background: radial-gradient(600px circle at 15% 20%, rgba(105,190,40,0.18), transparent 60%), radial-gradient(500px circle at 85% 80%, rgba(105,190,40,0.12), transparent 60%);"
@@ -31,8 +23,7 @@ import { business } from "@data/site";
       height={1400}
       loading="eager"
       fetchpriority="high"
-      class="h-full w-full object-cover"
-      style="clip-path: url(#hero-mirror-clip); filter: drop-shadow(0 0 3px rgba(155,211,111,0.9)) drop-shadow(0 0 16px rgba(105,190,40,0.5));"
+      class="h-full w-full rounded-l-[40px] object-cover"
     />
   </div>
 
@@ -87,8 +78,7 @@ import { business } from "@data/site";
         height={900}
         loading="eager"
         fetchpriority="high"
-        class="relative aspect-[4/3] w-full object-cover"
-        style="clip-path: url(#hero-mirror-clip); filter: drop-shadow(0 0 3px rgba(155,211,111,0.9)) drop-shadow(0 0 14px rgba(105,190,40,0.5));"
+        class="relative aspect-[4/3] w-full rounded-[32px] object-cover shadow-2xl"
       />
     </div>
   </div>
