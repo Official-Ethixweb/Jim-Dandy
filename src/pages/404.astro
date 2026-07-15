@@ -1,0 +1,67 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Button from "@components/ui/Button.astro";
+import { business } from "@data/site";
+import { ArrowUpRight } from "lucide-react";
+
+const quickLinks = [
+  { label: "Home", href: "/" },
+  { label: "Our Services", href: "/services" },
+  { label: "Emergency Plumbing", href: "/services/emergency" },
+  { label: "Service Area", href: "/service-area" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Reviews", href: "/reviews" },
+];
+---
+
+<Layout
+  title="Page Not Found | Jim Dandy Sewer & Plumbing"
+  description="The page you're looking for couldn't be found. Explore our plumbing and sewer services or call Jim Dandy 24/7."
+  path="/404"
+  noindex
+>
+  <section class="relative flex min-h-[80vh] items-center overflow-hidden bg-navy-900 py-24">
+    <div
+      class="pointer-events-none absolute inset-0 opacity-50"
+      style="background: radial-gradient(620px circle at 20% 20%, rgba(105,190,40,0.20), transparent 60%), radial-gradient(520px circle at 85% 90%, rgba(105,190,40,0.12), transparent 60%);"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="pointer-events-none absolute inset-0 opacity-[0.06]"
+      style="background-image: linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px); background-size: 46px 46px; mask-image: radial-gradient(120% 100% at 50% 30%, black, transparent 80%);"
+      aria-hidden="true"
+    ></div>
+
+    <div class="container-page relative flex flex-col items-center gap-8 text-center">
+      <p class="font-display text-[110px] font-black italic leading-none text-brand-green-500 drop-shadow-[0_10px_30px_rgba(105,190,40,0.35)] sm:text-[160px]">
+        404
+      </p>
+      <div class="flex flex-col items-center gap-4">
+        <h1 class="max-w-2xl font-display text-3xl font-black italic text-cloud sm:text-[44px]">
+          Looks Like This Pipe Runs Nowhere
+        </h1>
+        <p class="max-w-lg text-lg leading-relaxed text-white/75">
+          The page you're after has moved or never existed. But your plumbing problem is still very
+          real - let's get you to the right place.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-4 sm:flex-row">
+        <Button href="/" variant="primary">Back to Home</Button>
+        <Button href={business.phoneHref} variant="secondary">Call {business.phone}</Button>
+      </div>
+
+      <div class="mt-4 flex flex-wrap justify-center gap-3">
+        {quickLinks.map((link) => (
+          <a
+            href={link.href}
+            class="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 backdrop-blur-sm transition-all duration-200 hover:border-brand-green-500/60 hover:bg-white/10 hover:text-white"
+          >
+            {link.label}
+            <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

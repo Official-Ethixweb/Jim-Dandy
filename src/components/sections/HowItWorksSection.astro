@@ -33,6 +33,15 @@ import { howItWorks } from "@data/site";
           <p class="hiw-desc max-w-xs text-balance text-base leading-relaxed text-white/80">
             {item.description}
           </p>
+
+          {index < howItWorks.length - 1 && (
+            <span
+              class="hiw-connector absolute left-1/2 top-full z-0 h-24 w-[3px] -translate-x-1/2 overflow-hidden rounded-full bg-white/15 sm:hidden"
+              aria-hidden="true"
+            >
+              <span class="hiw-connector-fill absolute inset-x-0 top-0 h-0 rounded-full"></span>
+            </span>
+          )}
         </div>
       ))}
     </div>
@@ -130,6 +139,25 @@ import { howItWorks } from "@data/site";
       left 550ms cubic-bezier(0.16, 1, 0.3, 1),
       opacity 300ms ease;
   }
+
+  /* Mobile-only vertical connector between the stacked step circles. The green
+     fill grows toward the next step as it scroll-activates, echoing the desktop
+     horizontal progress line. */
+  .hiw-connector-fill {
+    background: linear-gradient(
+      to bottom,
+      var(--color-brand-green-400),
+      var(--color-brand-green-500)
+    );
+    box-shadow: 0 0 10px 1px rgba(105, 190, 40, 0.55);
+    transition: height 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hiw-connector-fill {
+      transition: none;
+    }
+  }
 </style>
 
 <script>
@@ -142,6 +170,8 @@ import { howItWorks } from "@data/site";
     const fill2 = group.querySelector<HTMLElement>(".hiw-fill-2");
     const dot = group.querySelector<HTMLElement>(".hiw-dot");
     const dotPositions = ["16.5%", "50%", "83.5%"];
+    // Mobile vertical connectors: connFills[0] links steps 1→2, connFills[1] links 2→3.
+    const connFills = Array.from(group.querySelectorAll<HTMLElement>(".hiw-connector-fill"));
 
     let scrollProgress = 0;
     let hoverProgress = 0;
@@ -157,6 +187,10 @@ import { howItWorks } from "@data/site";
 
       fill1?.style.setProperty("transform", `scaleX(${progress >= 2 ? 1 : 0})`);
       fill2?.style.setProperty("transform", `scaleX(${progress >= 3 ? 1 : 0})`);
+
+      connFills.forEach((f, i) => {
+        f.style.height = progress >= i + 2 ? "100%" : "0%";
+      });
 
       if (dot) {
         if (progress > 0) {
@@ -193,19 +227,24 @@ import { howItWorks } from "@data/site";
     });
 
     if (!window.matchMedia("(hover: hover)").matches && "IntersectionObserver" in window) {
+      // Track which steps are sufficiently on-screen so the active step follows
+      // the deepest visible one - advancing 1→2→3 on the way down and reversing
+      // 3→2→1 on the way back up.
+      const inView = new Array(cards.length).fill(false);
       const io = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
-            if (entry.isIntersecting) {
-              const idx = cards.indexOf(entry.target as HTMLElement);
-              if (idx !== -1) {
-                scrollProgress = Math.max(scrollProgress, idx + 1);
-                apply();
-              }
-            }
+            const idx = cards.indexOf(entry.target as HTMLElement);
+            if (idx !== -1) inView[idx] = entry.intersectionRatio >= 0.6;
           }
+          let deepest = 0;
+          for (let i = 0; i < inView.length; i++) {
+            if (inView[i]) deepest = i + 1;
+          }
+          scrollProgress = deepest;
+          apply();
         },
-        { threshold: 0.6 },
+        { threshold: [0, 0.3, 0.6, 0.9, 1] },
       );
       cards.forEach((c) => io.observe(c));
     }

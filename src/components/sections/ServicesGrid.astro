@@ -27,22 +27,23 @@ const icons = {
       subtitle="From emergency calls to planned upgrades - Jim Dandy handles it all."
     />
 
-    <div class="grid grid-cols-1 gap-6 min-[560px]:grid-cols-2 min-[560px]:gap-x-10">
+    <div class="grid grid-cols-1 gap-6 min-[560px]:grid-cols-2 min-[560px]:gap-x-10 max-md:auto-rows-[1fr]">
       {services.map((service) => (
         <a
           href={`/services/${service.slug}`}
-          class="group relative flex items-stretch justify-between gap-4 overflow-hidden rounded-[36px] border border-navy-400 bg-surface-muted p-8 shadow-card transition-[transform,background-color,border-color,box-shadow] duration-300 ease-brand hover:-translate-y-1 hover:border-navy-800 hover:bg-navy-800 hover:shadow-xl sm:min-h-[230px]"
+          data-service-card
+          class="group relative flex h-full items-stretch justify-between gap-4 overflow-hidden rounded-[36px] border border-navy-400 bg-surface-muted p-8 shadow-card transition-[transform,background-color,border-color,box-shadow] duration-300 ease-brand hover:-translate-y-1 hover:border-navy-800 hover:bg-navy-800 hover:shadow-xl sm:min-h-[230px] max-md:duration-[400ms] max-md:ease-out max-md:[&.is-active]:-translate-y-1 max-md:[&.is-active]:border-navy-800 max-md:[&.is-active]:bg-navy-800 max-md:[&.is-active]:shadow-xl"
         >
           <div class="relative z-10 flex min-w-0 flex-col gap-4 pr-1">
-            <h3 class="font-display text-[32px] font-bold leading-none text-navy-800 transition-colors duration-300 group-hover:text-white/50 sm:text-[38px]">
+            <h3 class="font-display text-[32px] font-bold leading-none text-navy-800 transition-colors duration-300 group-hover:text-white/50 sm:text-[38px] max-md:duration-[400ms] max-md:group-[.is-active]:text-white/50">
               {service.label}
             </h3>
-            <p class="max-w-xs text-base leading-snug text-white/85 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <p class="max-w-xs text-base leading-snug text-white/85 opacity-0 transition-opacity duration-300 group-hover:opacity-100 max-md:translate-y-1 max-md:transition-[opacity,transform] max-md:duration-[400ms] max-md:ease-out max-md:group-[.is-active]:translate-y-0 max-md:group-[.is-active]:opacity-100">
               {service.description}
             </p>
-            <span class="mt-auto flex items-center gap-3 font-sans text-base font-medium text-navy-600 transition-colors duration-300 group-hover:text-white">
-              <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700 transition-colors duration-300 group-hover:bg-navy-600 group-hover:text-white">
-                <ArrowUpRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+            <span class="mt-auto flex items-center gap-3 font-sans text-base font-medium text-navy-600 transition-colors duration-300 group-hover:text-white max-md:duration-[400ms] max-md:group-[.is-active]:text-white">
+              <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700 transition-colors duration-300 group-hover:bg-navy-600 group-hover:text-white max-md:duration-[400ms] max-md:group-[.is-active]:bg-navy-600 max-md:group-[.is-active]:text-white">
+                <ArrowUpRight className="svc-arrow h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 max-md:duration-[400ms] max-md:group-[.is-active]:translate-x-0.5 max-md:group-[.is-active]:-translate-y-0.5" aria-hidden="true" />
               </span>
               Learn more
             </span>
@@ -52,10 +53,112 @@ const icons = {
             alt=""
             width={160}
             height={160}
-            class="pointer-events-none relative z-10 h-24 w-24 shrink-0 self-center object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105 min-[560px]:h-20 min-[560px]:w-20 lg:h-36 lg:w-36"
+            class="svc-icon pointer-events-none relative z-10 h-24 w-24 shrink-0 self-center object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105 min-[560px]:h-20 min-[560px]:w-20 lg:h-36 lg:w-36 max-md:duration-[400ms] max-md:group-[.is-active]:scale-105"
           />
         </a>
       ))}
     </div>
   </div>
 </section>
+
+<style is:global>
+  /* Reduced-motion users get the same scroll-driven reveal, but with no animated
+     motion; transitions collapse to instant. Scoped to mobile so the desktop
+     hover experience is left exactly as-is. */
+  @media (prefers-reduced-motion: reduce) and (max-width: 767px) {
+    #services [data-service-card],
+    #services [data-service-card] * {
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+<script>
+  // Mobile only: touch devices have no hover, so we spotlight the most-centered
+  // service card as the user scrolls, reproducing the desktop hover state via an
+  // `is-active` class. One card active at a time, reversible, IntersectionObserver
+  // based (no scroll listeners), and fully disabled on desktop.
+  function initServiceCards() {
+    const section = document.getElementById("services");
+    if (!section) return;
+    const cards = Array.from(
+      section.querySelectorAll<HTMLElement>("[data-service-card]"),
+    );
+    if (!cards.length) return;
+
+    const mq = window.matchMedia("(max-width: 767px)");
+    const ratios = new Map<Element, number>();
+    let observer: IntersectionObserver | null = null;
+    let active: HTMLElement | null = null;
+    let raf = 0;
+    let delay = 0;
+
+    const setActive = (card: HTMLElement | null) => {
+      if (active === card) return;
+      if (active) active.classList.remove("is-active");
+      active = card;
+      if (active) active.classList.add("is-active");
+    };
+
+    const evaluate = () => {
+      raf = 0;
+      let best: HTMLElement | null = null;
+      let bestRatio = 0;
+      ratios.forEach((ratio, card) => {
+        if (ratio > bestRatio) {
+          bestRatio = ratio;
+          best = card as HTMLElement;
+        }
+      });
+      // Hysteresis: only promote a new card once it's clearly centered (>=0.5),
+      // and only clear the active card once nothing is meaningfully visible.
+      if (best && bestRatio >= 0.5) {
+        if (best !== active) {
+          window.clearTimeout(delay);
+          const next = best;
+          // Small settle delay avoids accidental flips during fast scrolling.
+          delay = window.setTimeout(() => setActive(next), 90);
+        }
+      } else if (bestRatio < 0.2) {
+        window.clearTimeout(delay);
+        setActive(null);
+      }
+    };
+
+    const onIntersect = (entries: IntersectionObserverEntry[]) => {
+      for (const entry of entries) {
+        ratios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
+      }
+      if (!raf) raf = requestAnimationFrame(evaluate);
+    };
+
+    const enable = () => {
+      if (observer) return;
+      observer = new IntersectionObserver(onIntersect, {
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+        rootMargin: "-12% 0px -12% 0px",
+      });
+      cards.forEach((card) => observer!.observe(card));
+    };
+
+    const disable = () => {
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+      ratios.clear();
+      window.clearTimeout(delay);
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      setActive(null);
+    };
+
+    const sync = () => (mq.matches ? enable() : disable());
+    sync();
+    mq.addEventListener("change", sync);
+  }
+
+  initServiceCards();
+</script>

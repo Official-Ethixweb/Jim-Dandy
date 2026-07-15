@@ -1,0 +1,184 @@
+---
+import Layout from "@layouts/Layout.astro";
+import PageHero from "@components/sections/PageHero.astro";
+import MotionInit from "@components/ui/MotionInit.astro";
+import { business } from "@data/site";
+import { breadcrumbSchema } from "@lib/seo";
+
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Terms of Service", path: "/terms" },
+]);
+
+const effectiveDate = "January 1, 2026";
+
+const sections = [
+  { id: "acceptance", title: "Acceptance of Terms" },
+  { id: "services", title: "Services & Estimates" },
+  { id: "scheduling", title: "Scheduling & Access" },
+  { id: "payment", title: "Pricing & Payment" },
+  { id: "warranty", title: "Workmanship Guarantee" },
+  { id: "liability", title: "Limitation of Liability" },
+  { id: "communications", title: "Communications & SMS" },
+  { id: "website", title: "Website & Content" },
+  { id: "changes", title: "Changes to These Terms" },
+  { id: "law", title: "Governing Law" },
+  { id: "contact", title: "Contact Us" },
+];
+---
+
+<Layout
+  title="Terms of Service | Jim Dandy Sewer & Plumbing"
+  description="The terms of service governing your use of the Jim Dandy Sewer & Plumbing website and the plumbing and sewer services we provide."
+  path="/terms"
+>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
+
+  <PageHero
+    eyebrow={`Effective ${effectiveDate}`}
+    title="Terms of Service"
+    lead="The terms that govern your use of our website and the services Jim Dandy provides. Please read them carefully."
+    crumbs={[{ name: "Home", href: "/" }, { name: "Terms of Service" }]}
+    ctas={false}
+    showRating={false}
+  />
+
+  <section class="bg-white py-16 lg:py-24">
+    <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-[240px_1fr]">
+      <aside class="hidden lg:block">
+        <nav aria-label="On this page" class="sticky top-28 flex flex-col gap-3 rounded-[24px] border border-navy-200 bg-surface p-6">
+          <p class="font-display text-sm font-bold uppercase tracking-[0.16em] text-navy-500">On This Page</p>
+          <ul class="flex flex-col gap-2.5">
+            {sections.map((s) => (
+              <li>
+                <a href={`#${s.id}`} class="text-sm leading-snug text-navy-600 transition-colors hover:text-brand-green-600">{s.title}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+
+      <div class="flex max-w-3xl flex-col gap-10 text-navy-700">
+        <p class="text-lg leading-relaxed text-navy-600">
+          These Terms of Service ("Terms") govern your use of the {business.name} website (the "Site")
+          and the plumbing and sewer services we provide. By using our Site or scheduling service, you
+          agree to these Terms.
+        </p>
+
+        <div id="acceptance" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Acceptance of Terms</h2>
+          <p class="mt-3 leading-relaxed">
+            By accessing this Site, requesting a quote, or scheduling service, you acknowledge that you
+            have read, understood, and agree to be bound by these Terms. If you do not agree, please do
+            not use the Site or our services.
+          </p>
+        </div>
+
+        <div id="services" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Services & Estimates</h2>
+          <p class="mt-3 leading-relaxed">
+            We provide residential and commercial plumbing and sewer services in the Puget Sound region.
+            Estimates are based on an on-site assessment of the work required. Because plumbing systems
+            can hide unexpected conditions, additional work discovered during a job will always be
+            quoted and approved by you before we proceed.
+          </p>
+        </div>
+
+        <div id="scheduling" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Scheduling & Access</h2>
+          <p class="mt-3 leading-relaxed">
+            You agree to provide safe, reasonable access to the areas requiring service and to disclose
+            known hazards. Appointment windows are estimates; we call ahead with a 30-minute arrival
+            notice whenever possible. If you need to reschedule, please contact us as early as you can
+            so we can offer the slot to another customer.
+          </p>
+        </div>
+
+        <div id="payment" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Pricing & Payment</h2>
+          <p class="mt-3 leading-relaxed">
+            We quote flat-rate, upfront pricing before work begins. Payment is due upon completion
+            unless other arrangements - such as approved financing - have been made in advance.
+            Promotional offers and coupons are subject to their stated terms and cannot be applied
+            retroactively.
+          </p>
+        </div>
+
+        <div id="warranty" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Workmanship Guarantee</h2>
+          <p class="mt-3 leading-relaxed">
+            Our workmanship is backed by our guarantee: if a repair we performed isn't right, contact us
+            and we'll make it right. Manufacturer warranties on parts and equipment are provided by their
+            respective manufacturers and are subject to those manufacturers' terms. Normal wear, misuse,
+            or issues unrelated to our work are not covered.
+          </p>
+        </div>
+
+        <div id="liability" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Limitation of Liability</h2>
+          <p class="mt-3 leading-relaxed">
+            To the fullest extent permitted by law, our liability for any claim arising from our services
+            is limited to the amount paid for the specific service at issue. We are not liable for
+            indirect, incidental, or consequential damages. Nothing in these Terms limits liability that
+            cannot be limited under applicable law.
+          </p>
+        </div>
+
+        <div id="communications" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Communications & SMS</h2>
+          <p class="mt-3 leading-relaxed">
+            By providing your phone number and consenting on our contact form, you agree we may contact
+            you about your request and, if you opt in, send appointment and promotional text messages.
+            Message and data rates may apply, and frequency varies. Reply STOP to opt out or HELP for
+            help. See our
+            <a href="/privacy-policy" class="font-semibold text-navy-800 underline">Privacy Policy</a>
+            for details on how we handle your information.
+          </p>
+        </div>
+
+        <div id="website" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Website & Content</h2>
+          <p class="mt-3 leading-relaxed">
+            All content on this Site - text, graphics, logos, and images - is the property of
+            {business.name} or its licensors and is protected by applicable law. You may not reproduce
+            or redistribute it without permission. The Site may link to third-party sites we do not
+            control and are not responsible for.
+          </p>
+        </div>
+
+        <div id="changes" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Changes to These Terms</h2>
+          <p class="mt-3 leading-relaxed">
+            We may update these Terms from time to time. The effective date above reflects the most
+            recent revision. Continued use of the Site or our services after changes take effect
+            constitutes acceptance of the updated Terms.
+          </p>
+        </div>
+
+        <div id="law" class="scroll-mt-28 border-t border-navy-100 pt-8">
+          <h2 class="font-heading text-2xl font-bold text-navy-800">Governing Law</h2>
+          <p class="mt-3 leading-relaxed">
+            These Terms are governed by the laws of the State of Washington, without regard to its
+            conflict-of-laws rules. Any dispute will be resolved in the state or federal courts located
+            in Washington.
+          </p>
+        </div>
+
+        <div id="contact" class="scroll-mt-28">
+          <div class="flex flex-col gap-3 rounded-[28px] border border-navy-200 bg-navy-900 p-8 text-white">
+            <h2 class="font-heading text-2xl font-bold text-white">Contact Us</h2>
+            <p class="leading-relaxed text-white/80">
+              Questions about these Terms? Reach us at
+              <a href={`mailto:${business.email}`} class="font-semibold text-brand-green-400 underline">{business.email}</a>
+              or
+              <a href={business.phoneHref} class="font-semibold text-brand-green-400 underline">{business.phone}</a>,
+              or write to us at {business.address.full}.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <MotionInit />
+</Layout>

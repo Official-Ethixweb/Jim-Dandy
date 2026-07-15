@@ -28,13 +28,16 @@ const marqueeLogos = [...logoBadges, ...logoBadges, ...logoBadges];
   <div class="container-page relative flex flex-col items-center gap-10">
     <SectionHeading title="Licensed & Insured" subtitle="Your home is in good hands." />
 
-    <img
-      src="/NEW/Licence%20No%20Header%20and%20Cards.webp"
-      alt={`License No. ${business.licenses.join(", ")}`}
-      width="1152"
-      height="257"
-      class="h-auto w-full max-w-sm sm:max-w-md"
-    />
+    <div class="license-tilt w-full max-w-sm sm:max-w-md" data-license-tilt>
+      <img
+        src="/NEW/Licence%20No%20Header%20and%20Cards.webp"
+        alt={`License No. ${business.licenses.join(", ")}`}
+        width="1152"
+        height="257"
+        class="license-tilt-img h-auto w-full"
+        draggable="false"
+      />
+    </div>
   </div>
 
   <div class="trustbar-viewport relative left-1/2 mt-[100px] w-screen -translate-x-1/2">
@@ -126,4 +129,61 @@ const marqueeLogos = [...logoBadges, ...logoBadges, ...logoBadges];
   }
 
   document.querySelectorAll(".trustbar-viewport").forEach(initTrustbarPop);
+</script>
+
+<style>
+  .license-tilt {
+    perspective: 900px;
+  }
+
+  .license-tilt-img {
+    display: block;
+    transform-style: preserve-3d;
+    transition:
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+    filter: drop-shadow(0 6px 12px rgba(0, 34, 68, 0));
+  }
+
+  .license-tilt:hover .license-tilt-img {
+    filter: drop-shadow(0 16px 26px rgba(0, 34, 68, 0.28));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .license-tilt-img {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function initLicenseTilt(wrap: HTMLElement) {
+    const img = wrap.querySelector<HTMLElement>(".license-tilt-img");
+    if (!img) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const MAX = 12; // max tilt in degrees
+    let raf = 0;
+
+    const onMove = (e: PointerEvent) => {
+      const r = wrap.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width - 0.5;
+      const ny = (e.clientY - r.top) / r.height - 0.5;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        img.style.transform = `rotateY(${(nx * MAX).toFixed(2)}deg) rotateX(${(-ny * MAX).toFixed(2)}deg) scale(1.035)`;
+      });
+    };
+    const reset = () => {
+      cancelAnimationFrame(raf);
+      img.style.transform = "";
+    };
+
+    wrap.addEventListener("pointermove", onMove);
+    wrap.addEventListener("pointerleave", reset);
+    wrap.addEventListener("pointercancel", reset);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-license-tilt]").forEach(initLicenseTilt);
 </script>

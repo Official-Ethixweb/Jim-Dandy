@@ -1,0 +1,48 @@
+---
+import AnimatedCounter from "@components/ui/AnimatedCounter";
+import { business } from "@data/site";
+
+type Stat = { target: number; decimals?: number; suffix?: string; label: string };
+
+type Props = {
+  stats?: Stat[];
+  tone?: "navy" | "light";
+};
+
+const {
+  stats = [
+    { target: business.yearsInBusiness, label: "Years in Business" },
+    { target: business.rating.value, decimals: 1, suffix: " / 5", label: "Google Rating" },
+    { target: business.rating.count, suffix: "+", label: "5-Star Reviews" },
+    { target: 25, suffix: "+", label: "Cities Served" },
+  ],
+  tone = "navy",
+} = Astro.props;
+
+const isNavy = tone === "navy";
+---
+
+<section class:list={["relative overflow-hidden", isNavy ? "bg-navy-900" : "bg-white"]}>
+  {isNavy && (
+    <div
+      class="pointer-events-none absolute inset-0 opacity-50"
+      style="background: radial-gradient(700px circle at 50% 120%, rgba(105,190,40,0.18), transparent 60%);"
+      aria-hidden="true"
+    ></div>
+  )}
+  <div class="container-page relative py-14 lg:py-16">
+    <dl class="grid grid-cols-2 gap-y-10 gap-x-4 sm:grid-cols-4" data-reveal-group data-reveal-step="70">
+      {stats.map((stat, i) => (
+        <div class:list={["flex flex-col items-center gap-1.5 text-center", i > 0 && "sm:border-l", isNavy ? "sm:border-white/10" : "sm:border-navy-100"]}>
+          <dd class:list={["flex items-baseline font-badge text-4xl font-bold sm:text-[44px]", isNavy ? "text-white" : "text-navy-800"]}>
+            <AnimatedCounter client:visible target={stat.target} decimals={stat.decimals ?? 0} />
+            {stat.suffix && <span class="text-brand-green-400">{stat.suffix}</span>}
+          </dd>
+          <dt class:list={["text-xs font-bold uppercase tracking-[0.14em] sm:text-sm", isNavy ? "text-white/60" : "text-navy-500"]}>
+            {stat.label}
+          </dt>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

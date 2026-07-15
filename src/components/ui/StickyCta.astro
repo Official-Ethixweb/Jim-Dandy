@@ -1,0 +1,44 @@
+---
+import { business } from "@data/site";
+import { CalendarClock, Phone } from "lucide-react";
+---
+
+<div
+  id="sticky-cta"
+  class="pointer-events-none fixed inset-x-0 bottom-0 z-40 translate-y-full p-3 transition-transform duration-300 ease-brand lg:hidden"
+  style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));"
+  aria-hidden="true"
+>
+  <div class="pointer-events-auto mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-white/10 bg-navy-900/95 p-2 shadow-2xl backdrop-blur-md">
+    <a
+      href={business.phoneHref}
+      class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white/10 px-4 py-3 font-display text-base font-bold text-white"
+    >
+      <Phone className="h-4 w-4 text-brand-green-400" aria-hidden="true" />
+      Call Now
+    </a>
+    <a
+      href={business.scheduleUrl}
+      class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-4 py-3 font-display text-base font-bold text-navy-900 shadow-[var(--shadow-pill-green)]"
+    >
+      <CalendarClock className="h-4 w-4" aria-hidden="true" />
+      Schedule
+    </a>
+  </div>
+</div>
+
+<script>
+  function initStickyCta() {
+    const bar = document.getElementById("sticky-cta");
+    if (!bar) return;
+    const onScroll = () => {
+      const show = window.scrollY > 520;
+      bar.classList.toggle("translate-y-full", !show);
+      bar.setAttribute("aria-hidden", show ? "false" : "true");
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+  if (document.readyState !== "loading") initStickyCta();
+  else document.addEventListener("DOMContentLoaded", initStickyCta);
+</script>

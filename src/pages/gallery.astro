@@ -1,0 +1,203 @@
+---
+import { Image } from "astro:assets";
+import Layout from "@layouts/Layout.astro";
+import PageHero from "@components/sections/PageHero.astro";
+import FinalCta from "@components/sections/FinalCta.astro";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import { breadcrumbSchema } from "@lib/seo";
+
+import drainCleaning from "@assets/photos/legacy-drain-cleaning.webp";
+import sewerTrench from "@assets/photos/legacy-sewer-trench.webp";
+import sewerPipe from "@assets/photos/legacy-sewer-pipe.webp";
+import burstPipe from "@assets/photos/legacy-burst-pipe.webp";
+import copperValves from "@assets/photos/legacy-copper-valves.webp";
+import gasLine from "@assets/photos/legacy-gas-line.webp";
+import shower from "@assets/photos/legacy-shower.webp";
+import sumpPump from "@assets/photos/legacy-sump-pump.webp";
+import crewTruck from "@assets/photos/legacy-crew-truck.webp";
+import jdTruck from "@assets/photos/legacy-jd-truck.webp";
+import crewFramed from "@assets/photos/legacy-crew-framed.webp";
+import technician from "@assets/photos/hero-technician-clean.webp";
+import sapling from "@assets/photos/legacy-sapling.webp";
+
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Gallery", path: "/gallery" },
+]);
+
+const filters = [
+  { key: "all", label: "All Work" },
+  { key: "sewer", label: "Sewer & Drain" },
+  { key: "repairs", label: "Repairs & Leaks" },
+  { key: "fixtures", label: "Fixtures & Heaters" },
+  { key: "team", label: "Our Team" },
+];
+
+const items = [
+  { src: drainCleaning, cat: "sewer", caption: "Hydro-jetting a blocked main line" },
+  { src: crewFramed, cat: "team", caption: "The Jim Dandy crew, ready to roll" },
+  { src: sewerTrench, cat: "sewer", caption: "Sewer main replacement in progress" },
+  { src: copperValves, cat: "repairs", caption: "Copper repipe and shut-off valves" },
+  { src: technician, cat: "team", caption: "Licensed, background-checked technicians" },
+  { src: burstPipe, cat: "repairs", caption: "Burst pipe emergency response" },
+  { src: sewerPipe, cat: "sewer", caption: "A camera-verified, fully cleared line" },
+  { src: shower, cat: "fixtures", caption: "Fixture and water-pressure restoration" },
+  { src: jdTruck, cat: "team", caption: "Fully-stocked trucks across Puget Sound" },
+  { src: gasLine, cat: "repairs", caption: "Safe gas line installation and repair" },
+  { src: sumpPump, cat: "fixtures", caption: "Sump pump install for flood protection" },
+  { src: crewTruck, cat: "team", caption: "Same-day dispatch, neighborhood service" },
+  { src: sapling, cat: "team", caption: "Eco-conscious, rooted in the community" },
+];
+---
+
+<Layout
+  title="Project Gallery | Jim Dandy Sewer & Plumbing"
+  description="See real Jim Dandy plumbing and sewer work across the Puget Sound region - drain cleaning, trenchless sewer repair, repiping, water heaters, and our team in action."
+  path="/gallery"
+>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
+
+  <PageHero
+    eyebrow="Our Work"
+    title="See the Work Up Close"
+    lead="From trenchless sewer replacements to same-day water heater swaps, this is the quality we bring to every Puget Sound home and business."
+    crumbs={[{ name: "Home", href: "/" }, { name: "Gallery" }]}
+    ctas={false}
+  />
+
+  <section class="bg-white py-16 lg:py-24">
+    <div class="container-page flex flex-col gap-10">
+      <!-- Filters -->
+      <div class="flex flex-wrap justify-center gap-3" data-gallery-filters data-reveal>
+        {filters.map((f, i) => (
+          <button
+            type="button"
+            data-filter={f.key}
+            class:list={[
+              "rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-200 ease-brand",
+              i === 0
+                ? "border-navy-800 bg-navy-900 text-white"
+                : "border-navy-200 bg-white text-navy-700 hover:border-navy-800",
+            ]}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      <!-- Masonry -->
+      <div class="columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5" data-gallery-grid>
+        {items.map((item) => (
+          <button
+            type="button"
+            class="gallery-item group relative block w-full break-inside-avoid overflow-hidden rounded-[22px] border border-navy-100 shadow-sm transition-shadow duration-300 hover:shadow-card"
+            data-cat={item.cat}
+            data-caption={item.caption}
+            aria-label={`View larger: ${item.caption}`}
+          >
+            <Image
+              src={item.src}
+              alt={item.caption}
+              widths={[360, 560, 760]}
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              quality={80}
+              loading="lazy"
+              class="h-auto w-full object-cover transition-transform duration-500 ease-brand group-hover:scale-[1.05]"
+            />
+            <span class="pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-navy-900/80 via-navy-900/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span class="p-5 text-left font-display text-lg font-bold text-white">{item.caption}</span>
+            </span>
+            <span class="pointer-events-none absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-navy-900 opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M14 10 21 3M9 21H3v-6M10 14l-7 7"/></svg>
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div
+    id="gallery-lightbox"
+    class="fixed inset-0 z-[60] hidden items-center justify-center bg-navy-900/90 p-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Enlarged photo"
+  >
+    <button type="button" data-lightbox-close class="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20" aria-label="Close">
+      <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <figure class="flex max-h-[88vh] max-w-4xl flex-col items-center gap-4">
+      <img id="gallery-lightbox-img" alt="" class="max-h-[78vh] w-auto rounded-2xl object-contain shadow-2xl" />
+      <figcaption id="gallery-lightbox-cap" class="text-center font-display text-lg font-bold text-white"></figcaption>
+    </figure>
+  </div>
+
+  <FinalCta />
+
+  <StickyCta />
+  <MotionInit />
+</Layout>
+
+<script>
+  function initGallery() {
+    const grid = document.querySelector<HTMLElement>("[data-gallery-grid]");
+    const filterBar = document.querySelector<HTMLElement>("[data-gallery-filters]");
+    const lightbox = document.getElementById("gallery-lightbox");
+    if (!grid || !lightbox) return;
+
+    const items = Array.from(grid.querySelectorAll<HTMLElement>(".gallery-item"));
+    const lbImg = document.getElementById("gallery-lightbox-img") as HTMLImageElement | null;
+    const lbCap = document.getElementById("gallery-lightbox-cap");
+
+    // Filtering
+    filterBar?.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-filter");
+        filterBar.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((b) => {
+          const active = b === btn;
+          b.classList.toggle("border-navy-800", active);
+          b.classList.toggle("bg-navy-900", active);
+          b.classList.toggle("text-white", active);
+          b.classList.toggle("border-navy-200", !active);
+          b.classList.toggle("bg-white", !active);
+          b.classList.toggle("text-navy-700", !active);
+        });
+        items.forEach((item) => {
+          const show = key === "all" || item.getAttribute("data-cat") === key;
+          item.style.display = show ? "" : "none";
+        });
+      });
+    });
+
+    // Lightbox
+    const open = (item: HTMLElement) => {
+      const img = item.querySelector("img");
+      if (!img || !lbImg) return;
+      lbImg.src = img.currentSrc || img.src;
+      lbImg.alt = img.alt;
+      if (lbCap) lbCap.textContent = item.getAttribute("data-caption") || "";
+      lightbox.classList.remove("hidden");
+      lightbox.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    };
+    const close = () => {
+      lightbox.classList.add("hidden");
+      lightbox.classList.remove("flex");
+      document.body.style.overflow = "";
+    };
+
+    items.forEach((item) => item.addEventListener("click", () => open(item)));
+    lightbox.querySelector("[data-lightbox-close]")?.addEventListener("click", close);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !lightbox.classList.contains("hidden")) close();
+    });
+  }
+
+  if (document.readyState !== "loading") initGallery();
+  else document.addEventListener("DOMContentLoaded", initGallery);
+</script>

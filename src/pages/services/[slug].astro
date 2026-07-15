@@ -1,13 +1,31 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import Button from "@components/ui/Button.astro";
 import SectionHeading from "@components/ui/SectionHeading.astro";
-import PhotoFrame from "@components/ui/PhotoFrame.astro";
+import Heading from "@components/ui/Heading.astro";
+import PageHero from "@components/sections/PageHero.astro";
+import ProcessSteps from "@components/sections/ProcessSteps.astro";
+import ReviewsSection from "@components/sections/ReviewsSection.astro";
+import Accordion from "@components/sections/Accordion";
 import ServiceIcon from "@components/ui/ServiceIcon";
 import FinalCta from "@components/sections/FinalCta.astro";
-import { business, services } from "@data/site";
-import { breadcrumbSchema } from "@lib/seo";
-import { CheckCircle2, ChevronRight } from "lucide-react";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import { business, services, serviceExtras, serviceGuides } from "@data/site";
+import { breadcrumbSchema, faqSchema } from "@lib/seo";
+import { ArrowUpRight, CheckCircle2, HeartHandshake, Leaf, ReceiptText, ShieldCheck, Timer } from "lucide-react";
+
+import burstPipe from "@assets/photos/legacy-burst-pipe.webp";
+import drainCleaning from "@assets/photos/legacy-drain-cleaning.webp";
+import sewerTrench from "@assets/photos/legacy-sewer-trench.webp";
+import sewerPipe from "@assets/photos/legacy-sewer-pipe.webp";
+import shower from "@assets/photos/legacy-shower.webp";
+import copperValves from "@assets/photos/legacy-copper-valves.webp";
+import gasLine from "@assets/photos/legacy-gas-line.webp";
+import crewTruck from "@assets/photos/legacy-crew-truck.webp";
+import jdTruck from "@assets/photos/legacy-jd-truck.webp";
+import technician from "@assets/photos/hero-technician-clean.webp";
 
 export function getStaticPaths() {
   return services.map((service) => ({
@@ -16,8 +34,28 @@ export function getStaticPaths() {
   }));
 }
 
+const imagery = {
+  emergency: { hero: burstPipe, heroAlt: "A frozen, burst outdoor pipe covered in ice", overview: technician, overviewAlt: "A Jim Dandy technician smiling from a service truck" },
+  "drains-clogs": { hero: drainCleaning, heroAlt: "A plumber clearing a drain line through a street manhole", overview: sewerPipe, overviewAlt: "The view down a freshly cleared drainage pipe" },
+  "sewer-services": { hero: sewerTrench, heroAlt: "A new sewer main laid in an excavated trench", overview: sewerPipe, overviewAlt: "Looking down a cleared sewer pipe toward daylight" },
+  "water-heaters": { hero: shower, heroAlt: "Hot water flowing from a chrome shower head", overview: copperValves, overviewAlt: "Copper water lines and shut-off valves being serviced" },
+  "all-plumbing": { hero: copperValves, heroAlt: "Copper water lines and shut-off valves being serviced", overview: gasLine, overviewAlt: "A technician joining a gas line in the field" },
+  commercial: { hero: crewTruck, heroAlt: "A Jim Dandy technician in front of a company van", overview: jdTruck, overviewAlt: "A branded Jim Dandy Sewer & Plumbing service truck" },
+} as const;
+
 const { service } = Astro.props;
+const extra = serviceExtras[service.slug];
+const guide = serviceGuides[service.slug];
+const media = imagery[service.slug as keyof typeof imagery];
 const otherServices = services.filter((s) => s.slug !== service.slug);
+const allFaqs = [...(extra?.faqs ?? []), ...(guide?.extraFaqs ?? [])];
+
+const trustChips = [
+  { icon: ShieldCheck, label: "Licensed & Insured" },
+  { icon: ReceiptText, label: "Upfront Pricing" },
+  { icon: Timer, label: "30-Min Arrival Notice" },
+  { icon: HeartHandshake, label: "Warranty-Backed" },
+];
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -32,94 +70,203 @@ const crumbs = breadcrumbSchema([
   path={`/services/${service.slug}`}
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
+  {allFaqs.length > 0 && <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema(allFaqs))} slot="head" />}
 
-  <section class="relative overflow-hidden bg-navy-900 py-16 lg:py-24">
-    <div
-      class="pointer-events-none absolute inset-0 opacity-40"
-      style="background: radial-gradient(600px circle at 15% 20%, rgba(105,190,40,0.18), transparent 60%);"
-      aria-hidden="true"
-    ></div>
-    <div class="container-page relative grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
-      <div class="flex flex-col items-start gap-6">
-        <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-white/60">
-          <a href="/" class="hover:text-white">Home</a>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <a href="/services" class="hover:text-white">Services</a>
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          <span class="text-white">{service.label}</span>
-        </nav>
+  <PageHero
+    eyebrow={extra?.tagline ?? "Licensed Plumbing"}
+    title={`${service.label} Services`}
+    lead={service.intro}
+    image={media?.hero}
+    imageAlt={media?.heroAlt}
+    crumbs={[
+      { name: "Home", href: "/" },
+      { name: "Services", href: "/services" },
+      { name: service.label },
+    ]}
+  />
 
-        <span class="grid h-16 w-16 place-items-center rounded-2xl bg-white/10 text-brand-green-400">
-          <ServiceIcon name={service.icon} className="h-9 w-9" strokeWidth={1.5} aria-hidden="true" />
-        </span>
+  <!-- Overview -->
+  {extra && (
+    <section class="bg-white py-20 lg:py-28">
+      <div class="container-page grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+        <div class="flex flex-col gap-6" data-reveal="left">
+          <div class="flex items-center gap-4">
+            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-navy-900 text-brand-green-400">
+              <ServiceIcon name={service.icon} className="h-7 w-7" strokeWidth={1.5} aria-hidden="true" />
+            </span>
+            <span class="font-display text-sm font-bold uppercase tracking-[0.2em] text-brand-green-600">{extra.tagline}</span>
+          </div>
+          <h2 class="font-heading text-3xl font-bold leading-tight text-navy-800 sm:text-4xl">{extra.overviewTitle}</h2>
+          {extra.overview.map((para) => (
+            <p class="text-base leading-relaxed text-navy-600 sm:text-lg">{para}</p>
+          ))}
+          <div class="mt-2 flex flex-wrap gap-2.5">
+            {trustChips.map(({ icon: Icon, label }) => (
+              <span class="inline-flex items-center gap-2 rounded-full border border-navy-200 bg-surface px-4 py-2 text-sm font-semibold text-navy-700">
+                <Icon className="h-4 w-4 text-brand-green-600" aria-hidden="true" />
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
 
-        <h1 class="font-display text-[38px] font-black italic leading-[1.05] text-cloud sm:text-[52px]">
-          {service.label} Services
-        </h1>
-        <p class="max-w-lg text-lg leading-relaxed text-white/80">{service.intro}</p>
-
-        <div class="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-          <Button href={business.scheduleUrl} variant="primary">Schedule Online</Button>
-          <Button href={business.phoneHref} variant="secondary">Call {business.phone}</Button>
+        <div class="relative order-first lg:order-last" data-reveal="right">
+          <div
+            class="pointer-events-none absolute -inset-5 -z-0 rounded-[44px] opacity-70 blur-2xl"
+            style="background: radial-gradient(circle at 30% 30%, rgba(105,190,40,0.22), transparent 70%);"
+            aria-hidden="true"
+          ></div>
+          <div class="relative overflow-hidden rounded-[32px] border border-navy-100 shadow-card">
+            <Image
+              src={media.overview}
+              alt={media.overviewAlt}
+              widths={[480, 720, 960]}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              quality={82}
+              loading="lazy"
+              class="aspect-[4/3] h-full w-full object-cover"
+            />
+          </div>
         </div>
       </div>
+    </section>
+  )}
 
-      <PhotoFrame
-        tone="green"
-        label={`${service.label} service photo`}
-        class="relative aspect-[4/3] w-full rounded-[40px] border-4 border-brand-green-400/60 shadow-2xl"
-      />
-    </div>
-  </section>
+  <!-- Education -->
+  {guide && (
+    <section class="relative overflow-hidden bg-navy-900 py-20 lg:py-28">
+      <div
+        class="pointer-events-none absolute inset-0 opacity-40"
+        style="background: radial-gradient(700px circle at 80% 20%, rgba(105,190,40,0.16), transparent 60%);"
+        aria-hidden="true"
+      ></div>
+      <div class="container-page relative mx-auto flex max-w-3xl flex-col gap-6 text-center" data-reveal>
+        <span class="mx-auto inline-flex items-center gap-2 rounded-full border border-brand-green-500/40 bg-brand-green-500/10 px-4 py-1.5 font-sans text-xs font-bold uppercase tracking-[0.18em] text-brand-green-400">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-green-400"></span>
+          The Homeowner's Guide
+        </span>
+        <h2 class="font-display text-3xl font-black italic leading-tight text-white sm:text-[42px]">{guide.education.title}</h2>
+        {guide.education.body.map((para) => (
+          <p class="text-lg leading-relaxed text-white/75">{para}</p>
+        ))}
+      </div>
+    </section>
+  )}
 
-  <section class="bg-white py-20 lg:py-28">
-    <div class="container-page grid grid-cols-1 gap-14 lg:grid-cols-2">
-      <div class="flex flex-col gap-6">
-        <SectionHeading title="Signs You Need This" align="left" />
+  <!-- Signs + What's included -->
+  <section class="bg-surface py-20 lg:py-28">
+    <div class="container-page grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div class="flex flex-col gap-6 rounded-[32px] border border-navy-200 bg-white p-8 shadow-sm sm:p-10" data-reveal="left">
+        <Heading title="Signs You Need This" eyebrow="Warning Signs" />
         <ul class="flex flex-col gap-4">
           {service.signs.map((sign) => (
             <li class="flex items-start gap-3 text-base leading-relaxed text-navy-700">
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-green-600" aria-hidden="true" />
+              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green-50 text-brand-green-600">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              </span>
               {sign}
             </li>
           ))}
         </ul>
       </div>
-      <div class="flex flex-col gap-6">
-        <SectionHeading title="What's Included" align="left" />
+      <div class="flex flex-col gap-6 rounded-[32px] border border-navy-800 bg-navy-900 p-8 shadow-card sm:p-10" data-reveal="right">
+        <Heading title="What's Included" eyebrow="Scope of Work" light />
         <ul class="flex flex-col gap-4">
           {service.benefits.map((benefit) => (
-            <li class="flex items-start gap-3 text-base leading-relaxed text-navy-700">
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-green-600" aria-hidden="true" />
+            <li class="flex items-start gap-3 text-base leading-relaxed text-white/85">
+              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green-500 text-navy-900">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              </span>
               {benefit}
             </li>
           ))}
         </ul>
+        <div class="mt-2 flex flex-col gap-4 sm:flex-row">
+          <Button href={business.scheduleUrl} variant="primary">Schedule Online</Button>
+          <Button href={business.phoneHref} variant="ghost">Call {business.phone}</Button>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="bg-surface py-20 lg:py-28">
-    <div class="container-page flex flex-col gap-14">
-      <SectionHeading title="Explore Other Services" subtitle="Jim Dandy handles the full range of plumbing and sewer work." />
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <!-- Process -->
+  {extra && (
+    <ProcessSteps
+      eyebrow="Our Process"
+      title={`How Our ${service.label} Service Works`}
+      subtitle="Straightforward, upfront, and done right - here's exactly what to expect."
+      steps={extra.process}
+    />
+  )}
+
+  <!-- Prevention / maintenance -->
+  {guide && (
+    <section class="bg-surface py-20 lg:py-28">
+      <div class="container-page flex flex-col gap-14">
+        <div data-reveal>
+          <SectionHeading eyebrow="Pro Tips" title={guide.prevention.title} subtitle={guide.prevention.intro} />
+        </div>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {guide.prevention.tips.map((tip, i) => (
+            <div class="flex items-start gap-4 rounded-[24px] border border-navy-200 bg-white p-6 shadow-sm transition-all duration-300 ease-brand hover:-translate-y-1 hover:border-brand-green-500 hover:shadow-card">
+              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-green-50 text-brand-green-600">
+                <Leaf className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <p class="text-sm leading-relaxed text-navy-700">{tip}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- FAQ -->
+  {allFaqs.length > 0 && (
+    <section class="bg-white py-20 lg:py-28">
+      <div class="container-page flex flex-col gap-14">
+        <div data-reveal>
+          <SectionHeading
+            eyebrow="Good to Know"
+            title={`${service.label} Questions, Answered`}
+            subtitle="Straight answers before you pick up the phone."
+          />
+        </div>
+        <div class="mx-auto w-full max-w-3xl" data-reveal>
+          <Accordion client:visible items={allFaqs} />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <ReviewsSection />
+
+  <!-- Related services -->
+  <section class="relative overflow-hidden bg-navy-900 py-20 lg:py-28">
+    <div
+      class="pointer-events-none absolute inset-0 opacity-40"
+      style="background: radial-gradient(600px circle at 85% 15%, rgba(105,190,40,0.16), transparent 60%);"
+      aria-hidden="true"
+    ></div>
+    <div class="container-page relative flex flex-col gap-14">
+      <div data-reveal>
+        <SectionHeading title="Explore Other Services" subtitle="One licensed team for the full range of plumbing and sewer work." light />
+      </div>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
         {otherServices.map((s) => (
           <a
             href={`/services/${s.slug}`}
-            class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-[45px] border border-navy-400 bg-surface-muted p-8 shadow-card transition-transform duration-200 hover:-translate-y-1"
+            class="group flex items-center justify-between gap-4 rounded-[28px] border border-white/10 bg-white/5 p-7 backdrop-blur-sm transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-brand-green-500/60 hover:bg-white/10"
           >
-            <div class="flex h-full flex-col justify-between gap-6">
-              <h3 class="font-display text-[26px] font-bold leading-none text-navy-600">{s.label}</h3>
-              <span class="flex items-center gap-3 font-sans text-sm text-navy-600">
+            <div class="flex flex-col gap-4">
+              <span class="grid h-12 w-12 place-items-center rounded-xl bg-white/10 text-brand-green-400 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+                <ServiceIcon name={s.icon} className="h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
+              </span>
+              <h3 class="font-display text-[26px] font-bold leading-none text-white">{s.label}</h3>
+              <span class="flex items-center gap-2 text-sm font-medium text-white/60 transition-colors group-hover:text-white">
                 Learn more
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
               </span>
             </div>
-            <ServiceIcon
-              name={s.icon}
-              className="h-16 w-16 shrink-0 text-navy-300 transition-colors duration-200 group-hover:text-brand-green-500"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
           </a>
         ))}
       </div>
@@ -127,4 +274,7 @@ const crumbs = breadcrumbSchema([
   </section>
 
   <FinalCta />
+
+  <StickyCta />
+  <MotionInit />
 </Layout>

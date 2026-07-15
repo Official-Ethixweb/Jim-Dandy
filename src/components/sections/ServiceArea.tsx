@@ -36,26 +36,29 @@ export default function ServiceArea() {
 
       <Map />
 
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-3">
         {filteredCities.length > 0 ? (
           <>
             {visibleCities.map((city) => (
               <a
                 key={city}
                 href={`/service-area#${city.toLowerCase().replace(/\s+/g, "-")}`}
-                className="rounded-full bg-navy-800 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-navy-700"
+                className="rounded-full bg-navy-800 px-2 py-2.5 text-center text-xs font-medium leading-tight text-white transition-colors hover:bg-navy-700 max-sm:w-full sm:px-5 sm:py-3 sm:text-sm"
               >
                 {city}
               </a>
             ))}
             {hiddenCount > 0 && (
-              <a href="/service-area" className="text-sm font-semibold text-navy-700 hover:text-brand-green-600">
+              <a
+                href="/service-area"
+                className="text-sm font-semibold text-navy-700 hover:text-brand-green-600 max-sm:col-span-3 max-sm:py-1 max-sm:text-center"
+              >
                 And more →
               </a>
             )}
           </>
         ) : (
-          <p className="text-sm text-navy-400">
+          <p className="text-sm text-navy-400 max-sm:col-span-3">
             We couldn't find that city - call us at{" "}
             <a href={business.phoneHref} className="font-semibold text-navy-700 underline">
               {business.phone}

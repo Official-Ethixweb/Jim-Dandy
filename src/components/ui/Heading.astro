@@ -1,0 +1,38 @@
+---
+/**
+ * Container-scoped heading for use INSIDE cards and grid columns, where the
+ * full-bleed w-screen bars of SectionHeading would overflow. Echoes the brand
+ * two-bar mark at a fixed width so it stays within its parent.
+ */
+type Props = {
+  title: string;
+  eyebrow?: string;
+  subtitle?: string;
+  light?: boolean;
+  as?: "h2" | "h3";
+};
+
+const { title, eyebrow, subtitle, light = false, as: Tag = "h2" } = Astro.props;
+---
+
+<div class="flex flex-col items-start gap-4 text-left">
+  {eyebrow && (
+    <span class:list={["font-display text-sm font-bold uppercase tracking-[0.2em]", light ? "text-brand-green-400" : "text-brand-green-600"]}>
+      {eyebrow}
+    </span>
+  )}
+  <div class="flex items-center gap-4">
+    <span class="hidden shrink-0 flex-col gap-1.5 sm:flex" aria-hidden="true">
+      <span class:list={["h-2.5 w-9", light ? "bg-white/80" : "bg-navy-800"]}></span>
+      <span class="h-2.5 w-9 bg-brand-green-500"></span>
+    </span>
+    <Tag class:list={["text-balance font-heading text-[28px] font-bold leading-tight sm:text-[36px]", light ? "text-white" : "text-navy-800"]}>
+      {title}
+    </Tag>
+  </div>
+  {subtitle && (
+    <p class:list={["max-w-xl text-base leading-relaxed sm:text-lg", light ? "text-white/80" : "text-navy-600"]}>
+      {subtitle}
+    </p>
+  )}
+</div>

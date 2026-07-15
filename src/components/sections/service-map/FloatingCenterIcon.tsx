@@ -12,7 +12,7 @@ export default function FloatingCenterIcon({ x, y, isInView, reduceMotion }: Pro
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
       transition={{ duration: 0.7, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="-translate-x-[150px]">
+      <div className="sm:-translate-x-[150px]">
         <motion.div
           animate={
             reduceMotion
@@ -40,7 +40,7 @@ export default function FloatingCenterIcon({ x, y, isInView, reduceMotion }: Pro
           </motion.div>
         </motion.div>
       </div>
-      <div className="-translate-x-[150px]">
+      <div className="hidden sm:block sm:-translate-x-[150px]">
         <p className="text-balance font-display text-2xl font-bold text-white sm:text-[28px]">Puget Sound Region</p>
         <p className="text-balance text-sm font-medium text-white/80 sm:text-base">
           King · Snohomish · Pierce Counties

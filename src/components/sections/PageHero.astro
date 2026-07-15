@@ -1,0 +1,163 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import Button from "@components/ui/Button.astro";
+import { business } from "@data/site";
+import { ChevronRight } from "lucide-react";
+
+type Crumb = { name: string; href?: string };
+type Cta = { label: string; href: string; variant?: "primary" | "secondary" };
+
+type Props = {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  crumbs: Crumb[];
+  image?: ImageMetadata;
+  imageAlt?: string;
+  align?: "left" | "split";
+  ctas?: Cta[] | false;
+  showRating?: boolean;
+  class?: string;
+};
+
+const {
+  eyebrow,
+  title,
+  lead,
+  crumbs,
+  image,
+  imageAlt = "",
+  align = image ? "split" : "left",
+  ctas,
+  showRating = true,
+  class: className = "",
+} = Astro.props;
+
+const resolvedCtas: Cta[] =
+  ctas === false
+    ? []
+    : ctas ?? [
+        { label: "Schedule Online", href: business.scheduleUrl, variant: "primary" },
+        { label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" },
+      ];
+
+const isSplit = align === "split" && !!image;
+---
+
+<section class:list={["relative overflow-hidden bg-navy-900", className]}>
+  <!-- signature dual green glow, matched to the homepage hero -->
+  <div
+    class="pointer-events-none absolute inset-0 opacity-50"
+    style="background: radial-gradient(620px circle at 12% 18%, rgba(105,190,40,0.20), transparent 60%), radial-gradient(520px circle at 88% 92%, rgba(105,190,40,0.12), transparent 60%);"
+    aria-hidden="true"
+  >
+  </div>
+  <!-- faint blueprint grid -->
+  <div
+    class="pointer-events-none absolute inset-0 opacity-[0.06]"
+    style="background-image: linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px); background-size: 46px 46px; mask-image: radial-gradient(120% 100% at 50% 0%, black, transparent 80%);"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div
+    class:list={[
+      "container-page relative py-16 lg:py-24",
+      isSplit
+        ? "grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]"
+        : "flex flex-col items-start",
+    ]}
+  >
+    <div class="flex flex-col items-start gap-6">
+      <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-sm text-white/60">
+        {crumbs.map((crumb, i) => (
+          <>
+            {i > 0 && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-white/35" aria-hidden="true" />}
+            {crumb.href ? (
+              <a href={crumb.href} class="transition-colors hover:text-white">{crumb.name}</a>
+            ) : (
+              <span class="text-white">{crumb.name}</span>
+            )}
+          </>
+        ))}
+      </nav>
+
+      {eyebrow && (
+        <span class="inline-flex items-center gap-2 rounded-full border border-brand-green-500/40 bg-brand-green-500/10 px-4 py-1.5 font-sans text-xs font-bold uppercase tracking-[0.18em] text-brand-green-400">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-green-400"></span>
+          {eyebrow}
+        </span>
+      )}
+
+      <h1 class="max-w-2xl text-balance font-display text-[38px] font-black italic leading-[1.03] text-cloud sm:text-[52px] lg:text-[58px]">
+        {title}
+      </h1>
+
+      {lead && (
+        <p class="max-w-xl text-lg leading-relaxed text-white/80">{lead}</p>
+      )}
+
+      {resolvedCtas.length > 0 && (
+        <div class="mt-1 flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
+          {resolvedCtas.map((cta) => (
+            <Button href={cta.href} variant={cta.variant ?? "primary"}>{cta.label}</Button>
+          ))}
+        </div>
+      )}
+
+      {showRating && (
+        <div class="mt-3 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div class="inline-flex items-center gap-2.5">
+            <svg viewBox="0 0 24 24" class="h-6 w-6 shrink-0" aria-hidden="true">
+              <path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.82z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.88-3c-1.08.72-2.46 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.1A12 12 0 0 0 12 24z"/>
+              <path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.28v-3.1H1.27A12 12 0 0 0 0 12c0 1.94.46 3.77 1.27 5.38z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.27 6.62l4 3.1C6.22 6.86 8.87 4.75 12 4.75z"/>
+            </svg>
+            <span class="font-accent text-base font-extrabold text-white">{business.rating.value}</span>
+            <div class="flex" aria-hidden="true">
+              {Array.from({ length: 5 }).map(() => (
+                <svg viewBox="0 0 20 20" class="h-4 w-4 fill-[#fea500]"><path d="M10 1.5l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7z"/></svg>
+              ))}
+            </div>
+            <span class="text-sm text-white/60">{business.rating.count} reviews</span>
+          </div>
+          <span class="hidden h-4 w-px bg-white/20 sm:block" aria-hidden="true"></span>
+          <span class="text-sm font-semibold text-white/70">Serving Puget Sound since {business.founded}</span>
+        </div>
+      )}
+    </div>
+
+    {isSplit && image && (
+      <div class="relative">
+        <div
+          class="pointer-events-none absolute -inset-6 -z-0 rounded-[48px] opacity-70 blur-2xl"
+          style="background: radial-gradient(circle at 70% 30%, rgba(105,190,40,0.30), transparent 70%);"
+          aria-hidden="true"
+        ></div>
+        <div class="relative overflow-hidden rounded-[36px] border-4 border-brand-green-400/60 shadow-2xl">
+          <Image
+            src={image}
+            alt={imageAlt}
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1024px) 45vw, 100vw"
+            quality={82}
+            loading="eager"
+            class="aspect-[4/3] h-full w-full object-cover"
+          />
+          <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-900/45 via-transparent to-transparent" aria-hidden="true"></span>
+        </div>
+        <div class="absolute -bottom-5 -left-4 flex items-center gap-3 rounded-2xl border border-navy-100 bg-white px-5 py-3 shadow-xl sm:-left-6">
+          <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-green-500 font-badge text-lg font-bold text-navy-900">
+            {business.yearsInBusiness}
+          </span>
+          <div class="leading-tight">
+            <p class="font-display text-sm font-bold text-navy-800">Years of Trust</p>
+            <p class="text-xs text-navy-500">Licensed · Bonded · Insured</p>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</section>

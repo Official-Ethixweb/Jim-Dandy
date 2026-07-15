@@ -137,7 +137,7 @@ export default function ContactForm({ onStepChange }: Props) {
         <legend className="font-sans text-sm font-semibold text-navy-700">
           Service needed* <span className="font-normal text-navy-400">(select all that apply)</span>
         </legend>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 max-sm:mt-2 sm:grid-cols-3 xl:grid-cols-4">
           {serviceOptions.map((option) => {
             const isActive = selectedService.includes(option.value);
             return (

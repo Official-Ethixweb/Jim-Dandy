@@ -6,7 +6,7 @@ import RotatingHeadline from "./RotatingHeadline";
 import { business } from "@data/site";
 ---
 
-<section class="relative overflow-hidden bg-navy-800">
+<section class="hero-section relative overflow-hidden bg-navy-800 max-sm:flex max-sm:min-h-[calc(100svh-80px)] max-sm:flex-col">
   <div class="absolute inset-0 lg:hidden" aria-hidden="true">
     <video
       class="hero-video h-full w-full object-cover opacity-[0.3]"
@@ -55,12 +55,12 @@ import { business } from "@data/site";
     </div>
   </div>
 
-  <div class="container-page relative grid grid-cols-1 items-center gap-12 py-16 lg:grid-cols-[1fr_1fr] lg:py-24">
-    <div class="flex flex-col items-start gap-10 lg:max-w-xl">
-      <div class="flex flex-col gap-6">
+  <div class="container-page relative grid grid-cols-1 items-center gap-12 py-16 max-sm:flex max-sm:flex-1 max-sm:flex-col max-sm:items-stretch max-sm:pt-6 max-sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:grid-cols-[1fr_1fr] lg:py-24">
+    <div class="hero-content flex flex-col items-start gap-10 max-sm:flex-1 max-sm:justify-center max-sm:gap-7 lg:max-w-xl">
+      <div class="flex flex-col gap-6 max-sm:gap-5">
         <RotatingHeadline
           client:load
-          className="font-display text-[42px] font-black italic leading-[1.05] tracking-tight text-cloud sm:text-[56px] lg:text-[78px]"
+          className="font-display text-[clamp(3.25rem,14.5vw,4rem)] font-black italic leading-[1.05] tracking-tight text-cloud max-sm:leading-[1.03] sm:text-[56px] lg:text-[78px]"
         />
         <p class="max-w-lg text-lg leading-relaxed text-white/80 sm:text-xl">
           Licensed experts available 24/7 - from burst pipes to full sewer replacement.
@@ -68,12 +68,12 @@ import { business } from "@data/site";
         </p>
       </div>
 
-      <div class="grid w-full grid-cols-1 gap-4 sm:inline-grid sm:w-auto sm:grid-cols-2">
-        <Button href={business.scheduleUrl} variant="primary" fullWidth>Schedule Online</Button>
-        <Button href={business.financingUrl} variant="secondary" fullWidth>Get Financed</Button>
+      <div class="grid w-full grid-cols-2 gap-3 sm:inline-grid sm:w-auto sm:grid-cols-2 sm:gap-4">
+        <Button href={business.scheduleUrl} variant="primary" fullWidth class="max-sm:px-3 max-sm:text-sm">Schedule Online</Button>
+        <Button href={business.financingUrl} variant="secondary" fullWidth class="max-sm:px-3 max-sm:text-sm">Get Financed</Button>
       </div>
 
-      <div class="flex flex-wrap items-center gap-8">
+      <div class="flex flex-wrap items-center gap-8 max-sm:w-full max-sm:justify-between max-sm:gap-4">
         <div class="inline-flex items-center gap-3 border-b border-brand-green-600/40 pb-2">
           <svg viewBox="0 0 24 24" class="h-8 w-8 shrink-0" aria-hidden="true">
             <path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.82z"/>
@@ -94,7 +94,7 @@ import { business } from "@data/site";
           </div>
         </div>
 
-        <YearsBadge years={business.yearsInBusiness} year={business.founded} class="h-[131px] w-[131px] shrink-0" />
+        <YearsBadge years={business.yearsInBusiness} year={business.founded} class="hero-badge h-[131px] w-[131px] shrink-0" />
       </div>
     </div>
   </div>
@@ -116,6 +116,50 @@ import { business } from "@data/site";
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
+  }
+</style>
+
+<style is:global>
+  /* Mobile hero: the rotating headline reserves the tallest line-count so the
+     content below never jumps while it types. On phones we bottom-align that
+     reserved box so the description always hugs the current headline (no gap
+     between them); any slack while typing sits above the headline as breathing
+     room. Desktop/tablet keep the original top-aligned headline. */
+  @media (max-width: 639px) {
+    .hero-section h1 > span {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+  }
+
+  /* Mobile hero fit: on SHORT phone viewports the full-height hero can't fit a
+     52px headline, the description, both CTAs, the rating AND the 131px badge.
+     So we scale the headline + badge (and tighten the copy) down by available
+     height, keeping everything inside the fold. Taller phones are untouched and
+     keep the large, dominant headline. Phone-width scoped; desktop/tablet never
+     see these rules. */
+  @media (max-width: 639px) and (max-height: 740px) {
+    .hero-section h1 {
+      font-size: clamp(2.3rem, 10.5vw, 2.7rem);
+    }
+    .hero-badge {
+      height: 108px !important;
+      width: 108px !important;
+    }
+    .hero-content p {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+  }
+  @media (max-width: 639px) and (max-height: 650px) {
+    .hero-section h1 {
+      font-size: clamp(1.95rem, 9vw, 2.25rem);
+    }
+    .hero-badge {
+      height: 94px !important;
+      width: 94px !important;
+    }
   }
 </style>
 

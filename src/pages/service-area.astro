@@ -1,10 +1,16 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
+import Button from "@components/ui/Button.astro";
+import SectionHeading from "@components/ui/SectionHeading.astro";
 import ServiceArea from "@components/sections/ServiceArea";
 import FinalCta from "@components/sections/FinalCta.astro";
-import { business, serviceAreaCities } from "@data/site";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import { business, serviceAreaCities, serviceCounties } from "@data/site";
 import { breadcrumbSchema } from "@lib/seo";
-import { ChevronRight, MapPin } from "lucide-react";
+import { ChevronRight, MapPin, Phone } from "lucide-react";
+import skyline from "@assets/photos/seattle-skyline.webp";
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -19,59 +25,105 @@ const crumbs = breadcrumbSchema([
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
-  <section class="relative overflow-hidden bg-navy-900 py-16 lg:py-20">
+  <!-- Skyline hero -->
+  <section class="relative isolate overflow-hidden bg-navy-900">
+    <Image
+      src={skyline}
+      alt=""
+      widths={[768, 1280, 1920, 2500]}
+      sizes="100vw"
+      quality={78}
+      loading="eager"
+      class="absolute inset-0 -z-10 h-full w-full object-cover"
+    />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-navy-900 via-navy-900/85 to-navy-900/55" aria-hidden="true"></div>
     <div
-      class="pointer-events-none absolute inset-0 opacity-40"
-      style="background: radial-gradient(600px circle at 15% 20%, rgba(105,190,40,0.18), transparent 60%);"
+      class="pointer-events-none absolute inset-0 -z-10 opacity-50"
+      style="background: radial-gradient(620px circle at 12% 20%, rgba(105,190,40,0.20), transparent 60%);"
       aria-hidden="true"
     ></div>
-    <div class="container-page relative flex flex-col items-start gap-6">
+
+    <div class="container-page relative flex flex-col items-start gap-6 py-20 lg:py-32">
       <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-white/60">
         <a href="/" class="hover:text-white">Home</a>
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+        <ChevronRight className="h-3.5 w-3.5 text-white/35" aria-hidden="true" />
         <span class="text-white">Service Area</span>
       </nav>
-      <h1 class="font-display text-[38px] font-black italic leading-[1.05] text-cloud sm:text-[52px]">
+      <span class="inline-flex items-center gap-2 rounded-full border border-brand-green-500/40 bg-brand-green-500/10 px-4 py-1.5 font-sans text-xs font-bold uppercase tracking-[0.18em] text-brand-green-400">
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-green-400"></span>
+        Same-Day Dispatch
+      </span>
+      <h1 class="max-w-3xl text-balance font-display text-[38px] font-black italic leading-[1.03] text-cloud sm:text-[52px] lg:text-[58px]">
         Proudly Serving the Puget Sound Region
       </h1>
       <p class="max-w-xl text-lg leading-relaxed text-white/80">
-        Licensed plumbers dispatched same-day across King, Snohomish, and Pierce Counties.
+        Licensed plumbers dispatched same-day across King, Snohomish, and Pierce Counties - with 24/7
+        emergency response in every community we cover.
       </p>
+      <div class="mt-1 flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
+        <Button href={business.scheduleUrl} variant="primary">Schedule Online</Button>
+        <Button href={business.phoneHref} variant="secondary">Call {business.phone}</Button>
+      </div>
     </div>
   </section>
 
+  <!-- Interactive coverage -->
   <section class="bg-white py-20 lg:py-28">
     <div class="container-page">
       <ServiceArea client:visible />
     </div>
   </section>
 
+  <!-- Counties -->
   <section class="bg-surface py-20 lg:py-28">
     <div class="container-page flex flex-col gap-14">
-      <div class="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
-        <h2 class="font-heading text-2xl font-bold text-navy-800 sm:text-4xl">Cities We Serve</h2>
-        <p class="text-base leading-relaxed text-navy-600 sm:text-lg">
-          Same-day dispatch and 24/7 emergency response in every city below.
-        </p>
+      <div data-reveal>
+        <SectionHeading eyebrow="Coverage" title="Three Counties, One Team" subtitle="From the North Sound to the South Sound, help is close by." />
       </div>
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3" data-reveal-group>
+        {serviceCounties.map((county) => (
+          <div class="group flex flex-col gap-4 rounded-[28px] border border-navy-200 bg-white p-8 shadow-sm transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-navy-800 hover:shadow-card">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-navy-900 text-brand-green-400 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+              <MapPin className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
+            </span>
+            <h3 class="font-display text-2xl font-bold text-navy-800">{county.name}</h3>
+            <p class="text-sm leading-relaxed text-navy-600">{county.cities}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Cities grid -->
+  <section class="bg-white py-20 lg:py-28">
+    <div class="container-page flex flex-col gap-14">
+      <div data-reveal>
+        <SectionHeading title="Cities We Serve" subtitle="Same-day dispatch and 24/7 emergency response in every city below." />
+      </div>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group data-reveal-step="50">
         {serviceAreaCities.map((city) => {
           const slug = city.toLowerCase().replace(/\s+/g, "-");
           return (
-            <div id={slug} class="scroll-mt-24 rounded-2xl border border-navy-200 bg-white p-6">
+            <div
+              id={slug}
+              class="group scroll-mt-24 rounded-[24px] border border-navy-200 bg-surface p-6 transition-all duration-300 ease-brand hover:-translate-y-1 hover:border-brand-green-500 hover:bg-white hover:shadow-card"
+            >
               <div class="flex items-center gap-2.5">
-                <MapPin className="h-5 w-5 shrink-0 text-brand-green-600" aria-hidden="true" />
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-green-50 text-brand-green-600 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+                  <MapPin className="h-5 w-5" aria-hidden="true" />
+                </span>
                 <h3 class="font-display text-xl font-bold text-navy-800">{city}</h3>
               </div>
-              <p class="mt-2 text-sm leading-relaxed text-navy-600">
-                Licensed plumbers available same-day in {city} for emergency and scheduled
-                plumbing, drain, and sewer service.
+              <p class="mt-3 text-sm leading-relaxed text-navy-600">
+                Licensed plumbers available same-day in {city} for emergency and scheduled plumbing,
+                drain, and sewer service.
               </p>
               <a
                 href={business.phoneHref}
-                class="mt-3 inline-block text-sm font-semibold text-navy-700 underline hover:text-brand-green-600"
+                class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-navy-700 transition-colors hover:text-brand-green-600"
               >
-                Call {business.phone}
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                {business.phone}
               </a>
             </div>
           );
@@ -81,4 +133,7 @@ const crumbs = breadcrumbSchema([
   </section>
 
   <FinalCta />
+
+  <StickyCta />
+  <MotionInit />
 </Layout>

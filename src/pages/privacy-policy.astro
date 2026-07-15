@@ -1,8 +1,9 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import PageHero from "@components/sections/PageHero.astro";
+import MotionInit from "@components/ui/MotionInit.astro";
 import { business } from "@data/site";
 import { breadcrumbSchema } from "@lib/seo";
-import { ChevronRight } from "lucide-react";
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -10,129 +11,153 @@ const crumbs = breadcrumbSchema([
 ]);
 
 const effectiveDate = "January 1, 2026";
+
+const sections = [
+  { id: "information-we-collect", title: "Information We Collect" },
+  { id: "how-we-use", title: "How We Use Your Information" },
+  { id: "sms", title: "SMS & Text Messaging" },
+  { id: "cookies", title: "Cookies & Analytics" },
+  { id: "how-we-share", title: "How We Share Information" },
+  { id: "your-choices", title: "Your Choices" },
+  { id: "childrens-privacy", title: "Children's Privacy" },
+  { id: "changes", title: "Changes to This Policy" },
+  { id: "contact", title: "Contact Us" },
+];
 ---
 
 <Layout
   title="Privacy Policy | Jim Dandy Sewer & Plumbing"
   description="Privacy policy for Jim Dandy Sewer & Plumbing, including how we collect, use, and protect your information."
   path="/privacy-policy"
+  noindex
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
-  <section class="bg-navy-900 py-14">
-    <div class="container-page flex flex-col items-start gap-4">
-      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-white/60">
-        <a href="/" class="hover:text-white">Home</a>
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-        <span class="text-white">Privacy Policy</span>
-      </nav>
-      <h1 class="font-display text-4xl font-black italic text-cloud sm:text-5xl">Privacy Policy</h1>
-      <p class="text-white/70">Effective {effectiveDate}</p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow={`Effective ${effectiveDate}`}
+    title="Privacy Policy"
+    lead="How Jim Dandy collects, uses, and protects the information you share with us."
+    crumbs={[{ name: "Home", href: "/" }, { name: "Privacy Policy" }]}
+    ctas={false}
+    showRating={false}
+  />
 
-  <section class="bg-white py-16 lg:py-20">
-    <div class="container-page max-w-3xl">
-      <div class="flex flex-col gap-10 text-navy-700">
-        <p class="leading-relaxed">
+  <section class="bg-white py-16 lg:py-24">
+    <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-[240px_1fr]">
+      <!-- Table of contents -->
+      <aside class="hidden lg:block">
+        <nav aria-label="On this page" class="sticky top-28 flex flex-col gap-3 rounded-[24px] border border-navy-200 bg-surface p-6">
+          <p class="font-display text-sm font-bold uppercase tracking-[0.16em] text-navy-500">On This Page</p>
+          <ul class="flex flex-col gap-2.5">
+            {sections.map((s) => (
+              <li>
+                <a href={`#${s.id}`} class="text-sm leading-snug text-navy-600 transition-colors hover:text-brand-green-600">
+                  {s.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Content -->
+      <div class="flex max-w-3xl flex-col gap-10 text-navy-700">
+        <p class="text-lg leading-relaxed text-navy-600">
           {business.name} ("Jim Dandy," "we," "us," or "our") respects your privacy. This policy
-          explains what information we collect through our website (the "Site"), how we use it,
-          and the choices you have.
+          explains what information we collect through our website (the "Site"), how we use it, and
+          the choices you have.
         </p>
 
-        <div>
+        <div id="information-we-collect" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">Information We Collect</h2>
           <p class="mt-3 leading-relaxed">
-            When you submit a form, call, or schedule service through the Site, we may collect
-            your name, phone number, email address, service address, and details about the
-            service you're requesting. We also collect standard technical information
-            automatically, such as your IP address, browser type, and pages visited, to help us
-            operate and improve the Site.
+            When you submit a form, call, or schedule service through the Site, we may collect your
+            name, phone number, email address, service address, and details about the service you're
+            requesting. We also collect standard technical information automatically, such as your IP
+            address, browser type, and pages visited, to help us operate and improve the Site.
           </p>
         </div>
 
-        <div>
+        <div id="how-we-use" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">How We Use Your Information</h2>
           <ul class="mt-3 flex flex-col gap-2 leading-relaxed">
             <li>To schedule, confirm, and dispatch the service you requested</li>
             <li>To contact you by phone, text, or email about your appointment or request</li>
-            <li>To send service updates, invoices, and -if you opt in -promotional offers</li>
+            <li>To send service updates, invoices, and - if you opt in - promotional offers</li>
             <li>To maintain business records and comply with legal and licensing obligations</li>
             <li>To improve our Site, services, and customer experience</li>
           </ul>
         </div>
 
-        <div>
+        <div id="sms" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">SMS &amp; Text Messaging</h2>
           <p class="mt-3 leading-relaxed">
             If you provide consent on our contact form, we may send you text messages regarding
             appointments, service updates, and promotional offers, including messages sent by
-            autodialer. Consent to receive texts is never a condition of purchase. Message and
-            data rates may apply, and message frequency varies. You can opt out at any time by
-            replying <strong>STOP</strong>, or get help by replying <strong>HELP</strong>. We do
-            not sell or share your mobile opt-in information with third parties for their own
-            marketing purposes.
+            autodialer. Consent to receive texts is never a condition of purchase. Message and data
+            rates may apply, and message frequency varies. You can opt out at any time by replying
+            <strong>STOP</strong>, or get help by replying <strong>HELP</strong>. We do not sell or
+            share your mobile opt-in information with third parties for their own marketing purposes.
           </p>
         </div>
 
-        <div>
+        <div id="cookies" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">Cookies &amp; Analytics</h2>
           <p class="mt-3 leading-relaxed">
             The Site may use cookies and similar technologies to remember your preferences and
-            understand how visitors use the Site. You can disable cookies in your browser
-            settings, though some features of the Site may not function properly as a result.
+            understand how visitors use the Site. You can disable cookies in your browser settings,
+            though some features of the Site may not function properly as a result.
           </p>
         </div>
 
-        <div>
+        <div id="how-we-share" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">How We Share Information</h2>
           <p class="mt-3 leading-relaxed">
-            We do not sell your personal information. We may share it with service providers who
-            help us operate our business -such as scheduling, payment processing, or
-            communication platforms -under obligations to keep it confidential, or when required
-            by law.
+            We do not sell your personal information. We may share it with service providers who help
+            us operate our business - such as scheduling, payment processing, or communication
+            platforms - under obligations to keep it confidential, or when required by law.
           </p>
         </div>
 
-        <div>
+        <div id="your-choices" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">Your Choices</h2>
           <p class="mt-3 leading-relaxed">
-            You may ask us to update or delete your contact information, or unsubscribe from
-            marketing communications, at any time by contacting us using the information below.
+            You may ask us to update or delete your contact information, or unsubscribe from marketing
+            communications, at any time by contacting us using the information below.
           </p>
         </div>
 
-        <div>
+        <div id="childrens-privacy" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">Children's Privacy</h2>
           <p class="mt-3 leading-relaxed">
-            The Site is intended for adults seeking home or commercial services and is not
-            directed to children under 13. We do not knowingly collect personal information from
-            children.
+            The Site is intended for adults seeking home or commercial services and is not directed to
+            children under 13. We do not knowingly collect personal information from children.
           </p>
         </div>
 
-        <div>
+        <div id="changes" class="scroll-mt-28 border-t border-navy-100 pt-8">
           <h2 class="font-heading text-2xl font-bold text-navy-800">Changes to This Policy</h2>
           <p class="mt-3 leading-relaxed">
-            We may update this policy from time to time. The effective date above reflects the
-            most recent revision.
+            We may update this policy from time to time. The effective date above reflects the most
+            recent revision.
           </p>
         </div>
 
-        <div>
-          <h2 class="font-heading text-2xl font-bold text-navy-800">Contact Us</h2>
-          <p class="mt-3 leading-relaxed">
-            Questions about this policy or your information? Contact us at{" "}
-            <a href={`mailto:${business.email}`} class="font-semibold text-navy-800 underline">
-              {business.email}
-            </a>{" "}
-            or{" "}
-            <a href={business.phoneHref} class="font-semibold text-navy-800 underline">
-              {business.phone}
-            </a>, or write to us at {business.address.full}.
-          </p>
+        <div id="contact" class="scroll-mt-28">
+          <div class="flex flex-col gap-3 rounded-[28px] border border-navy-200 bg-navy-900 p-8 text-white">
+            <h2 class="font-heading text-2xl font-bold text-white">Contact Us</h2>
+            <p class="leading-relaxed text-white/80">
+              Questions about this policy or your information? Reach us at
+              <a href={`mailto:${business.email}`} class="font-semibold text-brand-green-400 underline">{business.email}</a>
+              or
+              <a href={business.phoneHref} class="font-semibold text-brand-green-400 underline">{business.phone}</a>,
+              or write to us at {business.address.full}.
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <MotionInit />
 </Layout>

@@ -4,7 +4,7 @@ import { contactSchema } from "@lib/schemas/contact";
 export const prerender = false;
 
 // Best-effort in-memory rate limit: protects a single warm serverless instance
-// from rapid-fire abuse. It does NOT share state across cold starts or regions —
+// from rapid-fire abuse. It does NOT share state across cold starts or regions;
 // swap for Vercel KV/Upstash before this endpoint handles real production traffic.
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60_000;

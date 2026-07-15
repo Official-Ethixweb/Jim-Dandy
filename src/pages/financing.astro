@@ -1,0 +1,136 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Button from "@components/ui/Button.astro";
+import SectionHeading from "@components/ui/SectionHeading.astro";
+import PageHero from "@components/sections/PageHero.astro";
+import ProcessSteps from "@components/sections/ProcessSteps.astro";
+import Accordion from "@components/sections/Accordion";
+import FinalCta from "@components/sections/FinalCta.astro";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import { business, financing } from "@data/site";
+import { breadcrumbSchema, faqSchema } from "@lib/seo";
+import { CalendarCheck, Droplets, Flame, PiggyBank, Route, ShieldCheck, Wrench } from "lucide-react";
+import heroPhoto from "@assets/photos/legacy-copper-valves.webp";
+
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Financing", path: "/financing" },
+]);
+
+const financeIcons = [Flame, Route, Wrench, Droplets];
+
+const whyFinance = [
+  { icon: CalendarCheck, title: "Fix It Now, Not Later", description: "Don't let a failing water heater or sewer line wait. Handle it today and pay on your schedule." },
+  { icon: PiggyBank, title: "Protect Your Cash Flow", description: "Spread a large repair across affordable monthly payments instead of one big hit to your savings." },
+  { icon: ShieldCheck, title: "Upfront Pricing Still Applies", description: "Financing or not, you get the same flat, honest quote before any work begins - no games." },
+];
+---
+
+<Layout
+  title="Plumbing Financing | Jim Dandy Sewer & Plumbing"
+  description="Flexible financing for water heaters, sewer repair, repiping, and major plumbing work across the Puget Sound region. Fix it now and pay over time with affordable monthly payments."
+  path="/financing"
+>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema(financing.faqs))} slot="head" />
+
+  <PageHero
+    eyebrow="Flexible Monthly Payments"
+    title="Fix It Now, Pay Over Time"
+    lead={financing.intro}
+    image={heroPhoto}
+    imageAlt="Copper water lines and shut-off valves during a repipe"
+    crumbs={[{ name: "Home", href: "/" }, { name: "Financing" }]}
+    ctas={[
+      { label: "Schedule & Ask About Financing", href: business.scheduleUrl, variant: "primary" },
+      { label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" },
+    ]}
+  />
+
+  <!-- What you can finance -->
+  <section class="bg-white py-20 lg:py-28">
+    <div class="container-page flex flex-col gap-14">
+      <div data-reveal>
+        <SectionHeading eyebrow="Eligible Work" title="What You Can Finance" subtitle="Financing is ideal for the larger investments that keep your home running." />
+      </div>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+        {financing.financeable.map((item, i) => {
+          const Icon = financeIcons[i] ?? Wrench;
+          return (
+            <div class="group flex flex-col gap-4 rounded-[28px] border border-navy-200 bg-surface p-7 transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-navy-800 hover:bg-white hover:shadow-card">
+              <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-green-50 text-brand-green-600 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+                <Icon className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
+              </span>
+              <p class="font-display text-lg font-bold text-navy-800">{item.label}</p>
+              <p class="text-sm leading-relaxed text-navy-600">{item.description}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <ProcessSteps
+    eyebrow="Simple & Fast"
+    title="How Financing Works"
+    subtitle="From quote to approval in about the time it takes to read this page."
+    steps={financing.steps}
+    tone="surface"
+  />
+
+  <!-- Why finance -->
+  <section class="relative overflow-hidden bg-navy-900 py-20 lg:py-28">
+    <div
+      class="pointer-events-none absolute inset-0 opacity-40"
+      style="background: radial-gradient(700px circle at 20% 20%, rgba(105,190,40,0.16), transparent 60%);"
+      aria-hidden="true"
+    ></div>
+    <div class="container-page relative flex flex-col gap-14">
+      <div data-reveal>
+        <SectionHeading eyebrow="Why It Helps" title="A Smarter Way to Pay" light />
+      </div>
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3" data-reveal-group>
+        {whyFinance.map(({ icon: Icon, title, description }) => (
+          <div class="flex flex-col gap-4 rounded-[28px] border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-green-500/15 text-brand-green-400">
+              <Icon className="h-7 w-7" aria-hidden="true" />
+            </span>
+            <h3 class="font-display text-xl font-bold text-white">{title}</h3>
+            <p class="text-sm leading-relaxed text-white/75">{description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="bg-white py-20 lg:py-28">
+    <div class="container-page flex flex-col gap-14">
+      <div data-reveal>
+        <SectionHeading eyebrow="Good to Know" title="Financing Questions, Answered" />
+      </div>
+      <div class="mx-auto w-full max-w-3xl" data-reveal>
+        <Accordion client:visible items={financing.faqs} />
+      </div>
+    </div>
+  </section>
+
+  <!-- Coupons cross-link -->
+  <section class="bg-surface py-14">
+    <div class="container-page">
+      <div class="flex flex-col items-center gap-4 rounded-[28px] border border-brand-green-500/30 bg-brand-green-50 p-8 text-center sm:flex-row sm:justify-between sm:text-left" data-reveal>
+        <div>
+          <p class="font-display text-xl font-bold text-navy-800">Save even more.</p>
+          <p class="text-sm text-navy-600">Check our current coupons - some can be combined with financing.</p>
+        </div>
+        <Button href="/coupons" variant="secondary" size="md" class="shrink-0">View Coupons</Button>
+      </div>
+    </div>
+  </section>
+
+  <FinalCta />
+
+  <StickyCta />
+  <MotionInit />
+</Layout>

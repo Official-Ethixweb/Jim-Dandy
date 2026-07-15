@@ -25,14 +25,14 @@ import { business } from "@data/site";
     />
 
     <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-[auto_1fr] lg:[min-height:clamp(255px,27.6vw,706px)]">
-      <div class="relative flex flex-col gap-4 sm:flex-row lg:flex-col lg:w-72">
+      <div class="relative grid grid-cols-2 gap-3 sm:flex sm:flex-row sm:gap-4 lg:flex-col lg:w-72">
         <div
           class="pointer-events-none absolute -inset-10 -z-10 rounded-full opacity-80 blur-3xl"
           style="background: radial-gradient(circle, rgba(105,190,40,0.16), rgba(105,190,40,0) 70%);"
           aria-hidden="true"
         ></div>
-        <Button href={business.scheduleUrl} variant="primary" fullWidth>Schedule Online</Button>
-        <Button href={business.financingUrl} variant="secondary" fullWidth>Get Financed</Button>
+        <Button href={business.scheduleUrl} variant="primary" fullWidth class="max-sm:px-3 max-sm:text-sm">Schedule Online</Button>
+        <Button href={business.financingUrl} variant="secondary" fullWidth class="max-sm:px-3 max-sm:text-sm">Get Financed</Button>
       </div>
 
       <Image
@@ -41,7 +41,7 @@ import { business } from "@data/site";
         width={5505}
         height={2196}
         loading="lazy"
-        class="-mx-5 h-auto w-[calc(100%+2.5rem)] lg:hidden"
+        class="h-auto lg:hidden ml-[calc(1.25rem-10%)] mr-0 w-[125%] max-w-none md:mx-[-1.25rem] md:w-[calc(100%+2.5rem)] md:max-w-full"
       />
     </div>
   </div>

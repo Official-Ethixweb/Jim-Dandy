@@ -1,7 +1,11 @@
 ---
-// Two-sided "sandwich" of the legacy trust badge, spun continuously on the Y axis.
-// The back face's own 180deg rotation cancels out with the container's animated
-// rotation once it swings past 180deg, so it reads correctly instead of mirrored.
+// The legacy trust badge extruded into a solid machined-metal medallion.
+// Real front + back faces (artwork unchanged) with a hollow metal rim wall
+// between them, so the face always reads through the centre while the thick
+// edge stays visible as it spins on the Y axis. A perpendicular "core" strip
+// keeps the rim solid at the exact 90deg/270deg profile instead of collapsing
+// to a razor-thin line. The front face keeps its exact size/position (it sits
+// at world z:0 via a compensating translateZ, so perspective scale is unchanged).
 type Props = {
   years: number;
   year: number;
@@ -10,58 +14,143 @@ type Props = {
 
 const { years, year, class: className = "" } = Astro.props;
 const badgeSrc = "/NEW/Legacy%20Trust%20Badge.webp";
+const edgeSrc = "/NEW/badge-edge.png"; // hollow metal rim
+const coreSrc = "/NEW/badge-core.png"; // edge cross-section for the 90deg profile
+
+// Extrusion: half the total thickness (px). The wall fills strictly between the
+// two faces (avoids z-fighting). Sub-pixel spacing keeps the wall visually solid.
+const HALF = 8;
+const STEP = 0.7;
+const edgeZ: number[] = [];
+for (let z = -(HALF - 1); z <= HALF - 1 + 0.001; z += STEP) edgeZ.push(Math.round(z * 100) / 100);
 ---
 
-<div class:list={["legacy-badge-perspective", className]}>
+<div class:list={["legacy-badge-perspective", className]} style={`--badge-half:${HALF}px;`}>
   <div class="legacy-badge-spin">
+    <!-- perpendicular core: keeps the rim solid at the exact edge-on profile -->
+    <img src={coreSrc} alt="" aria-hidden="true" draggable="false" class="legacy-badge-core" />
+    <!-- extruded hollow metal rim wall -->
+    {edgeZ.map((z) => (
+      <img
+        src={edgeSrc}
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+        class="legacy-badge-edge"
+        style={`transform: translateZ(${z}px) scale(0.985);`}
+      />
+    ))}
+    <!-- back face (its own 180deg cancels the container's so it reads un-mirrored) -->
+    <img src={badgeSrc} alt="" aria-hidden="true" class="legacy-badge-face legacy-badge-back" draggable="false" />
+    <!-- front face (unchanged artwork) -->
     <img
       src={badgeSrc}
       alt={`${years} years in business, established ${year}`}
       class="legacy-badge-face legacy-badge-front"
       draggable="false"
     />
-    <img src={badgeSrc} alt="" aria-hidden="true" class="legacy-badge-face legacy-badge-back" draggable="false" />
   </div>
 </div>
 
 <style>
   .legacy-badge-perspective {
-    perspective: 900px;
+    position: relative;
+    isolation: isolate;
+    perspective: 950px;
+  }
+
+  /* soft floating contact shadow beneath the medallion */
+  .legacy-badge-perspective::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -3%;
+    z-index: 0;
+    width: 70%;
+    height: 18%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0, 9, 20, 0.5) 0%, rgba(0, 9, 20, 0) 72%);
+    filter: blur(7px);
+    pointer-events: none;
+  }
+
+  /* soft ambient glow in the brand green, matching the hero */
+  .legacy-badge-perspective::after {
+    content: "";
+    position: absolute;
+    inset: -10%;
+    z-index: 0;
+    background: radial-gradient(circle at 50% 44%, rgba(105, 190, 40, 0.14) 0%, rgba(105, 190, 40, 0) 60%);
+    pointer-events: none;
   }
 
   .legacy-badge-spin {
     position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    animation: legacy-badge-rotate 9s linear infinite;
+    transform: translateZ(calc(-1 * var(--badge-half)));
+    will-change: transform;
+    animation: legacy-badge-rotate 9s infinite;
   }
 
-  .legacy-badge-face {
+  .legacy-badge-face,
+  .legacy-badge-edge {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  .legacy-badge-face {
     backface-visibility: hidden;
   }
 
+  /* explicit thin strip so it reliably shows the thickness at the profile */
+  .legacy-badge-core {
+    position: absolute;
+    left: 50%;
+    top: 7%;
+    height: 87%;
+    width: calc(2 * var(--badge-half));
+    object-fit: fill;
+    transform: translateX(-50%) rotateY(90deg);
+  }
+
+  .legacy-badge-front {
+    transform: translateZ(var(--badge-half));
+  }
+
   .legacy-badge-back {
-    transform: rotateY(180deg);
+    transform: translateZ(calc(-1 * var(--badge-half))) rotateY(180deg);
+  }
+
+  /* the rim wall and the core are visible from both sides */
+  .legacy-badge-edge,
+  .legacy-badge-core {
+    backface-visibility: visible;
   }
 
   @keyframes legacy-badge-rotate {
-    from {
-      transform: rotateY(0deg);
+    0% {
+      transform: translateZ(calc(-1 * var(--badge-half))) rotateY(0deg);
+      animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
     }
-    to {
-      transform: rotateY(360deg);
+    50% {
+      transform: translateZ(calc(-1 * var(--badge-half))) rotateY(180deg);
+      animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    }
+    100% {
+      transform: translateZ(calc(-1 * var(--badge-half))) rotateY(360deg);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .legacy-badge-spin {
       animation: none;
+      transform: translateZ(calc(-1 * var(--badge-half)));
     }
   }
 </style>

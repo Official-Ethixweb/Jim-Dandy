@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Menu, Phone, X } from "lucide-react";
-import { business, navLinks } from "@data/site";
+import { business, navLinks, secondaryNavLinks } from "@data/site";
 import Logo from "./Logo";
 import ServiceIcon from "@components/ui/ServiceIcon";
 
@@ -259,6 +259,18 @@ export default function Header({ currentPath = "/" }: Props) {
                   </a>
                 ),
               )}
+              {secondaryNavLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isLinkActive(link.href, currentPath) ? "page" : undefined}
+                  className={`rounded-xl px-3 py-3 font-sans text-base font-medium text-white ${
+                    isLinkActive(link.href, currentPath) ? "underline underline-offset-4" : ""
+                  }`}
+                >
+                  {link.label}
+                </a>
+              ))}
               <div className="mt-3 flex flex-col gap-3 border-t border-white/10 pt-4">
                 <a
                   href={business.phoneHref}

@@ -1,0 +1,155 @@
+---
+import { Image } from "astro:assets";
+import Layout from "@layouts/Layout.astro";
+import Button from "@components/ui/Button.astro";
+import SectionHeading from "@components/ui/SectionHeading.astro";
+import Heading from "@components/ui/Heading.astro";
+import PageHero from "@components/sections/PageHero.astro";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import { business, careers } from "@data/site";
+import { breadcrumbSchema } from "@lib/seo";
+import { Check, GraduationCap, Hammer, Handshake, Headset, Search, Users, Wrench } from "lucide-react";
+import crewFramed from "@assets/photos/legacy-crew-framed.webp";
+import technician from "@assets/photos/hero-technician-clean.webp";
+
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Careers", path: "/careers" },
+]);
+
+const valueIcons = [Hammer, Handshake, GraduationCap, Users];
+const roleIcons = [Wrench, GraduationCap, Search, Headset];
+const applyHref = `mailto:${business.email}?subject=${encodeURIComponent("Careers Application - Jim Dandy")}`;
+---
+
+<Layout
+  title="Careers | Jim Dandy Sewer & Plumbing"
+  description="Join a plumbing company Puget Sound has trusted since 1908. Competitive pay, training, stocked trucks, and a clear path from apprentice to master. Apply today."
+  path="/careers"
+>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
+
+  <PageHero
+    eyebrow="Join the Team"
+    title="Build a Career That Lasts"
+    lead={careers.intro}
+    image={crewFramed}
+    imageAlt="The Jim Dandy Sewer & Plumbing crew gathered together"
+    crumbs={[{ name: "Home", href: "/" }, { name: "Careers" }]}
+    ctas={[
+      { label: "Apply Now", href: applyHref, variant: "primary" },
+      { label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" },
+    ]}
+    showRating={false}
+  />
+
+  <!-- Values -->
+  <section class="bg-white py-20 lg:py-28">
+    <div class="container-page flex flex-col gap-14">
+      <div data-reveal>
+        <SectionHeading eyebrow="Our Culture" title="What It's Like to Work Here" subtitle="A local, family-run company where craftsmanship and honesty still mean something." />
+      </div>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+        {careers.values.map((value, i) => {
+          const Icon = valueIcons[i] ?? Hammer;
+          return (
+            <div class="group flex flex-col gap-4 rounded-[28px] border border-navy-200 bg-surface p-7 transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-navy-800 hover:bg-white hover:shadow-card">
+              <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-green-50 text-brand-green-600 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+                <Icon className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
+              </span>
+              <p class="font-display text-lg font-bold text-navy-800">{value.title}</p>
+              <p class="text-sm leading-relaxed text-navy-600">{value.description}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section class="bg-surface py-20 lg:py-28">
+    <div class="container-page grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+      <div class="relative order-first" data-reveal="left">
+        <div
+          class="pointer-events-none absolute -inset-5 -z-0 rounded-[44px] opacity-70 blur-2xl"
+          style="background: radial-gradient(circle at 30% 30%, rgba(105,190,40,0.20), transparent 70%);"
+          aria-hidden="true"
+        ></div>
+        <div class="relative overflow-hidden rounded-[32px] border border-navy-100 shadow-card">
+          <Image
+            src={technician}
+            alt="A Jim Dandy technician smiling from a company truck"
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1024px) 45vw, 100vw"
+            quality={82}
+            loading="lazy"
+            class="aspect-[4/3] h-full w-full object-cover"
+          />
+        </div>
+      </div>
+      <div class="flex flex-col gap-6" data-reveal="right">
+        <Heading eyebrow="The Perks" title="We Invest in Our People" />
+        <ul class="flex flex-col gap-4">
+          {careers.benefits.map((benefit) => (
+            <li class="flex items-start gap-3 text-base leading-relaxed text-navy-700">
+              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green-500 text-navy-900">
+                <Check className="h-4 w-4" aria-hidden="true" />
+              </span>
+              {benefit}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open roles -->
+  <section class="bg-white py-20 lg:py-28">
+    <div class="container-page flex flex-col gap-14">
+      <div data-reveal>
+        <SectionHeading eyebrow="Now Growing" title="Roles We Hire For" subtitle="Don't see a perfect match? We still want to hear from good people." />
+      </div>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2" data-reveal-group>
+        {careers.roles.map((role, i) => {
+          const Icon = roleIcons[i] ?? Wrench;
+          return (
+            <div class="flex items-start gap-5 rounded-[28px] border border-navy-200 bg-surface p-7 transition-all duration-300 ease-brand hover:-translate-y-1 hover:border-navy-800 hover:bg-white hover:shadow-card">
+              <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-navy-900 text-brand-green-400">
+                <Icon className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
+              </span>
+              <div>
+                <h3 class="font-display text-xl font-bold text-navy-800">{role.title}</h3>
+                <p class="mt-1.5 text-sm leading-relaxed text-navy-600">{role.description}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Apply CTA -->
+  <section class="relative overflow-hidden bg-navy-900 py-20 lg:py-28">
+    <div
+      class="pointer-events-none absolute inset-0 opacity-50"
+      style="background: radial-gradient(700px circle at 50% 0%, rgba(105,190,40,0.18), transparent 60%);"
+      aria-hidden="true"
+    ></div>
+    <div class="container-page relative flex flex-col items-center gap-6 text-center" data-reveal>
+      <h2 class="max-w-2xl font-display text-3xl font-black italic text-white sm:text-[42px]">Ready to Join a Puget Sound Legacy?</h2>
+      <p class="max-w-xl leading-relaxed text-white/75">
+        Send your resume and a note about what you're looking for. We read every application and reply
+        to good fits quickly.
+      </p>
+      <div class="flex flex-col gap-4 sm:flex-row">
+        <Button href={applyHref} variant="primary">Email Your Resume</Button>
+        <Button href={business.phoneHref} variant="ghost">Call {business.phone}</Button>
+      </div>
+      <p class="text-sm text-white/50">Or reach us at {business.email}</p>
+    </div>
+  </section>
+
+  <StickyCta />
+  <MotionInit />
+</Layout>

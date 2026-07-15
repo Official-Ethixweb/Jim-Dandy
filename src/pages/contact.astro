@@ -1,9 +1,13 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import Button from "@components/ui/Button.astro";
+import PageHero from "@components/sections/PageHero.astro";
 import ContactSection from "@components/sections/ContactSection.astro";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
 import { business } from "@data/site";
 import { breadcrumbSchema } from "@lib/seo";
-import { ChevronRight, Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -11,12 +15,13 @@ const crumbs = breadcrumbSchema([
 ]);
 
 const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address.full)}`;
+const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(business.address.full)}&z=13&output=embed`;
 
 const contactCards = [
-  { icon: Phone, label: "Call or Text", value: business.phone, href: business.phoneHref },
-  { icon: Mail, label: "Email", value: business.email, href: `mailto:${business.email}` },
-  { icon: MapPin, label: "Address", value: business.address.full, href: directionsUrl },
-  { icon: Clock, label: "Hours", value: business.hours, href: undefined },
+  { icon: Phone, label: "Call or Text", value: business.phone, href: business.phoneHref, note: "24/7 live dispatch" },
+  { icon: Mail, label: "Email", value: business.email, href: `mailto:${business.email}`, note: "We reply within one business day" },
+  { icon: MapPin, label: "Visit", value: business.address.full, href: directionsUrl, note: "Mountlake Terrace, WA" },
+  { icon: Clock, label: "Hours", value: business.hours, href: undefined, note: "Emergencies answered anytime" },
 ];
 ---
 
@@ -27,49 +32,81 @@ const contactCards = [
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
-  <section class="relative overflow-hidden bg-navy-900 py-16 lg:py-20">
-    <div
-      class="pointer-events-none absolute inset-0 opacity-40"
-      style="background: radial-gradient(600px circle at 15% 20%, rgba(105,190,40,0.18), transparent 60%);"
-      aria-hidden="true"
-    ></div>
-    <div class="container-page relative flex flex-col items-start gap-6">
-      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-white/60">
-        <a href="/" class="hover:text-white">Home</a>
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-        <span class="text-white">Contact</span>
-      </nav>
-      <h1 class="font-display text-[38px] font-black italic leading-[1.05] text-cloud sm:text-[52px]">
-        Contact Jim Dandy
-      </h1>
-      <p class="max-w-xl text-lg leading-relaxed text-white/80">
-        Call anytime for emergencies, or fill out the form below and a dispatcher will reach out
-        to confirm your appointment.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="We're Standing By"
+    title="Let's Get It Fixed"
+    lead="Call anytime for emergencies, or send us the details below and a dispatcher will reach out to confirm your appointment - usually the same day."
+    crumbs={[{ name: "Home", href: "/" }, { name: "Contact" }]}
+    ctas={[
+      { label: `Call ${business.phone}`, href: business.phoneHref, variant: "primary" },
+      { label: "Send a Message", href: "#contact", variant: "secondary" },
+    ]}
+  />
 
-  <section class="bg-white py-12">
-    <div class="container-page grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {contactCards.map(({ icon: Icon, label, value, href }) => {
-        const Tag = href ? "a" : "div";
-        return (
-          <Tag
-            href={href}
-            class="flex flex-col items-start gap-3 rounded-2xl border border-navy-200 bg-surface p-6 transition-colors hover:border-brand-green-500"
-          >
-            <span class="grid h-11 w-11 place-items-center rounded-xl bg-navy-50 text-navy-700">
-              <Icon className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p class="text-xs font-bold uppercase tracking-wider text-navy-400">{label}</p>
-              <p class="mt-1 text-sm font-semibold leading-snug text-navy-800">{value}</p>
-            </div>
-          </Tag>
-        );
-      })}
+  <!-- Contact details + map -->
+  <section class="bg-white py-20 lg:py-28">
+    <div class="container-page grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
+      <div class="flex flex-col gap-6" data-reveal="left">
+        <div class="flex flex-col gap-3">
+          <span class="font-display text-sm font-bold uppercase tracking-[0.2em] text-brand-green-600">Ways to Reach Us</span>
+          <h2 class="font-heading text-3xl font-bold text-navy-800 sm:text-4xl">One Call Away, Day or Night</h2>
+        </div>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {contactCards.map(({ icon: Icon, label, value, href, note }) => {
+            const Tag = href ? "a" : "div";
+            return (
+              <Tag
+                href={href}
+                class="group flex flex-col gap-3 rounded-[24px] border border-navy-200 bg-surface p-6 transition-all duration-300 ease-brand hover:-translate-y-1 hover:border-brand-green-500 hover:bg-white hover:shadow-card"
+              >
+                <span class="grid h-12 w-12 place-items-center rounded-xl bg-navy-900 text-brand-green-400 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wider text-navy-400">{label}</p>
+                  <p class="mt-1 font-semibold leading-snug text-navy-800">{value}</p>
+                  <p class="mt-1 text-xs text-navy-500">{note}</p>
+                </div>
+              </Tag>
+            );
+          })}
+        </div>
+        <div class="flex flex-col gap-4 rounded-[24px] border border-brand-green-500/30 bg-brand-green-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="font-display text-lg font-bold text-navy-800">Plumbing emergency right now?</p>
+            <p class="text-sm text-navy-600">A real dispatcher answers 24/7 - don't wait.</p>
+          </div>
+          <Button href={business.phoneHref} variant="primary" size="md" class="shrink-0">Call {business.phone}</Button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4" data-reveal="right">
+        <div class="overflow-hidden rounded-[32px] border border-navy-200 shadow-card">
+          <iframe
+            title={`Map showing ${business.name} in Mountlake Terrace, WA`}
+            src={mapEmbedUrl}
+            width="100%"
+            height="460"
+            style="border:0; display:block;"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <a
+          href={directionsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 self-start text-sm font-semibold text-navy-700 underline decoration-brand-green-500 decoration-2 underline-offset-4 hover:text-brand-green-600"
+        >
+          <MapPin className="h-4 w-4" aria-hidden="true" />
+          Get driving directions
+        </a>
+      </div>
     </div>
   </section>
 
   <ContactSection />
+
+  <StickyCta />
+  <MotionInit />
 </Layout>

@@ -2,16 +2,23 @@
 import Layout from "@layouts/Layout.astro";
 import Button from "@components/ui/Button.astro";
 import SectionHeading from "@components/ui/SectionHeading.astro";
+import Heading from "@components/ui/Heading.astro";
+import PageHero from "@components/sections/PageHero.astro";
+import ProcessSteps from "@components/sections/ProcessSteps.astro";
+import Accordion from "@components/sections/Accordion";
 import FinalCta from "@components/sections/FinalCta.astro";
-import { business } from "@data/site";
-import { breadcrumbSchema } from "@lib/seo";
-import { Building2, ChevronRight, Clock, FileText, ShieldCheck, Wrench } from "lucide-react";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import { business, serviceExtras } from "@data/site";
+import { breadcrumbSchema, faqSchema } from "@lib/seo";
+import { Building2, CheckCircle2, ClipboardList, Clock, Store, UtensilsCrossed } from "lucide-react";
+import heroPhoto from "@assets/photos/legacy-jd-truck.webp";
 
 const propertyTypes = [
-  { label: "Multi-Family & Apartments", icon: Building2 },
-  { label: "Restaurants & Food Service", icon: Wrench },
-  { label: "Retail & Office Buildings", icon: FileText },
-  { label: "Property Management Portfolios", icon: ShieldCheck },
+  { label: "Multi-Family & Apartments", description: "Buildings, HOAs, and portfolios with shared systems and tenants who can't wait.", icon: Building2 },
+  { label: "Restaurants & Food Service", description: "Grease traps, high-use drains, and code compliance kept ahead of inspection day.", icon: UtensilsCrossed },
+  { label: "Retail & Office Buildings", description: "Clean, discreet service scheduled around your customers and business hours.", icon: Store },
+  { label: "Property Management", description: "One reliable vendor and clear invoicing across every property you manage.", icon: ClipboardList },
 ];
 
 const commercialServices = [
@@ -24,11 +31,13 @@ const commercialServices = [
 ];
 
 const whyUs = [
-  { label: "Priority emergency response", description: "Commercial accounts get priority dispatch - a plumbing issue doesn't get to become a closed sign." },
-  { label: "Licensed & insured crews", description: "Every technician is a licensed Washington State plumber; Jim Dandy carries full bonding and insurance." },
-  { label: "Clear, itemized invoicing", description: "Detailed invoices built for property management and accounting workflows, not handwritten receipts." },
-  { label: "118 years in the Puget Sound region", description: "We've been the trusted plumber for local businesses since 1908 - long enough to know how to keep yours running." },
+  { label: "Priority Emergency Response", description: "Commercial accounts get priority dispatch - a plumbing issue doesn't get to become a closed sign." },
+  { label: "Licensed & Insured Crews", description: "Every technician is a licensed Washington State plumber; Jim Dandy carries full bonding and insurance." },
+  { label: "Clear, Itemized Invoicing", description: "Detailed invoices built for property management and accounting workflows, not handwritten receipts." },
+  { label: "118 Years in Puget Sound", description: "We've kept local businesses running since 1908 - long enough to know how to keep yours open." },
 ];
+
+const extra = serviceExtras.commercial;
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -42,70 +51,65 @@ const crumbs = breadcrumbSchema([
   path="/commercial"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema(extra.faqs))} slot="head" />
 
-  <section class="relative overflow-hidden bg-navy-900 py-16 lg:py-24">
-    <div
-      class="pointer-events-none absolute inset-0 opacity-40"
-      style="background: radial-gradient(600px circle at 15% 20%, rgba(105,190,40,0.18), transparent 60%);"
-      aria-hidden="true"
-    ></div>
-    <div class="container-page relative flex flex-col items-start gap-6">
-      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-white/60">
-        <a href="/" class="hover:text-white">Home</a>
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-        <span class="text-white">Commercial</span>
-      </nav>
-      <h1 class="font-display text-[38px] font-black italic leading-[1.05] text-cloud sm:text-[52px]">
-        Commercial Plumbing &amp; Sewer Services
-      </h1>
-      <p class="max-w-2xl text-lg leading-relaxed text-white/80">
-        Downtime costs money. We work with property managers, restaurants, and multi-family
-        buildings on scheduled maintenance plans and back them with the same 24/7 emergency
-        response we offer residential customers.
-      </p>
-      <div class="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-        <Button href={business.scheduleUrl} variant="primary">Schedule a Consultation</Button>
-        <Button href={business.phoneHref} variant="secondary">Call {business.phone}</Button>
-      </div>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Commercial & Multi-Family"
+    title="Plumbing That Keeps You Open"
+    lead="Downtime costs money. We partner with property managers, restaurants, and multi-family buildings on scheduled maintenance - backed by the same 24/7 emergency response we bring to every call."
+    image={heroPhoto}
+    imageAlt="A branded Jim Dandy Sewer & Plumbing commercial service truck"
+    crumbs={[{ name: "Home", href: "/" }, { name: "Commercial" }]}
+    ctas={[
+      { label: "Schedule a Consultation", href: business.scheduleUrl, variant: "primary" },
+      { label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" },
+    ]}
+  />
 
+  <!-- Who we serve -->
   <section class="bg-white py-20 lg:py-28">
     <div class="container-page flex flex-col gap-14">
-      <SectionHeading title="Who We Serve" subtitle="Commercial plumbing built around your operating hours, not ours." />
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {propertyTypes.map(({ label, icon: Icon }) => (
-          <div class="flex flex-col items-center gap-4 rounded-3xl border border-navy-200 bg-surface p-8 text-center shadow-sm">
-            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-navy-50 text-navy-700">
-              <Icon className="h-7 w-7" aria-hidden="true" />
+      <div data-reveal>
+        <SectionHeading eyebrow="Who We Serve" title="Built Around Your Operating Hours" subtitle="Commercial plumbing scheduled around your business, not ours." />
+      </div>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+        {propertyTypes.map(({ label, description, icon: Icon }) => (
+          <div class="group flex flex-col gap-4 rounded-[28px] border border-navy-200 bg-surface p-7 transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-navy-800 hover:bg-white hover:shadow-card">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-navy-900 text-brand-green-400 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+              <Icon className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
             </span>
             <p class="font-display text-lg font-bold text-navy-800">{label}</p>
+            <p class="text-sm leading-relaxed text-navy-600">{description}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
+  <!-- Services + Why us -->
   <section class="bg-surface py-20 lg:py-28">
-    <div class="container-page grid grid-cols-1 gap-14 lg:grid-cols-2">
-      <div class="flex flex-col gap-6">
-        <SectionHeading title="Commercial Services" align="left" />
+    <div class="container-page grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div class="flex flex-col gap-6 rounded-[32px] border border-navy-200 bg-white p-8 shadow-sm sm:p-10" data-reveal="left">
+        <Heading title="Commercial Services" eyebrow="What We Handle" />
         <ul class="flex flex-col gap-4">
           {commercialServices.map((item) => (
             <li class="flex items-start gap-3 text-base leading-relaxed text-navy-700">
-              <Wrench className="mt-0.5 h-5 w-5 shrink-0 text-brand-green-600" aria-hidden="true" />
+              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green-50 text-brand-green-600">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              </span>
               {item}
             </li>
           ))}
         </ul>
+        <Button href={business.scheduleUrl} variant="primary" class="mt-2 self-start">Request a Maintenance Plan</Button>
       </div>
-      <div class="flex flex-col gap-6">
-        <SectionHeading title="Why Businesses Choose Jim Dandy" align="left" />
-        <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-6" data-reveal="right">
+        <Heading title="Why Businesses Choose Us" eyebrow="The Difference" />
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {whyUs.map(({ label, description }) => (
-            <div class="rounded-2xl border border-navy-200 bg-white p-5">
+            <div class="rounded-[24px] border border-navy-200 bg-white p-6 transition-all duration-300 ease-brand hover:-translate-y-1 hover:border-navy-800 hover:shadow-card">
               <p class="font-display text-lg font-bold text-navy-800">{label}</p>
-              <p class="mt-1 text-sm leading-relaxed text-navy-600">{description}</p>
+              <p class="mt-2 text-sm leading-relaxed text-navy-600">{description}</p>
             </div>
           ))}
         </div>
@@ -113,16 +117,48 @@ const crumbs = breadcrumbSchema([
     </div>
   </section>
 
-  <section class="bg-navy-900 py-12">
-    <div class="container-page flex flex-col items-center gap-3 text-center">
-      <Clock className="h-8 w-8 text-brand-green-400" aria-hidden="true" />
-      <p class="font-display text-2xl font-bold text-white">24/7 Priority Emergency Dispatch</p>
-      <p class="max-w-xl text-white/70">
-        Commercial accounts reach a live dispatcher any hour of the day - no answering machines,
-        no waiting until morning.
+  <ProcessSteps
+    eyebrow="How We Partner"
+    title="From Walkthrough to Worry-Free"
+    subtitle="A clear, documented process built for busy properties."
+    steps={extra.process}
+  />
+
+  <!-- 24/7 band -->
+  <section class="relative overflow-hidden bg-navy-900 py-16 lg:py-20">
+    <div
+      class="pointer-events-none absolute inset-0 opacity-50"
+      style="background: radial-gradient(600px circle at 50% 0%, rgba(105,190,40,0.18), transparent 60%);"
+      aria-hidden="true"
+    ></div>
+    <div class="container-page relative flex flex-col items-center gap-5 text-center">
+      <span class="grid h-16 w-16 place-items-center rounded-2xl bg-brand-green-500/15 text-brand-green-400">
+        <Clock className="h-8 w-8" aria-hidden="true" />
+      </span>
+      <h2 class="font-display text-3xl font-black italic text-white sm:text-4xl">24/7 Priority Emergency Dispatch</h2>
+      <p class="max-w-xl leading-relaxed text-white/75">
+        Commercial accounts reach a live dispatcher any hour of the day - no answering machines, no
+        waiting until morning, no lost revenue.
       </p>
+      <div class="mt-2 flex flex-col gap-4 sm:flex-row">
+        <Button href={business.phoneHref} variant="primary">Call {business.phone}</Button>
+        <Button href={business.scheduleUrl} variant="ghost">Schedule Online</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="bg-surface py-20 lg:py-28">
+    <div class="container-page flex flex-col gap-14">
+      <SectionHeading eyebrow="Good to Know" title="Commercial Questions, Answered" />
+      <div class="mx-auto w-full max-w-3xl" data-reveal>
+        <Accordion client:visible items={extra.faqs} />
+      </div>
     </div>
   </section>
 
   <FinalCta />
+
+  <StickyCta />
+  <MotionInit />
 </Layout>

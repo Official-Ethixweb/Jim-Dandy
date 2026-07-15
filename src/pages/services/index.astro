@@ -1,16 +1,25 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Button from "@components/ui/Button.astro";
+import PageHero from "@components/sections/PageHero.astro";
 import ServicesGrid from "@components/sections/ServicesGrid.astro";
+import StatBand from "@components/sections/StatBand.astro";
+import TrustFeatures from "@components/sections/TrustFeatures.astro";
+import ProcessSteps from "@components/sections/ProcessSteps.astro";
+import FaqSection from "@components/sections/FaqSection.astro";
+import ReviewsSection from "@components/sections/ReviewsSection.astro";
 import FinalCta from "@components/sections/FinalCta.astro";
-import { business } from "@data/site";
+import MotionInit from "@components/ui/MotionInit.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import { howItWorks } from "@data/site";
 import { breadcrumbSchema } from "@lib/seo";
-import { ChevronRight } from "lucide-react";
+import heroPhoto from "@assets/photos/legacy-crew-truck.webp";
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
   { name: "Services", path: "/services" },
 ]);
+
+const processSteps = howItWorks.map((s) => ({ title: s.title, description: s.description }));
 ---
 
 <Layout
@@ -20,33 +29,38 @@ const crumbs = breadcrumbSchema([
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
-  <section class="relative overflow-hidden bg-navy-900 py-16 lg:py-20">
-    <div
-      class="pointer-events-none absolute inset-0 opacity-40"
-      style="background: radial-gradient(600px circle at 15% 20%, rgba(105,190,40,0.18), transparent 60%);"
-      aria-hidden="true"
-    ></div>
-    <div class="container-page relative flex flex-col items-start gap-6">
-      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-sm text-white/60">
-        <a href="/" class="hover:text-white">Home</a>
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-        <span class="text-white">Services</span>
-      </nav>
-      <h1 class="font-display text-[38px] font-black italic leading-[1.05] text-cloud sm:text-[52px]">
-        Plumbing &amp; Sewer Services
-      </h1>
-      <p class="max-w-xl text-lg leading-relaxed text-white/80">
-        From same-hour emergencies to planned upgrades, Jim Dandy's licensed techs cover the full
-        range of residential and commercial plumbing - with upfront pricing every time.
-      </p>
-      <div class="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-        <Button href={business.scheduleUrl} variant="primary">Schedule Online</Button>
-        <Button href={business.phoneHref} variant="secondary">Call {business.phone}</Button>
-      </div>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Plumbing & Sewer Experts"
+    title="Every Job. One Trusted Team."
+    lead="From same-hour emergencies to planned upgrades, our licensed technicians cover the full range of residential and commercial plumbing - with upfront pricing every single time."
+    image={heroPhoto}
+    imageAlt="A Jim Dandy technician standing in front of a company service van"
+    crumbs={[{ name: "Home", href: "/" }, { name: "Services" }]}
+  />
 
   <ServicesGrid />
 
+  <StatBand />
+
+  <TrustFeatures
+    eyebrow="Why Homeowners Call Us"
+    title="Premium Service, Honest Prices"
+    subtitle="What you can count on from Jim Dandy, whether it's a dripping faucet or a full sewer replacement."
+  />
+
+  <ProcessSteps
+    eyebrow="Simple Process"
+    title="How Jim Dandy Works"
+    subtitle="Four straightforward steps from your first call to a problem solved."
+    steps={processSteps}
+  />
+
+  <FaqSection />
+
+  <ReviewsSection />
+
   <FinalCta />
+
+  <StickyCta />
+  <MotionInit />
 </Layout>

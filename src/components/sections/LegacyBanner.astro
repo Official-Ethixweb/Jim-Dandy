@@ -1,23 +1,279 @@
 ---
 import { Image } from "astro:assets";
-import legacyPhoto from "@assets/photos/legacy-crew-truck.webp";
 import { business } from "@data/site";
 import LegacyScrollText from "./LegacyScrollText";
+
+import crewPhoto from "@assets/photos/legacy-crew-truck.webp";
+import truckPhoto from "@assets/photos/legacy-jd-truck.webp";
+import drainPhoto from "@assets/photos/legacy-drain-cleaning.webp";
+import valvesPhoto from "@assets/photos/legacy-copper-valves.webp";
+import gasPhoto from "@assets/photos/legacy-gas-line.webp";
+import trenchPhoto from "@assets/photos/legacy-sewer-trench.webp";
+import pipePhoto from "@assets/photos/legacy-sewer-pipe.webp";
+import showerPhoto from "@assets/photos/legacy-shower.webp";
+import sumpPhoto from "@assets/photos/legacy-sump-pump.webp";
+import burstPhoto from "@assets/photos/legacy-burst-pipe.webp";
+import saplingPhoto from "@assets/photos/legacy-sapling.webp";
+
+const slides = [
+  { src: crewPhoto, eyebrow: "Since 1908", title: "Your Neighborhood Plumber", alt: "A Jim Dandy technician smiling from a company service van" },
+  { src: truckPhoto, eyebrow: "Same-Day Dispatch", title: "Fully-Stocked Trucks, Ready to Roll", alt: "A branded Jim Dandy Sewer & Plumbing box truck" },
+  { src: drainPhoto, eyebrow: "Drains & Clogs", title: "Fast, Camera-Verified Drain Cleaning", alt: "A plumber clearing a sewer line through a street manhole" },
+  { src: valvesPhoto, eyebrow: "Repiping & Leaks", title: "Leak Detection & Repiping Done Right", alt: "Copper water lines and shut-off valves being serviced" },
+  { src: gasPhoto, eyebrow: "Gas Lines", title: "Safe Gas Line Install & Repair", alt: "A technician joining a gas line in the field" },
+  { src: trenchPhoto, eyebrow: "Sewer Services", title: "Trenchless Sewer Repair & Replacement", alt: "A new sewer main laid in an excavated trench" },
+  { src: pipePhoto, eyebrow: "Video Inspection", title: "We Find the Problem at the Source", alt: "The view down a cleared drainage pipe toward a forest" },
+  { src: showerPhoto, eyebrow: "Fixtures", title: "Faucets, Fixtures & Water Pressure", alt: "Water flowing from a chrome shower head" },
+  { src: sumpPhoto, eyebrow: "Flood Control", title: "Sump Pumps & Basement Protection", alt: "A sump pump installed in a basement pit" },
+  { src: burstPhoto, eyebrow: "24/7 Emergency", title: "Burst Pipes? We Answer Day or Night", alt: "A frozen, burst outdoor pipe covered in ice" },
+  { src: saplingPhoto, eyebrow: "118 Years Strong", title: "Rooted in the Community We Serve", alt: "Hands holding a young plant growing in soil" },
+];
 ---
 
 <section class="relative overflow-hidden">
-  <Image
-    src={legacyPhoto}
-    alt="A Jim Dandy technician standing in front of a company service van outside a customer's home"
-    width={2160}
-    height={793}
-    loading="lazy"
-    class="relative aspect-[1440/657] w-full object-cover object-top"
-  />
+  <h2 class="sr-only">{business.yearsInBusiness} Years Of Legacy</h2>
+
+  <div
+    class="legacy-carousel group relative aspect-[4/3] w-full touch-pan-y select-none overflow-hidden bg-navy-900 sm:aspect-[16/9] lg:aspect-[1440/657]"
+    data-legacy-carousel
+  >
+    <div class="legacy-track flex h-full w-full" data-track>
+      {slides.map((slide, index) => (
+        <div class:list={["legacy-slide relative h-full w-full shrink-0 basis-full overflow-hidden", index === 0 && "is-active"]} data-slide>
+          <Image
+            src={slide.src}
+            alt={slide.alt}
+            widths={[768, 1280, 1920]}
+            sizes="100vw"
+            quality={80}
+            loading={index < 2 ? "eager" : "lazy"}
+            class="legacy-img h-full w-full object-cover object-center"
+          />
+          <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/25 to-navy-900/10" aria-hidden="true"></span>
+
+          <div class="legacy-caption absolute inset-x-0 bottom-0 pb-9 sm:pb-12 lg:pb-16">
+            <div class="container-page">
+              <p class="legacy-cap-eyebrow font-sans text-xs font-bold uppercase tracking-[0.22em] text-brand-green-400 sm:text-sm">
+                {slide.eyebrow}
+              </p>
+              <p class="legacy-cap-title mt-2 max-w-2xl font-display text-2xl font-black italic leading-tight text-white drop-shadow-md sm:text-4xl lg:text-[52px]">
+                {slide.title}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <button type="button" data-prev aria-label="Previous photo" class="legacy-arrow left-3 sm:left-5">
+      <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+    </button>
+    <button type="button" data-next aria-label="Next photo" class="legacy-arrow right-3 sm:right-5">
+      <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m9 18 6-6-6-6" />
+      </svg>
+    </button>
+
+    <div class="legacy-dots absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+      {slides.map((_, index) => (
+        <button type="button" class:list={["legacy-dot", index === 0 && "is-active"]} data-dot aria-label={`Show photo ${index + 1}`}></button>
+      ))}
+    </div>
+  </div>
+
   <div class="flex items-center overflow-hidden bg-navy-800 py-8 sm:py-10">
-    <h2 class="sr-only">{business.yearsInBusiness} Years Of Legacy</h2>
     <div class="w-full leading-none" aria-hidden="true">
       <LegacyScrollText client:visible text={`${business.yearsInBusiness} Years Of Legacy`} />
     </div>
   </div>
 </section>
+
+<style>
+  .legacy-track {
+    transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  /* per-slide caption animates up once its slide is the active one */
+  .legacy-cap-eyebrow,
+  .legacy-cap-title {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 600ms ease,
+      transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .legacy-slide.is-active .legacy-cap-eyebrow {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 220ms;
+  }
+  .legacy-slide.is-active .legacy-cap-title {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 340ms;
+  }
+
+  /* subtle slow zoom on the active image for life */
+  .legacy-img {
+    transform: scale(1.04);
+    transition: transform 5000ms ease-out;
+  }
+  .legacy-slide.is-active .legacy-img {
+    transform: scale(1);
+  }
+
+  .legacy-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 20;
+    display: grid;
+    height: 2.75rem;
+    width: 2.75rem;
+    transform: translateY(-50%);
+    place-items: center;
+    border-radius: 9999px;
+    background-color: rgba(0, 34, 68, 0.45);
+    color: #fff;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition:
+      opacity 250ms ease,
+      background-color 250ms ease;
+  }
+  .legacy-carousel:hover .legacy-arrow,
+  .legacy-arrow:focus-visible {
+    opacity: 1;
+  }
+  .legacy-arrow:hover {
+    background-color: var(--color-brand-green-500);
+    color: var(--color-navy-900);
+  }
+
+  .legacy-dot {
+    height: 8px;
+    width: 8px;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    transition:
+      width 300ms ease,
+      background-color 300ms ease;
+    cursor: pointer;
+  }
+  .legacy-dot.is-active {
+    width: 24px;
+    background-color: var(--color-brand-green-500);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .legacy-track,
+    .legacy-img,
+    .legacy-cap-eyebrow,
+    .legacy-cap-title {
+      transition: none;
+    }
+    .legacy-img {
+      transform: scale(1);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .legacy-arrow {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  function initLegacyCarousel(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>("[data-track]");
+    const slides = Array.from(root.querySelectorAll<HTMLElement>("[data-slide]"));
+    const dots = Array.from(root.querySelectorAll<HTMLElement>("[data-dot]"));
+    const count = slides.length;
+    if (!track || count < 2) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let index = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const render = () => {
+      track.style.transform = `translateX(-${index * 100}%)`;
+      slides.forEach((s, k) => s.classList.toggle("is-active", k === index));
+      dots.forEach((d, k) => d.classList.toggle("is-active", k === index));
+    };
+    const go = (n: number) => {
+      index = (n + count) % count;
+      render();
+    };
+
+    const stop = () => {
+      if (timer) clearInterval(timer);
+      timer = undefined;
+    };
+    const start = () => {
+      if (reduce) return;
+      stop();
+      timer = setInterval(() => go(index + 1), 3800);
+    };
+
+    root.querySelector("[data-next]")?.addEventListener("click", () => {
+      go(index + 1);
+      start();
+    });
+    root.querySelector("[data-prev]")?.addEventListener("click", () => {
+      go(index - 1);
+      start();
+    });
+    dots.forEach((d, k) =>
+      d.addEventListener("click", () => {
+        go(k);
+        start();
+      }),
+    );
+
+    root.addEventListener("mouseenter", stop);
+    root.addEventListener("mouseleave", start);
+
+    // pointer / touch swipe
+    let startX: number | null = null;
+    root.addEventListener("pointerdown", (e) => {
+      startX = e.clientX;
+      stop();
+    });
+    root.addEventListener("pointerup", (e) => {
+      if (startX === null) return;
+      const dx = e.clientX - startX;
+      if (dx < -45) go(index + 1);
+      else if (dx > 45) go(index - 1);
+      startX = null;
+      start();
+    });
+    root.addEventListener("pointercancel", () => {
+      startX = null;
+      start();
+    });
+
+    // only auto-advance while on screen
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) start();
+            else stop();
+          }
+        },
+        { threshold: 0.25 },
+      );
+      io.observe(root);
+    } else {
+      start();
+    }
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-legacy-carousel]").forEach(initLegacyCarousel);
+</script>
