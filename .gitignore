@@ -24,3 +24,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 _*.mjs
+
+# large media source files (kept locally, not deployed)
+_media-src/

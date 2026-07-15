@@ -43,7 +43,7 @@ export default function ServiceArea() {
               <a
                 key={city}
                 href={`/service-area#${city.toLowerCase().replace(/\s+/g, "-")}`}
-                className="rounded-md bg-navy-800 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-navy-700"
+                className="rounded-full bg-navy-800 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-navy-700"
               >
                 {city}
               </a>

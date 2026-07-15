@@ -1,26 +1,25 @@
 ---
-import { Image } from "astro:assets";
 import Button from "@components/ui/Button.astro";
 import AnimatedCounter from "@components/ui/AnimatedCounter";
 import YearsBadge from "@components/ui/YearsBadge.astro";
 import RotatingHeadline from "./RotatingHeadline";
-import heroPhotoClean from "@assets/photos/hero-technician-clean.webp";
-import heroPhotoFramed from "@assets/photos/hero-technician-framed.webp";
 import { business } from "@data/site";
 ---
 
 <section class="relative overflow-hidden bg-navy-800">
   <div class="absolute inset-0 lg:hidden" aria-hidden="true">
-    <Image
-      src={heroPhotoClean}
-      alt=""
-      width={1200}
-      height={1200}
-      loading="eager"
-      fetchpriority="high"
-      class="h-full w-full object-cover opacity-[0.14]"
-    />
-    <div class="absolute inset-0 bg-gradient-to-b from-navy-900/70 via-navy-800/80 to-navy-900/95"></div>
+    <video
+      class="hero-video h-full w-full object-cover opacity-[0.3]"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="/hero/seattle-hero-poster.jpg"
+    >
+      <source src="/hero/seattle-hero.mp4" type="video/mp4" />
+    </video>
+    <div class="absolute inset-0 bg-gradient-to-b from-navy-900/55 via-navy-800/65 to-navy-900/90"></div>
   </div>
 
   <div
@@ -33,15 +32,27 @@ import { business } from "@data/site";
     class="pointer-events-none absolute inset-y-8 -right-[80px] z-10 hidden w-[calc(48%+140px)] -translate-y-[40px] items-center justify-end lg:flex xl:w-[calc(44%+140px)]"
     aria-hidden="true"
   >
-    <Image
-      src={heroPhotoFramed}
-      alt=""
-      width={4090}
-      height={3000}
-      loading="eager"
-      fetchpriority="high"
-      class="pointer-events-auto h-auto w-full transition-all duration-500 ease-out will-change-transform hover:-translate-y-2 hover:scale-[1.03] hover:drop-shadow-[0_25px_50px_rgba(105,190,40,0.45)]"
-    />
+    <div
+      class="hero-video-frame pointer-events-auto relative aspect-[4090/3000] w-full transition-transform duration-500 ease-out will-change-transform hover:-translate-y-2 hover:scale-[1.02]"
+      style="--frame-mask: url('/NEW/Header.webp');"
+    >
+      <div
+        class="hero-video-fill absolute inset-0"
+        style="background: url('/NEW/Header.webp') center / cover no-repeat;"
+      >
+        <video
+          class="hero-video hero-frame-video absolute inset-0 h-full w-full object-cover"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="/hero/seattle-hero-poster.jpg"
+        >
+          <source src="/hero/seattle-hero.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
   </div>
 
   <div class="container-page relative grid grid-cols-1 items-center gap-12 py-16 lg:grid-cols-[1fr_1fr] lg:py-24">
@@ -57,9 +68,9 @@ import { business } from "@data/site";
         </p>
       </div>
 
-      <div class="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
-        <Button href={business.scheduleUrl} variant="primary">Schedule Online</Button>
-        <Button href={business.financingUrl} variant="secondary">Get Financed</Button>
+      <div class="grid w-full grid-cols-1 gap-4 sm:inline-grid sm:w-auto sm:grid-cols-2">
+        <Button href={business.scheduleUrl} variant="primary" fullWidth>Schedule Online</Button>
+        <Button href={business.financingUrl} variant="secondary" fullWidth>Get Financed</Button>
       </div>
 
       <div class="flex flex-wrap items-center gap-8">
@@ -88,3 +99,31 @@ import { business } from "@data/site";
     </div>
   </div>
 </section>
+
+<style>
+  .hero-video-frame {
+    filter: drop-shadow(0 24px 36px rgba(0, 0, 0, 0.5));
+  }
+
+  /* Clip the video to the same frame shape, scaled down just enough that the
+     real textured border from the frame image shows evenly all the way around. */
+  .hero-frame-video {
+    -webkit-mask-image: var(--frame-mask);
+    mask-image: var(--frame-mask);
+    -webkit-mask-size: 95.5% 95.5%;
+    mask-size: 95.5% 95.5%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+  }
+</style>
+
+<script>
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll<HTMLVideoElement>(".hero-video").forEach((video) => {
+      video.removeAttribute("autoplay");
+      video.pause();
+    });
+  }
+</script>

@@ -80,7 +80,7 @@ export default function Header({ currentPath = "/" }: Props) {
           <a
             href={business.phoneHref}
             className="absolute z-10 flex translate-y-[2px] items-center justify-center gap-2 whitespace-nowrap font-display text-3xl font-bold text-navy-900 transition-transform hover:-translate-y-0.5"
-            style={{ left: "57%", top: "4%", width: "42%", height: "50%" }}
+            style={{ left: "57%", top: "8%", width: "42%", height: "50%" }}
           >
             <Phone className="h-7 w-7 shrink-0" aria-hidden="true" />
             {business.phone}

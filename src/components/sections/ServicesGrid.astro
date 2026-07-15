@@ -3,12 +3,12 @@ import { Image } from "astro:assets";
 import SectionHeading from "@components/ui/SectionHeading.astro";
 import { services } from "@data/site";
 import { ArrowUpRight } from "lucide-react";
-import emergencyIcon from "@assets/icons/emergency.webp";
-import drainsClogsIcon from "@assets/icons/drains-clogs.webp";
-import sewerServicesIcon from "@assets/icons/sewer-services.webp";
-import waterHeatersIcon from "@assets/icons/water-heaters.webp";
-import allPlumbingIcon from "@assets/icons/all-plumbing.webp";
-import commercialIcon from "@assets/icons/commercial.webp";
+import emergencyIcon from "@assets/icons/emergency-3d.png";
+import drainsClogsIcon from "@assets/icons/drains-clogs-3d.png";
+import sewerServicesIcon from "@assets/icons/sewer-services-3d.png";
+import waterHeatersIcon from "@assets/icons/water-heaters-3d.png";
+import allPlumbingIcon from "@assets/icons/all-plumbing-3d.png";
+import commercialIcon from "@assets/icons/commercial-3d.png";
 
 const icons = {
   emergency: emergencyIcon,
@@ -31,14 +31,19 @@ const icons = {
       {services.map((service) => (
         <a
           href={`/services/${service.slug}`}
-          class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-[36px] border border-navy-400 bg-surface-muted p-8 shadow-card transition-transform duration-200 hover:-translate-y-1 sm:min-h-[210px]"
+          class="group relative flex items-stretch justify-between gap-4 overflow-hidden rounded-[36px] border border-navy-400 bg-surface-muted p-8 shadow-card transition-[transform,background-color,border-color,box-shadow] duration-300 ease-brand hover:-translate-y-1 hover:border-navy-800 hover:bg-navy-800 hover:shadow-xl sm:min-h-[230px]"
         >
-          <div class="flex h-full flex-col justify-between gap-6">
-            <h3 class="font-display text-[32px] font-bold leading-none text-navy-800 sm:text-[38px]">
+          <div class="relative z-10 flex min-w-0 flex-col gap-4 pr-1">
+            <h3 class="font-display text-[32px] font-bold leading-none text-navy-800 transition-colors duration-300 group-hover:text-white/50 sm:text-[38px]">
               {service.label}
             </h3>
-            <span class="flex items-center gap-3 font-sans text-base text-navy-600">
-              <ArrowUpRight className="h-6 w-6 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+            <p class="max-w-xs text-base leading-snug text-white/85 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              {service.description}
+            </p>
+            <span class="mt-auto flex items-center gap-3 font-sans text-base font-medium text-navy-600 transition-colors duration-300 group-hover:text-white">
+              <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700 transition-colors duration-300 group-hover:bg-navy-600 group-hover:text-white">
+                <ArrowUpRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+              </span>
               Learn more
             </span>
           </div>
@@ -47,7 +52,7 @@ const icons = {
             alt=""
             width={160}
             height={160}
-            class="h-24 w-24 shrink-0 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-105 min-[560px]:h-20 min-[560px]:w-20 lg:h-36 lg:w-36"
+            class="pointer-events-none relative z-10 h-24 w-24 shrink-0 self-center object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105 min-[560px]:h-20 min-[560px]:w-20 lg:h-36 lg:w-36"
           />
         </a>
       ))}

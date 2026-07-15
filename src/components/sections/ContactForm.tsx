@@ -133,7 +133,7 @@ export default function ContactForm({ onStepChange }: Props) {
         </div>
       </div>
 
-      <fieldset className="flex flex-col gap-3">
+      <fieldset className="flex flex-col gap-5">
         <legend className="font-sans text-sm font-semibold text-navy-700">
           Service needed* <span className="font-normal text-navy-400">(select all that apply)</span>
         </legend>
@@ -143,7 +143,7 @@ export default function ContactForm({ onStepChange }: Props) {
             return (
               <label
                 key={option.value}
-                className={`relative flex cursor-pointer items-center gap-2 rounded-lg border p-4 transition-all duration-150 ease-out active:scale-[0.96] ${
+                className={`relative flex cursor-pointer items-center gap-2 rounded-full border px-5 py-3.5 transition-all duration-150 ease-out active:scale-[0.96] ${
                   isActive
                     ? "border-navy-800 bg-navy-800 shadow-[0_8px_20px_-8px_rgba(0,34,68,0.6)]"
                     : "border-navy-200 bg-white hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-sm"
@@ -247,7 +247,7 @@ function SubmitState({ isSubmitting }: { isSubmitting: boolean }) {
     <button
       type="submit"
       disabled={isSubmitting}
-      className="relative inline-flex items-center justify-center gap-2 self-start rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-10 py-5 font-display text-[21px] font-bold text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
+      className="relative inline-flex w-[280px] max-w-full items-center justify-center gap-2 self-center rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-6 py-5 font-display text-[21px] font-bold text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
     >
       <AnimatePresence mode="wait" initial={false}>
         {isSubmitting ? (
