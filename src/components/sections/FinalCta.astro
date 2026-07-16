@@ -7,6 +7,9 @@ import { business } from "@data/site";
 ---
 
 <section class="relative overflow-hidden bg-white py-20 lg:py-28">
+  {/* The tint is still ~30% opaque where it meets the white section above, so
+      inset-0 sliced it into a visible band. Feathering the overlay's own edges
+      lets it fade out before the boundary instead of being cut. */}
   <div
     class="pointer-events-none absolute inset-0"
     style="background: radial-gradient(120% 100% at 12% 45%,
@@ -14,7 +17,9 @@ import { business } from "@data/site";
       rgba(220,255,194,0.7) 30%,
       rgba(220,255,194,0.35) 50%,
       rgba(220,255,194,0.1) 68%,
-      rgba(220,255,194,0) 82%);"
+      rgba(220,255,194,0) 82%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 88%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 88%, transparent 100%);"
     aria-hidden="true"
   ></div>
 
