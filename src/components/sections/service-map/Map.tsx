@@ -133,9 +133,11 @@ export default function Map() {
               onSelect={() => setActiveCity((prev) => (prev === city.label ? null : city.label))}
             />
           ))}
-        </div>
 
-        <FloatingCenterIcon x={HUB.x} y={HUB.y} isInView={isInView} reduceMotion={reduceMotion} />
+          {/* Lives inside the same translated space as the connections/markers so
+              the pin's point lands exactly on the hub the lines converge at. */}
+          <FloatingCenterIcon x={HUB.x} y={HUB.y} isInView={isInView} reduceMotion={reduceMotion} />
+        </div>
       </div>
 
       <AnimatePresence>

@@ -3,11 +3,17 @@ import { motion } from "framer-motion";
 
 type Props = { x: number; y: number; isInView: boolean; reduceMotion: boolean };
 
-export default function FloatingCenterIcon({ y, isInView, reduceMotion }: Props) {
+// Distance from the top of the 56px pin badge down to the tip of the MapPin
+// glyph: the 36px icon is centred in the badge (10px), and lucide's point sits
+// at 22/24 of the viewBox (33px). Anchoring on the tip - rather than centring
+// the whole stack - is what makes the pin read as marking the exact spot.
+const PIN_TIP_FROM_TOP = 43;
+
+export default function FloatingCenterIcon({ x, y, isInView, reduceMotion }: Props) {
   return (
     <motion.div
-      className="absolute left-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2 text-center"
-      style={{ top: `${y}%` }}
+      className="absolute z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-center"
+      style={{ left: `${x}%`, top: `calc(${y}% - ${PIN_TIP_FROM_TOP}px)` }}
       initial={{ opacity: 0, y: 14 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
       transition={{ duration: 0.7, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
