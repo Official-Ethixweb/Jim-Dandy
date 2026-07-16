@@ -67,8 +67,8 @@ export default function ContactForm({ onStepChange }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2 sm:col-span-2">
           <label htmlFor="fullName" className="font-sans text-sm font-semibold text-navy-700">
             Full Name*
@@ -80,7 +80,7 @@ export default function ContactForm({ onStepChange }: Props) {
             autoComplete="name"
             aria-invalid={!!errors.fullName}
             aria-describedby={errors.fullName ? "fullName-error" : undefined}
-            className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3.5 text-navy-900 shadow-[var(--shadow-inset)] outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
+            className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3 text-navy-900 shadow-[var(--shadow-inset)] outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
             {...register("fullName")}
           />
           {errors.fullName && (
@@ -101,7 +101,7 @@ export default function ContactForm({ onStepChange }: Props) {
             autoComplete="email"
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3.5 text-navy-900 outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
+            className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3 text-navy-900 outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
             {...register("email")}
           />
           {errors.email && (
@@ -122,7 +122,7 @@ export default function ContactForm({ onStepChange }: Props) {
             autoComplete="tel"
             aria-invalid={!!errors.phone}
             aria-describedby={errors.phone ? "phone-error" : undefined}
-            className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3.5 text-navy-900 outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
+            className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3 text-navy-900 outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
             {...register("phone")}
           />
           {errors.phone && (
@@ -133,7 +133,7 @@ export default function ContactForm({ onStepChange }: Props) {
         </div>
       </div>
 
-      <fieldset className="flex flex-col gap-5">
+      <fieldset className="flex flex-col gap-4">
         <legend className="font-sans text-sm font-semibold text-navy-700">
           Service needed* <span className="font-normal text-navy-400">(select all that apply)</span>
         </legend>
@@ -143,7 +143,7 @@ export default function ContactForm({ onStepChange }: Props) {
             return (
               <label
                 key={option.value}
-                className={`relative flex cursor-pointer items-center gap-2 rounded-full border px-5 py-3.5 transition-all duration-150 ease-out active:scale-[0.96] ${
+                className={`relative flex cursor-pointer items-center gap-2 rounded-full border px-5 py-3 transition-all duration-150 ease-out active:scale-[0.96] ${
                   isActive
                     ? "border-navy-800 bg-navy-800 shadow-[0_8px_20px_-8px_rgba(0,34,68,0.6)]"
                     : "border-navy-200 bg-white hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-sm"
@@ -198,7 +198,7 @@ export default function ContactForm({ onStepChange }: Props) {
                   placeholder="Eg. Gas line inspection"
                   aria-invalid={!!errors.otherServiceDetail}
                   aria-describedby={errors.otherServiceDetail ? "otherServiceDetail-error" : undefined}
-                  className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3.5 text-navy-900 shadow-[var(--shadow-inset)] outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
+                  className="rounded-2xl border border-navy-200 bg-navy-50/60 px-5 py-3 text-navy-900 shadow-[var(--shadow-inset)] outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white"
                   {...register("otherServiceDetail")}
                 />
                 {errors.otherServiceDetail && (
@@ -212,7 +212,7 @@ export default function ContactForm({ onStepChange }: Props) {
         </AnimatePresence>
       </fieldset>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <label className="flex cursor-pointer items-start gap-3">
           <input
             type="checkbox"
@@ -247,8 +247,15 @@ function SubmitState({ isSubmitting }: { isSubmitting: boolean }) {
     <button
       type="submit"
       disabled={isSubmitting}
-      className="relative inline-flex w-[280px] max-w-full items-center justify-center gap-2 self-center rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-6 py-5 font-display text-[21px] font-bold text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
+      className="relative inline-flex w-[280px] max-w-full items-center justify-center gap-2 self-center rounded-full border border-brand-green-600/40 bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-10 py-4 font-display text-[21px] font-bold leading-none text-navy-900 shadow-[var(--shadow-pill-green)] transition-all duration-200 ease-brand hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:brightness-95 disabled:cursor-not-allowed disabled:opacity-70"
     >
+      {/* Figma primary keeps a soft white sheen off the top-left over the green
+          gradient; this is what Button.astro renders and the form button lacked. */}
+      <span
+        className="pointer-events-none absolute inset-0 rounded-full opacity-40 mix-blend-overlay"
+        style={{ background: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.9), transparent 60%)" }}
+        aria-hidden="true"
+      />
       <AnimatePresence mode="wait" initial={false}>
         {isSubmitting ? (
           <motion.span
