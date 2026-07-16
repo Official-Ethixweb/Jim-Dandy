@@ -59,7 +59,9 @@ export default function Header({ currentPath = "/" }: Props) {
   return (
     <header
       className={`sticky top-0 z-50 w-full bg-navy-800 transition-shadow duration-300 ${
-        solid ? "shadow-lg backdrop-blur-md" : ""
+        solid
+          ? "shadow-[0_2px_0_0_#69be28,0_10px_28px_-4px_rgba(105,190,40,0.55)] backdrop-blur-md"
+          : ""
       }`}
     >
       <div className="container-page flex items-center justify-between gap-4 py-4 lg:py-[14px]">
@@ -70,7 +72,7 @@ export default function Header({ currentPath = "/" }: Props) {
           style={{ width: 712, aspectRatio: "3475 / 530" }}
         >
           <img
-            src="/NEW/Nav%20Bar%20Top%20Updated.webp"
+            src="/NEW/Nav%20Bar%20Top%20White.webp"
             alt=""
             aria-hidden="true"
             draggable={false}
