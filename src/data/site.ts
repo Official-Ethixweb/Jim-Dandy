@@ -198,7 +198,7 @@ export const howItWorks = [
   {
     step: "2",
     title: "We Diagnose & Quote Upfront",
-    description: "A licensed tech assesses the problem and gives you a price before touching anything.",
+    description: "A licensed tech diagnoses and prices the job before touching anything.",
   },
   {
     step: "3",
