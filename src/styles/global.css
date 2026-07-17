@@ -55,6 +55,15 @@
   --shadow-pill-green: 0px 0px 12px 0px rgba(135, 203, 83, 0.5), 0px 0px 2px 0px rgba(0, 0, 0, 0.1), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
   --shadow-pill-navy: 0px 0px 12px 0px rgba(0, 34, 68, 0.5), 0px 0px 2px 0px rgba(0, 0, 0, 0.1), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
 
+  /* Approved CTA fills, sampled from the Buttons-wo-text exports. Single source
+     of truth so buttons built outside Button.astro (sticky bar, chat/a11y
+     launchers, map popup, lead form, mobile nav) can't drift back to the old
+     flat gradients. */
+  --btn-primary: linear-gradient(180deg, #a6d67f 0%, #88ca56 48%, #82c74e 100%);
+  --btn-primary-hover: linear-gradient(180deg, #7d9a63 0%, #68834e 48%, #627e49 100%);
+  --btn-secondary: linear-gradient(180deg, #52667a 0%, #2a4158 52%, #31455c 100%);
+  --btn-secondary-hover: linear-gradient(180deg, #3d4b58 0%, #212f3f 52%, #263544 100%);
+
   /* Glossy CTA pills. The design keeps a bright rim along the top edge and a
      softer one along the bottom, which is what reads as glass over the fill. */
   --shadow-btn-green: inset 0 1px 0 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 0 rgba(255, 255, 255, 0.32),

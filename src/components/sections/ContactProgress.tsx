@@ -28,7 +28,7 @@ export default function ContactProgress({ steps, current }: { steps: Step[]; cur
                 <span
                   className={`relative grid h-10 w-10 place-items-center rounded-full font-display text-base font-bold transition-colors duration-300 ${
                     isDone
-                      ? "bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] text-navy-900"
+                      ? "bg-[image:var(--btn-primary)] text-navy-900"
                       : isActive
                         ? "bg-navy-800 text-white"
                         : "bg-navy-100 text-navy-400"

@@ -173,7 +173,7 @@ export default function AccessibilityWidget() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? "Close accessibility menu" : "Open accessibility menu"}
-        className="grid h-[60px] w-[60px] place-items-center rounded-full bg-[linear-gradient(135deg,#0a2c4e_0%,#002244_60%,#001830_100%)] text-white shadow-[0_12px_28px_-8px_rgba(0,24,48,0.8)] ring-2 ring-white/10 transition-transform duration-200 hover:-translate-y-1 active:translate-y-0"
+        className="grid h-[60px] w-[60px] place-items-center rounded-full bg-[image:var(--btn-secondary)] text-white shadow-[var(--shadow-btn-navy)] ring-2 ring-white/10 transition-all duration-200 hover:-translate-y-1 hover:bg-[image:var(--btn-secondary-hover)] hover:shadow-[var(--shadow-btn-navy-hover)] active:translate-y-0"
       >
         <AnimatePresence mode="wait" initial={false}>
           {open ? (

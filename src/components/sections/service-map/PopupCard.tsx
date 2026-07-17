@@ -97,7 +97,7 @@ export default function PopupCard({ city, x, y, side, onClose }: Props) {
 
         <a
           href={business.scheduleUrl}
-          className="relative mt-4 block rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-5 py-3 text-center font-display text-base font-bold text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5"
+          className="relative mt-4 block rounded-full bg-[image:var(--btn-primary)] px-5 py-3 text-center font-display text-base font-bold text-navy-900 shadow-[var(--shadow-btn-green)] hover:bg-[image:var(--btn-primary-hover)] hover:shadow-[var(--shadow-btn-green-hover)] transition-transform hover:-translate-y-0.5"
         >
           Book Service
         </a>

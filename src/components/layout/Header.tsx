@@ -283,7 +283,7 @@ export default function Header({ currentPath = "/" }: Props) {
                 </a>
                 <a
                   href={business.scheduleUrl}
-                  className="rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-6 py-3 text-center font-display text-lg font-bold text-navy-900 shadow-[var(--shadow-pill-green)]"
+                  className="rounded-full bg-[image:var(--btn-primary)] px-6 py-3 text-center font-display text-lg font-bold text-navy-900 shadow-[var(--shadow-btn-green)] hover:bg-[image:var(--btn-primary-hover)] hover:shadow-[var(--shadow-btn-green-hover)]"
                 >
                   Schedule Online
                 </a>

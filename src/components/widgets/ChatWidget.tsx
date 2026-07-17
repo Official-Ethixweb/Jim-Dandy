@@ -65,7 +65,7 @@ export default function ChatWidget() {
           >
             {/* header */}
             <div className="relative flex items-center gap-3 bg-[linear-gradient(135deg,#0a2c4e_0%,#002244_60%,#001830_100%)] px-5 py-4 text-white">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] text-navy-900 shadow-[var(--shadow-pill-green)]">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[var(--shadow-pill-green)]">
                 <MessageCircle className="h-6 w-6" aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
@@ -100,7 +100,7 @@ export default function ChatWidget() {
                   <p
                     className={
                       m.from === "user"
-                        ? "max-w-[80%] rounded-2xl rounded-br-md bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] px-4 py-2.5 text-sm font-medium text-navy-900 shadow-sm"
+                        ? "max-w-[80%] rounded-2xl rounded-br-md bg-[image:var(--btn-primary)] px-4 py-2.5 text-sm font-medium text-navy-900 shadow-sm"
                         : "max-w-[85%] rounded-2xl rounded-bl-md border border-navy-100 bg-white px-4 py-2.5 text-sm leading-relaxed text-navy-800 shadow-sm"
                     }
                   >
@@ -157,7 +157,7 @@ export default function ChatWidget() {
               <button
                 type="submit"
                 aria-label="Send message"
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5 active:translate-y-0"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5 active:translate-y-0"
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -172,7 +172,7 @@ export default function ChatWidget() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? "Close chat assistant" : "Open chat assistant"}
-        className="group relative grid h-[78px] w-[78px] place-items-center rounded-full bg-[linear-gradient(135deg,#9bd36f_0%,#69be28_55%,#4b871c_100%)] text-navy-900 shadow-[0_14px_32px_-8px_rgba(75,135,28,0.75)] transition-transform duration-200 hover:-translate-y-1 active:translate-y-0"
+        className="group relative grid h-[78px] w-[78px] place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[0_14px_32px_-8px_rgba(75,135,28,0.75)] transition-transform duration-200 hover:-translate-y-1 active:translate-y-0"
       >
         <AnimatePresence mode="wait" initial={false}>
           {open ? (
