@@ -14,18 +14,43 @@ function isLinkActive(href: string, currentPath: string) {
 
 export default function Header({ currentPath = "/" }: Props) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [heroLight, setHeroLight] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const servicesMenuId = useId();
   const mobileMenuId = useId();
 
+  // The home hero sits under the header; while it does, the header wears a
+  // white/glass theme and flips back to navy once the user scrolls past it.
+  // Pages without a .hero-section (all non-home pages) stay navy throughout.
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const hero = document.querySelector<HTMLElement>(".hero-section");
+    const update = () => {
+      setIsScrolled(window.scrollY > 24);
+      if (!hero || !headerRef.current) {
+        setHeroLight(false);
+        return;
+      }
+      // Measure the nav row, not the whole header, so the mobile menu's own
+      // height never skews the comparison.
+      const row = headerRef.current.querySelector(".container-page") ?? headerRef.current;
+      setHeroLight(hero.getBoundingClientRect().bottom > row.getBoundingClientRect().height);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    // Recompute once the hero has its final height (e.g. after the video/layout
+    // settles) so the initial theme is correct without needing a scroll.
+    const ro = hero ? new ResizeObserver(update) : null;
+    if (hero) ro!.observe(hero);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      ro?.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -55,16 +80,31 @@ export default function Header({ currentPath = "/" }: Props) {
   };
 
   const solid = isScrolled || isMobileOpen;
+  // Force navy while the mobile menu (navy panel) is open, even inside the hero.
+  const light = heroLight && !isMobileOpen;
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full bg-navy-800 transition-shadow duration-300 ${
-        solid
-          ? "shadow-[0_2px_0_0_#69be28,0_10px_28px_-4px_rgba(105,190,40,0.55)] backdrop-blur-md"
-          : ""
+      ref={headerRef}
+      className={`sticky top-0 z-50 w-full transition-[background-color,box-shadow] duration-300 ease-out ${
+        light
+          ? "bg-white/90 backdrop-blur-[18px] shadow-[inset_0_-1px_0_0_rgba(105,190,40,0.28),0_10px_30px_-10px_rgba(105,190,40,0.35)]"
+          : solid
+            ? "bg-navy-800 backdrop-blur-md shadow-[0_2px_0_0_#69be28,0_10px_28px_-4px_rgba(105,190,40,0.55)]"
+            : "bg-navy-800"
       }`}
     >
-      <div className="container-page flex items-center justify-between gap-4 py-4 lg:py-[14px]">
+      {/* Subtle green brand glow, fading in only on the light/glass theme. */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${light ? "opacity-100" : "opacity-0"}`}
+        style={{
+          background:
+            "radial-gradient(120% 240% at 18% 0%, rgba(105,190,40,0.14), transparent 55%), radial-gradient(120% 240% at 82% 0%, rgba(105,190,40,0.10), transparent 55%)",
+        }}
+      ></div>
+
+      <div className="container-page relative z-10 flex items-center justify-between gap-4 py-4 lg:py-[14px]">
         <Logo />
 
         <div
@@ -188,7 +228,9 @@ export default function Header({ currentPath = "/" }: Props) {
 
         <button
           type="button"
-          className="grid h-11 w-11 place-items-center rounded-full text-white xl:hidden"
+          className={`grid h-11 w-11 place-items-center rounded-full transition-colors duration-300 xl:hidden ${
+            light ? "text-navy-800" : "text-white"
+          }`}
           aria-label={isMobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMobileOpen}
           aria-controls={mobileMenuId}
