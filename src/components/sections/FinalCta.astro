@@ -65,7 +65,7 @@ import { business } from "@data/site";
     </div>
   </div>
 
-  <div class="pointer-events-none absolute -right-[50px] hidden lg:block lg:bottom-28 lg:[width:clamp(630px,calc(60.5vw_+_70px),1620px)]" aria-hidden="true">
+  <div class="group pointer-events-none absolute -right-[50px] hidden lg:block lg:bottom-28 lg:[width:clamp(630px,calc(60.5vw_+_70px),1620px)]" aria-hidden="true">
     <Image
       src={finalCtaPhoto}
       alt=""
@@ -75,12 +75,14 @@ import { business } from "@data/site";
       class="pointer-events-auto h-auto w-full transition-all duration-500 ease-out will-change-transform hover:-translate-y-2 hover:scale-[1.03] hover:drop-shadow-[0_25px_50px_rgba(105,190,40,0.45)]"
     />
     {/* Same rotating 118-years badge as the hero, anchored to the photo's
-        bottom-left via a flex overlay (percentage bottom won't resolve here). */}
+        bottom-left via a flex overlay (percentage bottom won't resolve here).
+        Sits 10px lower at rest and rises back to its anchored spot as the image
+        lifts on hover. */}
     <div class="pointer-events-none absolute inset-0 z-20 flex items-end justify-start">
       <YearsBadge
         years={business.yearsInBusiness}
         year={business.founded}
-        class="mb-[2%] ml-[calc(6%+15px)] h-[clamp(104px,9.5vw,150px)] w-[clamp(104px,9.5vw,150px)]"
+        class="mb-[2%] ml-[calc(6%+15px)] h-[clamp(104px,9.5vw,150px)] w-[clamp(104px,9.5vw,150px)] translate-y-[10px] transition-transform duration-500 ease-out group-hover:translate-y-0"
       />
     </div>
   </div>
