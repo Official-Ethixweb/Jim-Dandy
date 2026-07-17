@@ -34,7 +34,7 @@ export const services = [
     slug: "emergency",
     label: "Emergency",
     icon: "alert-triangle",
-    description: "Burst pipes, floods, and sewer backups - live dispatch 24/7.",
+    description: "24/7 response for burst pipes, floods, and sewer backup.",
     intro:
       "A burst pipe or sewage backup doesn't wait for business hours, and neither do we. A real dispatcher answers day or night and gets a licensed tech routed to your door - most calls seen the same day, emergencies within the hour.",
     benefits: [
@@ -54,7 +54,7 @@ export const services = [
     slug: "drains-clogs",
     label: "Drains & Clogs",
     icon: "filter",
-    description: "Fast, camera-verified drain clearing that actually lasts.",
+    description: "Slow, gurgling, or fully blocked — we clear it fast and get water moving again.",
     intro:
       "Slow or backed-up drains are almost never just a surface clog. We clear the line and then run a camera to confirm the real cause is gone - not just pushed further down the pipe - so the same drain doesn't back up again in a month.",
     benefits: [
@@ -74,7 +74,7 @@ export const services = [
     slug: "sewer-services",
     label: "Sewer Services",
     icon: "search",
-    description: "Trenchless repair, replacement, and video inspection.",
+    description: "From root intrusion to line replacement, we diagnose and fix it right the first time.",
     intro:
       "Sewer line problems used to mean tearing up the yard. In most cases we can now diagnose with a video camera and repair or fully replace the line trenchlessly - less mess, less time, and no re-landscaping bill on top of the plumbing bill.",
     benefits: [
@@ -94,7 +94,7 @@ export const services = [
     slug: "water-heaters",
     label: "Water Heaters",
     icon: "flame",
-    description: "Tank and tankless install, repair, and replacement.",
+    description: "Installs, repairs, and replacements for gas and electric units — hot water, restored fast.",
     intro:
       "From a same-day tank swap to a full tankless conversion, we size the unit to your household and install it to code - then walk you through the warranty and maintenance so it actually lasts as long as it's rated for.",
     benefits: [
@@ -114,7 +114,7 @@ export const services = [
     slug: "all-plumbing",
     label: "All Plumbing",
     icon: "wrench",
-    description: "Leaks, fixtures, repiping - the full-service list.",
+    description: "Leaky faucets, running toilets, low pressure — no job too small for our licensed team.",
     intro:
       "Not every plumbing job is an emergency - sometimes it's a leaky faucet, a fixture install, or a repipe you've been putting off. Our licensed techs handle the full range of residential plumbing with the same upfront pricing and workmanship guarantee.",
     benefits: [
@@ -134,7 +134,7 @@ export const services = [
     slug: "commercial",
     label: "Commercial",
     icon: "building-2",
-    description: "Scheduled maintenance and emergency response for businesses.",
+    description: "Reliable plumbing support for offices, restaurants, and properties that can't afford downtime.",
     intro:
       "Downtime costs money. We work with property managers, restaurants, and multi-family buildings on scheduled maintenance plans and back them with the same 24/7 emergency response we offer residential customers - so a plumbing issue never turns into a closed sign.",
     benefits: [
