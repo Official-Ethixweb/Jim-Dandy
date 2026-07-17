@@ -58,7 +58,10 @@ import { business } from "@data/site";
   {/* py trimmed on desktop so the rating + 118 badge clear the fold: at 96px the
       badge landed at 926px, past both 1440x900 and 1536x864. */}
   <div class="container-page relative grid grid-cols-1 items-center gap-12 py-16 max-sm:flex max-sm:flex-1 max-sm:flex-col max-sm:items-stretch max-sm:pt-6 max-sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:grid-cols-[1fr_1fr] lg:py-14">
-    <div class="hero-content flex flex-col items-start gap-10 max-sm:flex-1 max-sm:justify-center max-sm:gap-7 lg:max-w-xl lg:gap-7">
+    {/* Wider column on desktop: the rotating headline reserves the tallest of the
+        five, and at 576px that was 4 lines (328px). At 672px the longest wraps to
+        3, cutting 82px of reserved space with no change to the type itself. */}
+    <div class="hero-content flex flex-col items-start gap-10 max-sm:flex-1 max-sm:justify-center max-sm:gap-7 lg:max-w-2xl lg:gap-7">
       <div class="flex flex-col gap-6 max-sm:gap-5 lg:gap-4">
         <RotatingHeadline
           client:load
@@ -122,6 +125,23 @@ import { business } from "@data/site";
 </style>
 
 <style is:global>
+  /* Short desktop viewports - a 1080p screen at 125% scaling is only ~720px of
+     CSS height, and a 1440x900 laptop loses ~140px to the sticky header. The
+     rotating headline reserves the tallest of the five, so at 78px it holds
+     4 lines (328px) and pushes the rating + 118 badge past the fold. Stepping
+     the headline down lets it wrap to fewer lines, which shortens the reserve
+     and lifts the whole hero back above the fold. Tall viewports keep 78px. */
+  @media (min-width: 1024px) and (max-height: 860px) {
+    .hero-section h1 {
+      font-size: 68px;
+    }
+  }
+  @media (min-width: 1024px) and (max-height: 780px) {
+    .hero-section h1 {
+      font-size: 60px;
+    }
+  }
+
   /* Mobile hero: the rotating headline reserves the tallest line-count so the
      content below never jumps while it types. On phones we bottom-align that
      reserved box so the description always hugs the current headline (no gap
