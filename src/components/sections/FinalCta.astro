@@ -2,7 +2,8 @@
 import { Image } from "astro:assets";
 import SectionHeading from "@components/ui/SectionHeading.astro";
 import Button from "@components/ui/Button.astro";
-import finalCtaPhoto from "@assets/photos/legacy-crew-framed.webp";
+import YearsBadge from "@components/ui/YearsBadge.astro";
+import finalCtaPhoto from "@assets/photos/team-crew-gradient.webp";
 import { business } from "@data/site";
 ---
 
@@ -40,14 +41,27 @@ import { business } from "@data/site";
         <Button href={business.financingUrl} variant="secondary" fullWidth class="max-sm:px-3 max-sm:text-sm">Get Financed</Button>
       </div>
 
-      <Image
-        src={finalCtaPhoto}
-        alt="The full Jim Dandy Sewer & Plumbing crew standing together in front of a service truck"
-        width={5505}
-        height={2196}
-        loading="lazy"
-        class="h-auto lg:hidden ml-[calc(1.25rem-10%)] mr-0 w-[125%] max-w-none md:mx-[-1.25rem] md:w-[calc(100%+2.5rem)] md:max-w-full"
-      />
+      {/* Mobile/tablet image. Wrapped so the rotating badge can sit over its
+          bottom-left corner; the image keeps its exact bleed positioning. The
+          badge is anchored with a flex overlay rather than percentage bottom,
+          which wouldn't resolve against the image's auto height. */}
+      <div class="relative lg:hidden">
+        <Image
+          src={finalCtaPhoto}
+          alt="The full Jim Dandy Sewer & Plumbing crew standing together in front of a service truck"
+          width={2600}
+          height={980}
+          loading="lazy"
+          class="ml-[calc(1.25rem-10%)] mr-0 h-auto w-[125%] max-w-none md:mx-[-1.25rem] md:w-[calc(100%+2.5rem)] md:max-w-full"
+        />
+        <div class="pointer-events-none absolute inset-0 z-20 flex items-end justify-start">
+          <YearsBadge
+            years={business.yearsInBusiness}
+            year={business.founded}
+            class="mb-[5%] ml-[3%] h-[clamp(78px,17vw,122px)] w-[clamp(78px,17vw,122px)]"
+          />
+        </div>
+      </div>
     </div>
   </div>
 
@@ -55,10 +69,19 @@ import { business } from "@data/site";
     <Image
       src={finalCtaPhoto}
       alt=""
-      width={5505}
-      height={2196}
+      width={2600}
+      height={980}
       loading="lazy"
       class="pointer-events-auto h-auto w-full transition-all duration-500 ease-out will-change-transform hover:-translate-y-2 hover:scale-[1.03] hover:drop-shadow-[0_25px_50px_rgba(105,190,40,0.45)]"
     />
+    {/* Same rotating 118-years badge as the hero, anchored to the photo's
+        bottom-left via a flex overlay (percentage bottom won't resolve here). */}
+    <div class="pointer-events-none absolute inset-0 z-20 flex items-end justify-start">
+      <YearsBadge
+        years={business.yearsInBusiness}
+        year={business.founded}
+        class="mb-[5%] ml-[5%] h-[clamp(104px,9.5vw,150px)] w-[clamp(104px,9.5vw,150px)]"
+      />
+    </div>
   </div>
 </section>
