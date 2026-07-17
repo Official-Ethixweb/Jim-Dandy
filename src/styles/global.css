@@ -54,6 +54,17 @@
   --shadow-card: 0px 12px 16px 0px rgba(0, 34, 68, 0.16), 0px 5px 0px 0px var(--color-navy-800);
   --shadow-pill-green: 0px 0px 12px 0px rgba(135, 203, 83, 0.5), 0px 0px 2px 0px rgba(0, 0, 0, 0.1), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
   --shadow-pill-navy: 0px 0px 12px 0px rgba(0, 34, 68, 0.5), 0px 0px 2px 0px rgba(0, 0, 0, 0.1), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
+
+  /* Glossy CTA pills. The design keeps a bright rim along the top edge and a
+     softer one along the bottom, which is what reads as glass over the fill. */
+  --shadow-btn-green: inset 0 1px 0 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 0 rgba(255, 255, 255, 0.32),
+    0px 0px 14px 0px rgba(135, 203, 83, 0.5), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
+  --shadow-btn-green-hover: inset 0 1px 0 0 rgba(255, 255, 255, 0.5), inset 0 -1px 0 0 rgba(255, 255, 255, 0.26),
+    0px 0px 20px 2px rgba(135, 203, 83, 0.6), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+  --shadow-btn-navy: inset 0 1px 0 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 0 rgba(255, 255, 255, 0.16),
+    0px 0px 14px 0px rgba(0, 34, 68, 0.5), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
+  --shadow-btn-navy-hover: inset 0 1px 0 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 0 rgba(255, 255, 255, 0.12),
+    0px 0px 20px 2px rgba(0, 34, 68, 0.55), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
   --shadow-review: 0px 14px 12px 0px rgba(0, 39, 78, 0.08);
 
   --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
