@@ -10,7 +10,10 @@ import FloatingCenterIcon from "./FloatingCenterIcon";
 import RegionHighlight from "./RegionHighlight";
 import type { CityPin } from "./types";
 
-const HUB: CityPin = { label: "Seattle", x: 40, y: 46 };
+// The hub sits at the map's horizontal centre so the pin, the point the
+// connection lines radiate from, the coverage wave and the radial glow all
+// coincide - previously each sat somewhere different.
+const HUB: CityPin = { label: "Seattle", x: 50, y: 46 };
 
 const CITIES: CityPin[] = [
   { label: "Everett", x: 52, y: 9 },
@@ -86,7 +89,10 @@ export default function Map() {
 
         <CoverageWave x={HUB.x} y={HUB.y} waveKey={waveKey} reduceMotion={reduceMotion} />
 
-        <div className="absolute inset-0 translate-x-[50px]">
+        {/* No x-offset here: a fixed 50px shift is a different share of the map
+            at every width, which is what stopped the hub from ever being centred
+            (it landed at 44% on desktop but 54% on mobile). */}
+        <div className="absolute inset-0">
           <svg
             className="pointer-events-none absolute inset-0 h-full w-full"
             viewBox="0 0 100 100"
