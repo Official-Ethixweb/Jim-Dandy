@@ -28,8 +28,12 @@ import { business } from "@data/site";
     aria-hidden="true"
   ></div>
 
+  {/* Two things clipped the frame's top once the hero got shorter: the -40px
+      lift, and the frame growing taller than its inset-y-8 slot (598 vs 567 at
+      1536x720). Dropping the lift re-centres it and trimming ~10% keeps it
+      inside the slot at every width. */}
   <div
-    class="pointer-events-none absolute inset-y-8 -right-[80px] z-10 hidden w-[calc(48%+140px)] -translate-y-[40px] items-center justify-end lg:flex xl:w-[calc(44%+140px)]"
+    class="pointer-events-none absolute inset-y-8 -right-[80px] z-10 hidden w-[calc(43%+126px)] items-center justify-end lg:flex xl:w-[calc(40%+126px)]"
     aria-hidden="true"
   >
     <div
