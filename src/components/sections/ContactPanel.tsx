@@ -28,21 +28,21 @@ export default function ContactPanel() {
 
       <aside className="flex flex-col gap-10 p-2 text-navy-800">
         <div className="flex flex-col gap-3">
-          <div className="flex w-fit items-center gap-2 border-b-2 border-brand-green-500 pb-2 pr-4">
-            <GoogleG className="h-7 w-7 shrink-0" />
-            <div className="flex items-center gap-1">
-              <span className="font-accent text-xl font-extrabold text-navy-800">{business.rating.value}</span>
+          <div className="flex w-full items-center justify-center gap-2.5 border-b-2 border-brand-green-500 pb-2">
+            <GoogleG className="h-9 w-9 shrink-0" />
+            <div className="flex items-center gap-1.5">
+              <span className="font-accent text-2xl font-extrabold text-[#fea500]">{business.rating.value}</span>
               <div className="flex" aria-hidden="true">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-[#fea500] text-[#fea500]" />
+                  <Star key={i} className="h-5 w-5 fill-[#fea500] text-[#fea500]" />
                 ))}
               </div>
             </div>
           </div>
-          <h3 className="font-display text-3xl font-black leading-tight text-navy-800">
+          <h3 className="font-display text-[40px] font-black leading-[1.1] text-navy-800">
             Jim Dandy To The Rescue!
           </h3>
-          <p className="text-navy-600">Fully Licensed &amp; Insured</p>
+          <p className="text-lg text-navy-600">Fully Licensed &amp; Insured</p>
         </div>
 
         <ContactProgress steps={progressSteps} current={step} />
