@@ -3,12 +3,12 @@ import { Image } from "astro:assets";
 import SectionHeading from "@components/ui/SectionHeading.astro";
 import { services } from "@data/site";
 import { ArrowUpRight } from "lucide-react";
-import emergencyIcon from "@assets/icons/emergency-3d.png";
-import drainsClogsIcon from "@assets/icons/drains-clogs-3d.png";
-import sewerServicesIcon from "@assets/icons/sewer-services-3d.png";
-import waterHeatersIcon from "@assets/icons/water-heaters-3d.png";
-import allPlumbingIcon from "@assets/icons/all-plumbing-3d.png";
-import commercialIcon from "@assets/icons/commercial-3d.png";
+import emergencyIcon from "@assets/icons/emergency-card.png";
+import drainsClogsIcon from "@assets/icons/drains-clogs-card.png";
+import sewerServicesIcon from "@assets/icons/sewer-services-card.png";
+import waterHeatersIcon from "@assets/icons/water-heaters-card.png";
+import allPlumbingIcon from "@assets/icons/all-plumbing-card.png";
+import commercialIcon from "@assets/icons/commercial-card.png";
 
 const icons = {
   emergency: emergencyIcon,
@@ -48,11 +48,13 @@ const icons = {
               Learn more
             </span>
           </div>
+          {/* Draft 3 ships these at uneven canvases (191-277px, one portrait), so
+              they're trimmed to their artwork and object-contain fits each into the
+              same square box, keeping the badges a consistent size. Intrinsic width
+              is used rather than a fixed 160 so none of them upscale. */}
           <Image
             src={icons[service.slug]}
             alt=""
-            width={160}
-            height={160}
             class="svc-icon pointer-events-none relative z-10 h-24 w-24 shrink-0 self-center object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105 min-[560px]:h-20 min-[560px]:w-20 lg:h-36 lg:w-36 max-md:duration-[400ms] max-md:group-[.is-active]:scale-105"
           />
         </a>
