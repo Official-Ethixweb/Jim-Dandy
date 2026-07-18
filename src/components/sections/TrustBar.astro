@@ -5,18 +5,18 @@ import { business } from "@data/site";
 const logoBadges = [
   {
     label: "BBB Accredited Business",
-    idle: "/default/Components/Logos/Idle.png",
-    hover: "/default/Components/Logos/Hover.png",
+    idle: "/pages/home/trust-bar/logos/bbb-idle.png",
+    hover: "/pages/home/trust-bar/logos/bbb-hover.png",
   },
   {
     label: "Angi Super Service Award 2024",
-    idle: "/default/Components/Logos/Idle-1.png",
-    hover: "/default/Components/Logos/Hover-1.png",
+    idle: "/pages/home/trust-bar/logos/angi-idle.png",
+    hover: "/pages/home/trust-bar/logos/angi-hover.png",
   },
   {
     label: "PHCC Certified Member",
-    idle: "/default/Components/Logos/Idle-2.png",
-    hover: "/default/Components/Logos/Hover-2.png",
+    idle: "/pages/home/trust-bar/logos/phcc-idle.png",
+    hover: "/pages/home/trust-bar/logos/phcc-hover.png",
   },
 ];
 
@@ -30,7 +30,7 @@ const marqueeLogos = [...logoBadges, ...logoBadges, ...logoBadges];
 
     <div class="license-tilt w-full max-w-sm sm:max-w-md" data-license-tilt>
       <img
-        src="/NEW/Licence%20No%20Header%20and%20Cards.webp"
+        src="/pages/home/trust-bar/licence-badge.webp"
         alt={`License No. ${business.licenses.join(", ")}`}
         width="1152"
         height="257"

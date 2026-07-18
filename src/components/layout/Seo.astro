@@ -4,7 +4,7 @@ import type { SeoProps } from "@lib/seo";
 
 type Props = SeoProps;
 
-const { title, description, path, image = "/images/og-default.jpg", noindex = false } = Astro.props;
+const { title, description, path, image = "/shared/seo/og-default.jpg", noindex = false } = Astro.props;
 
 const canonical = resolveCanonical(path);
 const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;

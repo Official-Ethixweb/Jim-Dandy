@@ -13,9 +13,9 @@ type Props = {
 };
 
 const { years, year, class: className = "" } = Astro.props;
-const badgeSrc = "/NEW/Legacy%20Trust%20Badge.webp";
-const edgeSrc = "/NEW/badge-edge.png"; // hollow metal rim
-const coreSrc = "/NEW/badge-core.png"; // edge cross-section for the 90deg profile
+const badgeSrc = "/shared/badges/legacy-trust-badge.webp";
+const edgeSrc = "/shared/badges/badge-edge.png"; // hollow metal rim
+const coreSrc = "/shared/badges/badge-core.png"; // edge cross-section for the 90deg profile
 
 // Extrusion: half the total thickness (px). The wall fills strictly between the
 // two faces (avoids z-fighting). Sub-pixel spacing keeps the wall visually solid.

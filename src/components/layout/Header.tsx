@@ -72,7 +72,7 @@ export default function Header({ currentPath = "/" }: Props) {
           style={{ width: 712, aspectRatio: "3475 / 530" }}
         >
           <img
-            src="/NEW/Nav%20Bar%20Top%20White.webp"
+            src="/shared/nav/nav-bar-top.webp"
             alt=""
             aria-hidden="true"
             draggable={false}
