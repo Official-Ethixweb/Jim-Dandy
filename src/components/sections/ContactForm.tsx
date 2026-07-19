@@ -5,6 +5,20 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { contactSchema, serviceOptions, type ContactFormValues } from "@lib/schemas/contact";
 import ServiceIcon from "@components/ui/ServiceIcon";
+import allPlumbingIcon from "@assets/icons/all-plumbing.svg";
+import waterHeatersIcon from "@assets/icons/water-heaters.svg";
+import sewerServicesIcon from "@assets/icons/sewer-services.svg";
+import commercialIcon from "@assets/icons/commercial.svg";
+
+// The approved lead-form chips show the full-colour brand icons (same set as
+// the Service Cards), not monochrome strokes. "Other" has no brand icon, so it
+// keeps its lucide dots via ServiceIcon.
+const BRAND_ICONS: Partial<Record<(typeof serviceOptions)[number]["value"], { src: string }>> = {
+  plumbing: allPlumbingIcon,
+  heating: waterHeatersIcon,
+  sewers: sewerServicesIcon,
+  commercial: commercialIcon,
+};
 
 type Props = { onStepChange?: (step: number) => void };
 
@@ -158,11 +172,27 @@ export default function ContactForm({ onStepChange }: Props) {
                     <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden="true" />
                   </span>
                 )}
-                <ServiceIcon
-                  name={option.icon}
-                  className={`h-6 w-6 shrink-0 ${isActive ? "text-brand-green-400" : "text-navy-800"}`}
-                  aria-hidden="true"
-                />
+                {BRAND_ICONS[option.value] ? (
+                  <img
+                    src={BRAND_ICONS[option.value]!.src}
+                    alt=""
+                    aria-hidden="true"
+                    className={`h-6 w-6 shrink-0 object-contain ${
+                      /* On the navy active chip the icon's navy body would vanish,
+                         so trace its alpha edge in white - same treatment as the
+                         Service Cards' dark hover state. */
+                      isActive
+                        ? "[filter:drop-shadow(0_0_1px_#fff)_drop-shadow(0_0_1px_#fff)_drop-shadow(0_0_1.5px_#fff)]"
+                        : ""
+                    }`}
+                  />
+                ) : (
+                  <ServiceIcon
+                    name={option.icon}
+                    className={`h-6 w-6 shrink-0 ${isActive ? "text-brand-green-400" : "text-navy-800"}`}
+                    aria-hidden="true"
+                  />
+                )}
                 <span className={`min-w-0 text-nowrap text-sm font-semibold ${isActive ? "text-white" : "text-navy-800"}`}>
                   {option.label}
                 </span>
