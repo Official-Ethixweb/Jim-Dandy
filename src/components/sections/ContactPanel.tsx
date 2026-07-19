@@ -26,23 +26,25 @@ export default function ContactPanel() {
         <ContactForm onStepChange={setStep} />
       </div>
 
-      <aside className="flex flex-col gap-6 text-navy-800 max-sm:mt-4">
-        <div className="flex flex-col gap-3">
-          <div className="flex w-full items-center justify-center gap-2.5 border-b-2 border-brand-green-500 pb-2">
-            <GoogleG className="h-9 w-9 shrink-0" />
+      {/* max-md steps everything down ~25% so the panel doesn't dominate a
+          phone screen; md+ keeps the original scale untouched. */}
+      <aside className="flex flex-col gap-6 text-navy-800 max-sm:mt-4 max-md:gap-4">
+        <div className="flex flex-col gap-3 max-md:gap-2">
+          <div className="flex w-full items-center justify-center gap-2.5 border-b-2 border-brand-green-500 pb-2 max-md:gap-2 max-md:pb-1.5">
+            <GoogleG className="h-9 w-9 shrink-0 max-md:h-7 max-md:w-7" />
             <div className="flex items-center gap-1.5">
-              <span className="font-accent text-2xl font-extrabold text-[#fea500]">{business.rating.value}</span>
+              <span className="font-accent text-2xl font-extrabold text-[#fea500] max-md:text-xl">{business.rating.value}</span>
               <div className="flex" aria-hidden="true">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-[#fea500] text-[#fea500]" />
+                  <Star key={i} className="h-5 w-5 fill-[#fea500] text-[#fea500] max-md:h-4 max-md:w-4" />
                 ))}
               </div>
             </div>
           </div>
-          <h3 className="font-display text-[48px] font-black leading-[1.08] text-navy-800">
+          <h3 className="font-display text-[48px] font-black leading-[1.08] text-navy-800 max-md:text-[34px]">
             Jim Dandy To The Rescue!
           </h3>
-          <p className="text-lg text-navy-600">Fully Licensed &amp; Insured</p>
+          <p className="text-lg text-navy-600 max-md:text-base">Fully Licensed &amp; Insured</p>
         </div>
 
         <ContactProgress steps={progressSteps} current={step} />
