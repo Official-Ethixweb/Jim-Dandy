@@ -41,15 +41,25 @@ export default function ServiceArea() {
           behind the "See Full Service Area" link below. */}
       <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-3 xl:flex-nowrap xl:gap-1.5">
         {filteredCities.length > 0 ? (
-          visibleCities.map((city) => (
+          <>
+            {visibleCities.map((city) => (
+              <a
+                key={city}
+                href={`/service-area#${city.toLowerCase().replace(/\s+/g, "-")}`}
+                className="rounded-full bg-navy-800 px-2 text-center text-xs font-medium leading-tight text-white transition-colors hover:bg-navy-700 max-sm:flex max-sm:h-12 max-sm:w-full max-sm:items-center max-sm:justify-center sm:px-5 sm:py-3 sm:text-sm"
+              >
+                {city}
+              </a>
+            ))}
+            {/* Mobile: the link rides in the grid's last row, filling the empty
+                cells beside the final chip. sm+ uses the centred link below. */}
             <a
-              key={city}
-              href={`/service-area#${city.toLowerCase().replace(/\s+/g, "-")}`}
-              className="rounded-full bg-navy-800 px-2 text-center text-xs font-medium leading-tight text-white transition-colors hover:bg-navy-700 max-sm:flex max-sm:h-12 max-sm:w-full max-sm:items-center max-sm:justify-center sm:px-5 sm:py-3 sm:text-sm"
+              href="/service-area"
+              className="col-span-2 hidden items-center justify-center gap-1 font-semibold text-navy-700 hover:text-brand-green-600 max-sm:flex"
             >
-              {city}
+              See Full Service Area →
             </a>
-          ))
+          </>
         ) : (
           <p className="text-sm text-navy-400 max-sm:col-span-3">
             We couldn't find that city - call us at{" "}
@@ -61,9 +71,7 @@ export default function ServiceArea() {
         )}
       </div>
 
-      {/* Mobile: pull the link up under the last chip row (parent gap-10 is too
-          roomy there); desktop/tablet keep the original rhythm. */}
-      <div className="text-center max-sm:-mt-5">
+      <div className="text-center max-sm:hidden">
         <a href="/service-area" className="inline-flex items-center gap-1 font-semibold text-navy-700 hover:text-brand-green-600">
           See Full Service Area →
         </a>
