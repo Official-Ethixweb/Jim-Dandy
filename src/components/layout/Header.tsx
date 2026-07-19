@@ -67,7 +67,7 @@ export default function Header({ currentPath = "/" }: Props) {
       {/* Mobile (<sm): burger left, logo centre-ish, click-to-call pill right -
           calls are the primary conversion, so the number gets the premium green
           treatment. Tablet and desktop keep their original layout untouched. */}
-      <div className="container-page flex items-center justify-between gap-4 py-4 max-sm:gap-2 lg:py-[14px]">
+      <div className="container-page flex items-center justify-between gap-4 py-4 max-sm:min-h-[88px] max-sm:gap-1.5 lg:py-[14px]">
         <Logo />
 
         <div
@@ -200,15 +200,20 @@ export default function Header({ currentPath = "/" }: Props) {
           {isMobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
 
-        {/* Compact pill so the logo stays the dominant element; full number only
-            where it fits without squeezing the logo (Pro Max class widths). */}
+        {/* The actual number stays visible at every width - emergency callers
+            shouldn't have to tap to discover it. Font and logo step down
+            together on narrow phones so nothing clips down to 320px. */}
         <a
           href={business.phoneHref}
-          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1 rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-2.5 font-display text-[15px] font-bold leading-none text-navy-900 shadow-[var(--shadow-btn-green)] active:brightness-95 sm:hidden"
+          className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-1.5 font-display text-[12px] font-bold leading-none text-navy-900 shadow-[var(--shadow-btn-green)] active:brightness-95 min-[360px]:gap-1.5 min-[360px]:px-2.5 min-[360px]:text-[13px] min-[430px]:text-[15px] sm:hidden"
         >
-          <Phone className="h-[15px] w-[15px] shrink-0" aria-hidden="true" />
-          <span className="hidden whitespace-nowrap min-[412px]:inline">{business.phone}</span>
-          <span className="min-[412px]:hidden">Call</span>
+          <span
+            className="pointer-events-none absolute inset-0 rounded-full opacity-40 mix-blend-overlay"
+            style={{ background: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.9), transparent 60%)" }}
+            aria-hidden="true"
+          />
+          <Phone className="h-3 w-3 shrink-0 min-[360px]:h-3.5 min-[360px]:w-3.5" aria-hidden="true" />
+          <span className="whitespace-nowrap">{business.phone}</span>
         </a>
       </div>
 
