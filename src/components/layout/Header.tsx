@@ -215,7 +215,7 @@ export default function Header({ currentPath = "/" }: Props) {
             together on narrow phones so nothing clips down to 320px. */}
         <a
           href={business.phoneHref}
-          className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-1.5 font-display text-[12px] leading-none text-navy-900 shadow-[var(--shadow-btn-green)] active:brightness-95 min-[360px]:gap-1.5 min-[360px]:px-2.5 min-[360px]:text-[13px] min-[390px]:px-3.5 min-[390px]:text-[14px] sm:hidden"
+          className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-1.5 font-display text-[12px] font-semibold leading-none text-navy-900 shadow-[var(--shadow-btn-green)] active:brightness-95 min-[360px]:gap-1.5 min-[360px]:px-2.5 min-[360px]:text-[13px] min-[390px]:px-3.5 min-[390px]:text-[14px] sm:hidden"
         >
           <span
             className="pointer-events-none absolute inset-0 rounded-full opacity-40 mix-blend-overlay"
