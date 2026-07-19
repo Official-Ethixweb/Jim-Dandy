@@ -10,10 +10,11 @@ import { business } from "@data/site";
 <section class="relative overflow-hidden bg-white pt-8 pb-20 lg:pt-10 lg:pb-28">
   {/* The tint is still ~30% opaque where it meets the white section above, so
       inset-0 sliced it into a visible band. Feathering the overlay's own edges
-      lets it fade out before the boundary instead of being cut. */}
+      lets it fade out before the boundary instead of being cut. Anchored right
+      so the glow sits behind the team photo instead of fighting the green CTA. */}
   <div
     class="pointer-events-none absolute inset-0"
-    style="background: radial-gradient(120% 100% at 12% 45%,
+    style="background: radial-gradient(120% 100% at 88% 45%,
       rgba(220,255,194,0.95) 0%,
       rgba(220,255,194,0.7) 30%,
       rgba(220,255,194,0.35) 50%,
