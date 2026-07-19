@@ -41,13 +41,17 @@ export default function ContactPanel() {
               </div>
             </div>
           </div>
-          <h3 className="font-display text-[48px] font-black leading-[1.08] text-navy-800 max-md:text-[28px]">
+          {/* Mobile keeps only the Google rating beside the CTA; the heading,
+              subtitle, and progress tracker are desktop/tablet elements. */}
+          <h3 className="font-display text-[48px] font-black leading-[1.08] text-navy-800 max-md:hidden">
             Jim Dandy To The Rescue!
           </h3>
-          <p className="text-lg text-navy-600 max-md:text-[15px]">Fully Licensed &amp; Insured</p>
+          <p className="text-lg text-navy-600 max-md:hidden">Fully Licensed &amp; Insured</p>
         </div>
 
-        <ContactProgress steps={progressSteps} current={step} />
+        <div className="max-md:hidden">
+          <ContactProgress steps={progressSteps} current={step} />
+        </div>
       </aside>
     </div>
   );

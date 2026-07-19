@@ -42,8 +42,8 @@ export default function RotatingHeadline({ className }: { className?: string }) 
           <span className="block">
             {lines[0].question}
             <br />
-            {lines[0].answer.split(/(Dandy)/).map((part, i) =>
-              part === "Dandy" ? (
+            {lines[0].answer.split(/(Jim Dandy|Dandy)/).map((part, i) =>
+              part === "Jim Dandy" || part === "Dandy" ? (
                 <span key={i} className="text-brand-green-500">
                   {part}
                 </span>
@@ -65,7 +65,7 @@ export default function RotatingHeadline({ className }: { className?: string }) 
             showCursor
             cursorCharacter="|"
             cursorClassName="text-brand-green-400"
-            highlightWords={["Dandy"]}
+            highlightWords={["Jim", "Dandy"]}
             highlightClassName="text-brand-green-500"
           />
         )}

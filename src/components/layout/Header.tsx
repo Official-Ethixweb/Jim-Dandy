@@ -201,7 +201,7 @@ export default function Header({ currentPath = "/" }: Props) {
 
         <button
           type="button"
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-white max-sm:order-first max-sm:-ml-2 xl:hidden"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-white max-sm:order-first max-sm:-ml-2 min-[412px]:ml-0 xl:hidden"
           aria-label={isMobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMobileOpen}
           aria-controls={mobileMenuId}
@@ -215,7 +215,7 @@ export default function Header({ currentPath = "/" }: Props) {
             together on narrow phones so nothing clips down to 320px. */}
         <a
           href={business.phoneHref}
-          className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-1.5 font-display text-[12px] font-bold leading-none text-navy-900 shadow-[var(--shadow-btn-green)] active:brightness-95 min-[360px]:gap-1.5 min-[360px]:px-2.5 min-[360px]:text-[13px] min-[430px]:text-[15px] sm:hidden"
+          className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-1.5 font-display text-[12px] leading-none text-navy-900 shadow-[var(--shadow-btn-green)] active:brightness-95 min-[360px]:gap-1.5 min-[360px]:px-2.5 min-[360px]:text-[13px] min-[390px]:px-3.5 min-[390px]:text-[14px] sm:hidden"
         >
           <span
             className="pointer-events-none absolute inset-0 rounded-full opacity-40 mix-blend-overlay"
@@ -307,14 +307,14 @@ export default function Header({ currentPath = "/" }: Props) {
               <div className="mt-3 flex flex-col gap-3 border-t border-white/10 pt-4">
                 <a
                   href={business.phoneHref}
-                  className="flex items-center justify-center gap-2 rounded-full bg-white/10 px-4 py-3 font-display text-[21px] font-bold leading-none text-white"
+                  className="flex items-center justify-center gap-2 rounded-full bg-white/10 px-4 py-3 font-display text-[21px] font-normal leading-none text-white"
                 >
                   <Phone className="h-4 w-4 text-brand-green-400" aria-hidden="true" />
                   {business.phone}
                 </a>
                 <a
                   href={business.scheduleUrl}
-                  className="flex items-center justify-center rounded-full bg-[image:var(--btn-primary)] px-6 py-3 text-center font-display text-[21px] font-bold leading-none text-navy-900 shadow-[var(--shadow-btn-green)] hover:bg-[image:var(--btn-primary-hover)] hover:shadow-[var(--shadow-btn-green-hover)]"
+                  className="flex items-center justify-center rounded-full bg-[image:var(--btn-primary)] px-6 py-3 text-center font-display text-[21px] font-normal leading-none text-navy-900 shadow-[var(--shadow-btn-green)] hover:bg-[image:var(--btn-primary-hover)] hover:shadow-[var(--shadow-btn-green-hover)]"
                 >
                   Schedule Online
                 </a>

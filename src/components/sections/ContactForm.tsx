@@ -307,7 +307,7 @@ function SubmitState({ isSubmitting }: { isSubmitting: boolean }) {
     <button
       type="submit"
       disabled={isSubmitting}
-      className="relative inline-flex w-[280px] max-w-full items-center justify-center gap-2 self-center rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-10 py-4 font-display text-[21px] font-bold leading-none text-navy-900 shadow-[var(--shadow-btn-green)] hover:bg-[image:var(--btn-primary-hover)] hover:shadow-[var(--shadow-btn-green-hover)] transition-all duration-200 ease-brand hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:brightness-95 disabled:cursor-not-allowed disabled:opacity-70"
+      className="relative inline-flex w-[280px] max-w-full items-center justify-center gap-2 self-center rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-10 py-4 font-display text-[21px] font-normal leading-none text-navy-900 shadow-[var(--shadow-btn-green)] hover:bg-[image:var(--btn-primary-hover)] hover:shadow-[var(--shadow-btn-green-hover)] transition-all duration-200 ease-brand hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:brightness-95 disabled:cursor-not-allowed disabled:opacity-70"
     >
       {/* Figma primary keeps a soft white sheen off the top-left over the green
           gradient; this is what Button.astro renders and the form button lacked. */}
