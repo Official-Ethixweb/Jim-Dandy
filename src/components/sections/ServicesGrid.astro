@@ -65,11 +65,20 @@ const icons = {
 </section>
 
 <style is:global>
+  /* At rest, a hairline navy drop-shadow traces the icon's alpha edge (so it
+     follows the artwork shape, not a box) to sharpen definition against the
+     light card. Kept at 0.5px and slightly darker than the brand navy so it
+     reads as edge crispness, not an outline. */
+  #services [data-service-card] .svc-icon {
+    filter: drop-shadow(0 0 0.5px #001a33);
+  }
+
   /* The icons' navy (#002244) is the same colour as the card's hover state, so
      on hover their silhouette disappears and only the green/white details float.
      Stacked drop-shadows trace the alpha edge - so the outline follows the real
      icon shape rather than a box - and stay anti-aliased. Only applied on the
-     dark states; over the light card a white edge would be invisible anyway. */
+     dark states; over the light card a white edge would be invisible anyway.
+     This higher-specificity rule replaces the resting navy hairline on hover. */
   #services [data-service-card]:hover .svc-icon,
   #services [data-service-card].is-active .svc-icon {
     filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 1.5px #fff);
