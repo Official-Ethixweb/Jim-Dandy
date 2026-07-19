@@ -20,10 +20,18 @@ const BRAND_ICONS: Partial<Record<(typeof serviceOptions)[number]["value"], { sr
   commercial: commercialIcon,
 };
 
+const CONSENT_TEXT =
+  "By submitting this form and signing up for texts, you consent to receive messages from " +
+  "Jim Dandy Sewer & Plumbing at the number provided regarding your request, updates " +
+  "about appointments and services or promotions and offers, including messages sent by " +
+  "autodialer. Consent is not a condition of purchase. Msg & data rates may apply. Msg " +
+  "frequency varies. Unsubscribe at any time by replying STOP. Reply HELP for help.";
+
 type Props = { onStepChange?: (step: number) => void };
 
 export default function ContactForm({ onStepChange }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [consentExpanded, setConsentExpanded] = useState(false);
   const {
     register,
     handleSubmit,
@@ -241,22 +249,46 @@ export default function ContactForm({ onStepChange }: Props) {
       </fieldset>
 
       <div className="flex flex-col gap-2">
-        <label className="flex cursor-pointer items-start gap-3">
+        <label className="flex cursor-pointer items-start gap-3 max-md:items-center">
           <input
             type="checkbox"
-            className="mt-1 h-5 w-5 shrink-0 rounded border-navy-300 text-brand-green-600 focus-visible:outline-brand-green-500"
+            className="mt-1 h-5 w-5 shrink-0 rounded border-navy-300 text-brand-green-600 focus-visible:outline-brand-green-500 max-md:mt-0"
             checked={consent === true}
             onChange={(e) => setValue("consent", e.target.checked as true, { shouldValidate: true })}
           />
           <span className="text-sm font-semibold text-navy-700">Communication consent</span>
         </label>
-        <p className="text-xs leading-relaxed text-navy-400">
-          By submitting this form and signing up for texts, you consent to receive messages from
-          Jim Dandy Sewer &amp; Plumbing at the number provided regarding your request, updates
-          about appointments and services or promotions and offers, including messages sent by
-          autodialer. Consent is not a condition of purchase. Msg &amp; data rates may apply. Msg
-          frequency varies. Unsubscribe at any time by replying STOP. Reply HELP for help.
-        </p>
+
+        {/* Desktop keeps the full text; mobile collapses it to a two-line
+            preview behind a Read more toggle. Same copy in both. */}
+        <p className="hidden text-xs leading-relaxed text-navy-400 md:block">{CONSENT_TEXT}</p>
+
+        <div className="md:hidden">
+          <motion.div
+            initial={false}
+            animate={{ height: consentExpanded ? "auto" : 40 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden"
+          >
+            <p className="text-xs leading-relaxed text-navy-400">{CONSENT_TEXT}</p>
+            {/* premium fade-out over the clipped preview */}
+            <motion.span
+              initial={false}
+              animate={{ opacity: consentExpanded ? 0 : 1 }}
+              transition={{ duration: 0.25 }}
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-white to-transparent"
+              aria-hidden="true"
+            />
+          </motion.div>
+          <button
+            type="button"
+            onClick={() => setConsentExpanded((v) => !v)}
+            aria-expanded={consentExpanded}
+            className="mt-1 py-1 text-xs font-bold text-brand-green-600 underline underline-offset-2 hover:text-navy-700"
+          >
+            {consentExpanded ? "Read less" : "Read more"}
+          </button>
+        </div>
         {errors.consent && (
           <p role="alert" className="text-sm text-red-600">
             {errors.consent.message}
