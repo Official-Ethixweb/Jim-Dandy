@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Send, X } from "lucide-react";
-import chatbotAvatar from "@assets/photos/chatbot-avatar-face.webp";
+import { MessageCircle, Send, X } from "lucide-react";
+// AVATAR RESTORE: uncomment this import when bringing the photo back.
+// import chatbotAvatar from "@assets/photos/chatbot-avatar-face.webp";
 
 /**
  * Jim Dandy chat launcher - UI PREVIEW ONLY.
@@ -66,16 +67,20 @@ export default function ChatWidget() {
           >
             {/* header */}
             <div className="relative flex items-center gap-3 bg-[linear-gradient(135deg,#0a2c4e_0%,#002244_60%,#001830_100%)] px-5 py-4 text-white">
+              {/* AVATAR RESTORE (header): swap the MessageCircle icon back to
+                  the original photo by replacing the icon line with:
+                  <span className="h-10 w-10 overflow-hidden rounded-full">
+                    <img
+                      src={chatbotAvatar.src}
+                      alt=""
+                      aria-hidden="true"
+                      draggable={false}
+                      className="h-full w-full object-cover [transform:scale(1.18)_translateY(-4px)]"
+                    />
+                  </span>
+              */}
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] shadow-[var(--shadow-pill-green)]">
-                <span className="h-10 w-10 overflow-hidden rounded-full">
-                  <img
-                    src={chatbotAvatar.src}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    className="h-full w-full object-cover [transform:scale(1.18)_translateY(-4px)]"
-                  />
-                </span>
+                <MessageCircle className="h-5 w-5 text-navy-900" aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-2 font-display text-lg font-bold leading-none">
@@ -176,6 +181,20 @@ export default function ChatWidget() {
       </AnimatePresence>
 
       {/* launcher */}
+      {/* AVATAR RESTORE (launcher): to bring the photo back exactly as before,
+          replace the closed-state MessageCircle icon with:
+              {/ * Branded avatar sits inside the green ring with an even rim.
+                  The slight zoom + upward shift centres the face in the circle. * /}
+              <span className="block h-20 w-20 select-none overflow-hidden rounded-full">
+                <img
+                  src={chatbotAvatar.src}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="h-full w-full object-cover [transform:scale(1.18)_translateY(-7px)]"
+                />
+              </span>
+      */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -190,17 +209,7 @@ export default function ChatWidget() {
             </motion.span>
           ) : (
             <motion.span key="chat" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.18 }}>
-              {/* Branded avatar sits inside the green ring with an even rim.
-                  The slight zoom + upward shift centres the face in the circle. */}
-              <span className="block h-20 w-20 select-none overflow-hidden rounded-full">
-                <img
-                  src={chatbotAvatar.src}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  className="h-full w-full object-cover [transform:scale(1.18)_translateY(-7px)]"
-                />
-              </span>
+              <MessageCircle className="h-11 w-11" aria-hidden="true" />
             </motion.span>
           )}
         </AnimatePresence>
