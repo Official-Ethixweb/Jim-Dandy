@@ -80,7 +80,9 @@ export default function ChatWidget() {
                   </span>
               */}
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] shadow-[var(--shadow-pill-green)]">
-                <MessageCircle className="h-5 w-5 text-navy-900" aria-hidden="true" />
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-navy-900">
+                  <MessageCircle className="h-5 w-5 text-white" aria-hidden="true" />
+                </span>
               </span>
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-2 font-display text-lg font-bold leading-none">
@@ -209,7 +211,12 @@ export default function ChatWidget() {
             </motion.span>
           ) : (
             <motion.span key="chat" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.18 }}>
-              <MessageCircle className="h-11 w-11" aria-hidden="true" />
+              {/* Inner navy disc sized like the old photo circle (h-20 inside
+                  the h-[86px] button) so the brand-green button still shows
+                  as a thin ring around it. */}
+              <span className="grid h-20 w-20 select-none place-items-center rounded-full bg-navy-900">
+                <MessageCircle className="h-9 w-9 text-white" aria-hidden="true" />
+              </span>
             </motion.span>
           )}
         </AnimatePresence>
