@@ -35,7 +35,21 @@ import { CalendarClock, Phone } from "lucide-react";
       const show = window.scrollY > 520;
       bar.classList.toggle("translate-y-full", !show);
       bar.setAttribute("aria-hidden", show ? "false" : "true");
+      // The chat and accessibility launchers are fixed in the same corners this
+      // bar occupies, and at 375px they covered the left edge of "Call Now" and
+      // half of "Schedule". Publish the bar's height so they can step above it.
+      const lift = show ? `${Math.round(bar.getBoundingClientRect().height)}px` : "0px";
+      document.documentElement.style.setProperty("--sticky-cta-lift", lift);
     };
+    // Reserved once, not per scroll event: toggling page padding as the bar
+    // shows and hides would shift the page under the reader's finger.
+    const reserve = () => {
+      const h = Math.round(bar.getBoundingClientRect().height) || 87;
+      document.documentElement.style.setProperty("--sticky-cta-reserve", `${h + 12}px`);
+    };
+    reserve();
+    window.addEventListener("resize", reserve, { passive: true });
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
   }

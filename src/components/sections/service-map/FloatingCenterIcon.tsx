@@ -28,7 +28,7 @@ export default function FloatingCenterIcon({
 }: Props) {
   return (
     <motion.div
-      className="absolute z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-center"
+      className="absolute z-10 flex -translate-x-1/2 flex-col items-center gap-1 text-center sm:gap-2"
       style={{ left: `${x}%`, top: `calc(${y}% - ${PIN_TIP_FROM_TOP}px)` }}
       initial={{ opacity: 0, y: 14 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
@@ -56,7 +56,7 @@ export default function FloatingCenterIcon({
           }
           transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="relative grid h-14 w-14 place-items-center rounded-full">
+          <div className="relative grid h-11 w-11 place-items-center rounded-full sm:h-14 sm:w-14">
             {/* Glow is a static shadow revealed by opacity - animating
                 box-shadow itself repaints the badge every frame. */}
             <motion.span
@@ -70,13 +70,17 @@ export default function FloatingCenterIcon({
               }
               aria-hidden="true"
             />
-            <MapPin className="h-9 w-9 text-white" aria-hidden="true" />
+            <MapPin className="h-7 w-7 text-white sm:h-9 sm:w-9" aria-hidden="true" />
           </div>
         </motion.div>
       </motion.button>
       <div>
-        <p className="whitespace-nowrap font-display text-xl font-bold text-white sm:text-[28px]">Puget Sound Region</p>
-        <p className="whitespace-nowrap text-xs font-medium text-white/80 sm:text-base">
+        <p className="whitespace-nowrap font-display text-base font-bold text-white sm:text-xl lg:text-[28px]">Puget Sound Region</p>
+        {/* Redundant with the section subtitle directly above the map on
+            mobile, and the tightest thing that was colliding with the Tacoma
+            marker on short/narrow map cards - dropped there, kept from sm up
+            where the map has room. */}
+        <p className="hidden whitespace-nowrap text-xs font-medium text-white/80 sm:block sm:text-base">
           King · Snohomish · Pierce Counties
         </p>
       </div>

@@ -10,15 +10,16 @@ import { business } from "@data/site";
   <div class="absolute inset-0 lg:hidden" aria-hidden="true">
     <video
       class="hero-video h-full w-full object-cover opacity-[0.3]"
+      data-media="(max-width: 1023.98px)"
       autoplay
       muted
       loop
       playsinline
-      preload="auto"
+      preload="none"
       poster="/pages/home/hero/seattle-hero-poster.jpg"
       fetchpriority="high"
     >
-      <source src="/pages/home/hero/seattle-hero.mp4" type="video/mp4" />
+      <source data-src="/pages/home/hero/seattle-hero.mp4" type="video/mp4" />
     </video>
     <div class="absolute inset-0 bg-gradient-to-b from-navy-900/55 via-navy-800/65 to-navy-900/90"></div>
   </div>
@@ -47,14 +48,15 @@ import { business } from "@data/site";
       >
         <video
           class="hero-video hero-frame-video absolute inset-0 h-full w-full object-cover"
+          data-media="(min-width: 1024px)"
           autoplay
           muted
           loop
           playsinline
-          preload="auto"
+          preload="none"
           poster="/pages/home/hero/seattle-hero-poster.jpg"
         >
-          <source src="/pages/home/hero/seattle-hero.mp4" type="video/mp4" />
+          <source data-src="/pages/home/hero/seattle-hero.mp4" type="video/mp4" />
         </video>
       </div>
     </div>
@@ -62,7 +64,11 @@ import { business } from "@data/site";
 
   {/* py trimmed on desktop so the rating + 118 badge clear the fold: at 96px the
       badge landed at 926px, past both 1440x900 and 1536x864. */}
-  <div class="container-page relative grid grid-cols-1 items-center gap-12 py-16 max-sm:flex max-sm:flex-1 max-sm:flex-col max-sm:items-stretch max-sm:pt-6 max-sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:grid-cols-[1fr_1fr] lg:py-14">
+  {/* Bottom padding on mobile is taller than it looks: the chat launcher is
+      fixed at bottom-right (~86px tall, 20px off the edge), and this row ends
+      with the rotating 118-years badge in that same corner. Without this
+      clearance they visually collide on short viewports. */}
+  <div class="container-page relative grid grid-cols-1 items-center gap-12 py-16 max-sm:flex max-sm:flex-1 max-sm:flex-col max-sm:items-stretch max-sm:pt-6 max-sm:pb-[calc(7.5rem+env(safe-area-inset-bottom))] lg:grid-cols-[1fr_1fr] lg:py-14">
     {/* Wider column on desktop: the rotating headline reserves the tallest of the
         five, and at 576px that was 4 lines (328px). At 672px the longest wraps to
         3, cutting 82px of reserved space with no change to the type itself. */}
@@ -191,10 +197,37 @@ import { business } from "@data/site";
 </style>
 
 <script>
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  // Both hero videos point at the same 4.3MB file but only one is ever on
+  // screen (mobile background vs. desktop framed cutout). Attaching the source
+  // to the off-breakpoint one downloaded it twice and, in Safari, decoded it
+  // twice, so the source is wired up per breakpoint instead.
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const syncHeroVideos = () => {
     document.querySelectorAll<HTMLVideoElement>(".hero-video").forEach((video) => {
-      video.removeAttribute("autoplay");
-      video.pause();
+      const source = video.querySelector("source");
+      const query = video.dataset.media;
+      if (!source || !query) return;
+
+      const wanted = !reduceMotion.matches && window.matchMedia(query).matches;
+      const src = source.dataset.src ?? "";
+
+      if (wanted) {
+        if (source.getAttribute("src") === src) return;
+        source.setAttribute("src", src);
+        video.load();
+        void video.play().catch(() => {});
+      } else {
+        if (!source.hasAttribute("src")) return;
+        video.pause();
+        source.removeAttribute("src");
+        video.removeAttribute("src");
+        video.load();
+      }
     });
-  }
+  };
+
+  syncHeroVideos();
+  window.addEventListener("resize", syncHeroVideos, { passive: true });
+  reduceMotion.addEventListener("change", syncHeroVideos);
 </script>

@@ -15,7 +15,7 @@ export const business = {
   licenses: ["JIMDADE791MG", "JIMDADS879B3"],
   rating: { value: 4.8, count: 177 },
   scheduleUrl: "/contact",
-  financingUrl: "/coupons",
+  financingUrl: "/financing",
   social: {
     facebook: "https://www.facebook.com/",
     google: "https://share.google/L2jpUnfSMJK7ZRCk8",

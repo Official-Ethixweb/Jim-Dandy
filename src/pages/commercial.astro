@@ -152,7 +152,7 @@ const crumbs = breadcrumbSchema([
     <div class="container-page flex flex-col gap-14">
       <SectionHeading eyebrow="Good to Know" title="Commercial Questions, Answered" />
       <div class="mx-auto w-full max-w-3xl" data-reveal>
-        <Accordion client:visible items={extra.faqs} />
+        <Accordion client:idle items={extra.faqs} />
       </div>
     </div>
   </section>

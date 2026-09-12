@@ -50,7 +50,7 @@ export default function AccessibilityWidget() {
   const activeCount = Object.values(toggles).filter(Boolean).length + (textStep !== 1 ? 1 : 0);
 
   return (
-    <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] left-4 z-[60] sm:bottom-6 sm:left-6">
+    <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom)+var(--sticky-cta-lift,0px))] left-4 z-[60] transition-[bottom] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:bottom-[calc(1.5rem+var(--sticky-cta-lift,0px))] sm:left-6">
       <AnimatePresence>
         {open && (
           <motion.div

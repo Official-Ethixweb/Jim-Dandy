@@ -43,12 +43,67 @@ export default function Header({ currentPath = "/" }: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Plain `overflow: hidden` on body resets its scrollTop to 0 the instant
+  // it's applied (a scroll container can't hold an offset once it stops being
+  // scrollable) - on mobile that reads as the whole page glitching/jumping to
+  // the top the moment the menu opens. Freezing body in place with a negative
+  // top offset keeps the exact same content on screen with no jump.
+  //
+  // The unlock is deliberately NOT wired to this same effect's cleanup: the
+  // mobile panel lives in normal flow inside <header> and its collapse
+  // animation takes 200ms, so unlocking (and reading scrollHeight for the
+  // restore) the instant isMobileOpen flips false measures a page that's
+  // still mid-collapse - the restore then lands short of the real position.
+  // Unlocking is done from the panel's onExitComplete below instead, once
+  // the collapse has actually finished and layout has settled.
+  const scrollYRef = useRef(0);
+  const isLockedRef = useRef(false);
+
   useEffect(() => {
-    document.body.style.overflow = isMobileOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (!isMobileOpen) return;
+    scrollYRef.current = window.scrollY;
+    const { body } = document;
+    body.style.position = "fixed";
+    body.style.top = `-${scrollYRef.current}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    isLockedRef.current = true;
   }, [isMobileOpen]);
+
+  // Safety net only - if the component unmounts (e.g. a hot reload) while
+  // locked, don't leave the page stuck unable to scroll. Normal closes are
+  // unlocked by `unlockScroll` via the panel's onExitComplete below, not here.
+  useEffect(() => {
+    return () => {
+      if (!isLockedRef.current) return;
+      const { body } = document;
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+    };
+  }, []);
+
+  const unlockScroll = () => {
+    if (!isLockedRef.current) return;
+    const { body } = document;
+    body.style.position = "";
+    body.style.top = "";
+    body.style.left = "";
+    body.style.right = "";
+    // Clearing the styles above doesn't force layout on its own, so without
+    // this the browser can still be judging scrollTo against the just-cleared
+    // fixed/zero-height layout and clamp it back to 0. Reading a layout
+    // property forces a synchronous reflow first, so scrollTo below sees the
+    // real, restored page height.
+    void body.offsetHeight;
+    isLockedRef.current = false;
+    // The site sets `scroll-behavior: smooth` globally (global.css:84), which
+    // the legacy scrollTo(x, y) form respects - so restoring position was
+    // visibly animating back into place instead of snapping there. This is a
+    // position restore, not a navigation, so it must be instant.
+    window.scrollTo({ top: scrollYRef.current, left: 0, behavior: "instant" });
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -227,7 +282,7 @@ export default function Header({ currentPath = "/" }: Props) {
         </a>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={unlockScroll}>
         {isMobileOpen && (
           <motion.div
             id={mobileMenuId}

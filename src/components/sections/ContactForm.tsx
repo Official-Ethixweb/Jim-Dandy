@@ -163,7 +163,7 @@ export default function ContactForm({ onStepChange }: Props) {
             return (
               <label
                 key={option.value}
-                className={`relative flex cursor-pointer items-center gap-2.5 rounded-lg border border-l-4 px-4 py-3.5 transition-all duration-150 ease-out active:scale-[0.98] ${
+                className={`relative flex cursor-pointer items-center gap-2 rounded-lg border border-l-4 px-3 py-3.5 transition-all duration-150 ease-out active:scale-[0.98] sm:gap-2.5 sm:px-4 ${
                   isActive
                     ? "border-navy-800 border-l-navy-800 bg-navy-800 shadow-[0_8px_20px_-8px_rgba(0,34,68,0.6)]"
                     : "border-navy-200 border-l-navy-800 bg-white hover:border-navy-300 hover:shadow-md"
@@ -201,7 +201,7 @@ export default function ContactForm({ onStepChange }: Props) {
                     aria-hidden="true"
                   />
                 )}
-                <span className={`min-w-0 text-nowrap text-sm font-semibold ${isActive ? "text-white" : "text-navy-800"}`}>
+                <span className={`min-w-0 text-sm font-semibold leading-tight sm:text-nowrap ${isActive ? "text-white" : "text-navy-800"}`}>
                   {option.label}
                 </span>
               </label>
@@ -284,7 +284,7 @@ export default function ContactForm({ onStepChange }: Props) {
             type="button"
             onClick={() => setConsentExpanded((v) => !v)}
             aria-expanded={consentExpanded}
-            className="mt-1 py-1 text-xs font-bold text-brand-green-600 underline underline-offset-2 hover:text-navy-700"
+            className="-my-2 mt-0 py-3 text-xs font-bold text-brand-green-600 underline underline-offset-2 hover:text-navy-700"
           >
             {consentExpanded ? "Read less" : "Read more"}
           </button>
@@ -303,10 +303,17 @@ export default function ContactForm({ onStepChange }: Props) {
 }
 
 function SubmitState({ isSubmitting }: { isSubmitting: boolean }) {
+  // Until React takes over, nothing cancels the browser's own submit: pressing
+  // the button did a plain GET to the same URL and put the name/email/phone the
+  // visitor typed into the query string, losing the lead. The server-rendered
+  // markup therefore ships disabled and only the mounted component enables it.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
   return (
     <button
       type="submit"
-      disabled={isSubmitting}
+      disabled={!hydrated || isSubmitting}
       className="relative inline-flex w-[280px] max-w-full items-center justify-center gap-2 self-center rounded-full border border-brand-green-600/40 bg-[image:var(--btn-primary)] px-10 py-4 font-display text-[21px] font-normal leading-none text-navy-900 shadow-[var(--shadow-btn-green)] hover:bg-[image:var(--btn-primary-hover)] hover:shadow-[var(--shadow-btn-green-hover)] transition-all duration-200 ease-brand hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:brightness-95 disabled:cursor-not-allowed disabled:opacity-70"
     >
       {/* Figma primary keeps a soft white sheen off the top-left over the green

@@ -77,7 +77,7 @@ const slides = [
       </svg>
     </button>
 
-    <div class="legacy-dots absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+    <div class="legacy-dots absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-4">
       {slides.map((_, index) => (
         <button type="button" class:list={["legacy-dot", index === 0 && "is-active"]} data-dot aria-label={`Show photo ${index + 1}`}></button>
       ))}
@@ -173,11 +173,13 @@ const slides = [
   }
 
   /* Invisible hit-area extension: the visual dot stays 8px, but the tappable
-     area meets the 24x24 minimum touch-target size without changing layout. */
+     area is 24x44 so it clears the touch-target minimum. The inline inset is
+     kept to 8px and the row uses gap-4, otherwise neighbouring hit areas
+     overlapped and a tap near a dot's edge selected the wrong photo. */
   .legacy-dot::before {
     content: "";
     position: absolute;
-    inset: -8px;
+    inset: -18px -8px;
   }
   .legacy-dot.is-active {
     width: 24px;

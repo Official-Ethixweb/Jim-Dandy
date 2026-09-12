@@ -131,7 +131,12 @@ const items = [
       <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
     <figure class="flex max-h-[88vh] max-w-4xl flex-col items-center gap-4">
-      <img id="gallery-lightbox-img" alt="" class="max-h-[78vh] w-auto rounded-2xl object-contain shadow-2xl" />
+      <img
+        id="gallery-lightbox-img"
+        alt=""
+        hidden
+        class="max-h-[78vh] w-auto rounded-2xl object-contain shadow-2xl"
+      />
       <figcaption id="gallery-lightbox-cap" class="text-center font-display text-lg font-bold text-white"></figcaption>
     </figure>
   </div>
@@ -179,6 +184,9 @@ const items = [
       if (!img || !lbImg) return;
       lbImg.src = img.currentSrc || img.src;
       lbImg.alt = img.alt;
+      // Shipped without a src so the markup never contains an image that
+      // cannot load; it is revealed once a real source is assigned.
+      lbImg.hidden = false;
       if (lbCap) lbCap.textContent = item.getAttribute("data-caption") || "";
       lightbox.classList.remove("hidden");
       lightbox.classList.add("flex");

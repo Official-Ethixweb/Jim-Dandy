@@ -1,0 +1,36 @@
+---
+/**
+ * Renders GA4 and/or GTM only when an ID is configured for this environment.
+ * With neither set this component emits nothing at all - no script tag, no
+ * dataLayer, no requests - so the site never ships a half-wired tracking setup
+ * or a placeholder container from another project.
+ *
+ * Set in the hosting dashboard (both are inlined at build time, so a change
+ * needs a redeploy, not just a console edit):
+ *   PUBLIC_GA4_ID  e.g. G-XXXXXXXXXX
+ *   PUBLIC_GTM_ID  e.g. GTM-XXXXXXX
+ */
+const rawGa4 = (import.meta.env.PUBLIC_GA4_ID as string | undefined)?.trim();
+const rawGtm = (import.meta.env.PUBLIC_GTM_ID as string | undefined)?.trim();
+
+// Guard against a wrong-shaped value being pasted into the dashboard.
+const ga4: string | undefined = rawGa4 && /^G-[A-Z0-9]+$/i.test(rawGa4) ? rawGa4 : undefined;
+const gtm: string | undefined = rawGtm && /^GTM-[A-Z0-9]+$/i.test(rawGtm) ? rawGtm : undefined;
+
+if (rawGa4 && !ga4) console.warn(`[analytics] PUBLIC_GA4_ID "${rawGa4}" is not a G-XXXXXXX id - ignoring.`);
+if (rawGtm && !gtm) console.warn(`[analytics] PUBLIC_GTM_ID "${rawGtm}" is not a GTM-XXXXXXX id - ignoring.`);
+
+const gtmSnippet = gtm
+  ? `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`
+  : "";
+
+const ga4Snippet = ga4
+  ? `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','${ga4}');`
+  : "";
+
+const ga4Src = ga4 ? `https://www.googletagmanager.com/gtag/js?id=${ga4}` : "";
+---
+
+{gtm && <script is:inline set:html={gtmSnippet} />}
+{ga4 && <script is:inline async src={ga4Src} />}
+{ga4 && <script is:inline set:html={ga4Snippet} />}

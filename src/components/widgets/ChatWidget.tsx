@@ -338,7 +338,7 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const };
 
   return (
-    <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-4 z-[60] sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom)+var(--sticky-cta-lift,0px))] right-4 z-[60] transition-[bottom] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:bottom-[calc(1.5rem+var(--sticky-cta-lift,0px))] sm:right-6">
       <div ref={liveRegionRef} aria-live="polite" aria-atomic="false" className="sr-only" />
 
       <AnimatePresence>

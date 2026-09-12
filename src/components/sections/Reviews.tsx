@@ -45,7 +45,7 @@ function ReviewCard({ review, hidden, fluid }: { review: Review; hidden?: boolea
         target="_blank"
         rel="noopener noreferrer"
         tabIndex={hidden ? -1 : undefined}
-        className="-my-2 self-start py-2 text-left text-sm font-semibold text-navy-500 hover:text-navy-700"
+        className="-my-3 self-start py-3 text-left text-sm font-semibold text-navy-500 hover:text-navy-700"
       >
         Read more on Google
       </a>
