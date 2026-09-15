@@ -21,16 +21,25 @@ import vercel from '@astrojs/vercel';
 // Do NOT add `redirects`, `rewrites`, or `routes` to vercel.json - they would
 // compete with the adapter's generated routes. Add them here instead.
 
-// PRODUCTION ENV GUARD
-// A production deploy must never go live with a lead pipeline that silently
-// drops leads. Vercel sets VERCEL_ENV=production only for production deploys,
-// so previews and local builds are unaffected; a production build with the
-// email keys missing fails here, loudly, instead of shipping.
+// PRODUCTION ENV CHECK
+// Vercel sets VERCEL_ENV=production only for production deploys, so previews
+// and local builds are unaffected.
+//
+// Missing email keys warn rather than block the deploy: they are read at
+// request time (access: 'secret' below), so setting them in Vercel only needs a
+// redeploy, and until then the lead endpoints fail closed - the visitor is told
+// to call instead of seeing a false success, and the function log records
+// "LEAD NOT DELIVERED" (src/lib/email/deliver.ts).
 if (process.env.VERCEL_ENV === 'production') {
   const missing = ['RESEND_API_KEY', 'LEAD_TO_EMAIL', 'EMAIL_FROM'].filter((key) => !process.env[key]?.trim());
   if (missing.length) {
-    throw new Error(`[env] Production deploy blocked - set these in Vercel > Settings > Environment Variables: ${missing.join(', ')}`);
+    console.warn(
+      `\n[env] WARNING: lead emails are OFF - set these in Vercel > Settings > Environment Variables, then redeploy: ${missing.join(', ')}\n` +
+        '[env] Until then, contact and chat leads are not delivered; visitors are asked to call instead.\n',
+    );
   }
+  // This one still blocks: a secret without the site key rejects every form
+  // submission, and a site key without the secret shows a challenge nobody checks.
   const siteKey = Boolean(process.env.PUBLIC_TURNSTILE_SITE_KEY?.trim());
   const secret = Boolean(process.env.TURNSTILE_SECRET?.trim());
   if (siteKey !== secret) {
