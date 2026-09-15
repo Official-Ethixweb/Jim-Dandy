@@ -1,3 +1,5 @@
+import { TURNSTILE_SECRET } from "astro:env/server";
+
 /**
  * Cloudflare Turnstile, verified server-side.
  *
@@ -12,24 +14,13 @@ const SITEVERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverif
 const TIMEOUT_MS = 5_000;
 
 /**
- * Read at REQUEST time from process.env, not build time.
- *
- * Vite statically replaces `import.meta.env.X` during the build, which would
- * bake the secret into the deployed function bundle and make rotation a full
- * rebuild rather than a dashboard edit. Reading process.env first keeps the
- * secret out of the build artifact entirely when it is set only in the hosting
- * dashboard - which is how production should be configured.
- *
- * The import.meta.env fallback exists purely for local development, where
- * Astro loads .env into import.meta.env but not into process.env. In a
- * production build with the var unset at build time, Vite replaces that
- * expression with `undefined`, so nothing is inlined.
+ * Read from "astro:env/server" (declared as a secret in astro.config.mjs), so
+ * the value comes from the runtime environment and is never inlined into the
+ * deployed bundle - reading it via import.meta.env did exactly that.
  */
 function getSecret(): string | undefined {
-  const fromRuntime = typeof process !== "undefined" ? process.env?.TURNSTILE_SECRET : undefined;
-  const fromBuild = import.meta.env.TURNSTILE_SECRET as string | undefined;
-  const value = fromRuntime ?? fromBuild;
-  return value && value.trim() ? value.trim() : undefined;
+  const value = TURNSTILE_SECRET?.trim();
+  return value ? value : undefined;
 }
 
 /** True only when a real secret is configured for this environment. */

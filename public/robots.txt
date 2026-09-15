@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.jimdandysewer.com/sitemap-index.xml
+Sitemap: https://www.jimdandysewerandplumbing.com/sitemap-index.xml

@@ -130,8 +130,8 @@ const sections = [
             By providing your phone number and consenting on our contact form, you agree we may contact
             you about your request and, if you opt in, send appointment and promotional text messages.
             Message and data rates may apply, and frequency varies. Reply STOP to opt out or HELP for
-            help. See our
-            <a href="/privacy-policy" class="font-semibold text-navy-800 underline">Privacy Policy</a>
+            help. See our{" "}
+            <a href="/privacy-policy" class="font-semibold text-navy-800 underline">Privacy Policy</a>{" "}
             for details on how we handle your information.
           </p>
         </div>
@@ -165,12 +165,12 @@ const sections = [
         </div>
 
         <div id="contact" class="scroll-mt-28">
-          <div class="flex flex-col gap-3 rounded-[28px] border border-navy-200 bg-navy-900 p-8 text-white">
+          <div class="flex flex-col gap-3 rounded-[28px] border border-navy-200 bg-navy-900 p-6 text-white sm:p-8">
             <h2 class="font-heading text-2xl font-bold text-white">Contact Us</h2>
-            <p class="leading-relaxed text-white/80">
-              Questions about these Terms? Reach us at
-              <a href={`mailto:${business.email}`} class="font-semibold text-brand-green-400 underline">{business.email}</a>
-              or
+            <p class="leading-relaxed text-white/80 break-words">
+              Questions about these Terms? Reach us at{" "}
+              <a href={`mailto:${business.email}`} class="font-semibold text-brand-green-400 underline">{business.email.split("@")[0]}@<wbr />{business.email.split("@")[1]}</a>{" "}
+              or{" "}
               <a href={business.phoneHref} class="font-semibold text-brand-green-400 underline">{business.phone}</a>,
               or write to us at {business.address.full}.
             </p>

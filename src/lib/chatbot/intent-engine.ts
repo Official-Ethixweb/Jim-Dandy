@@ -108,13 +108,22 @@ function extractServiceSlug(rawText: string): ServiceSlug | undefined {
   return undefined;
 }
 
+const WEAK_SYMPTOM_WORDS = new Set([
+  "not", "the", "and", "any", "all", "one", "out", "off", "for", "too", "are", "was", "can", "you", "get", "got", "won't",
+  "water", "house", "home", "more", "same", "time", "when", "with", "from", "into", "your", "that", "this", "have",
+  "back", "need", "just", "they", "their", "fixture", "fixtures", "anywhere", "everywhere", "multiple", "planning",
+  "working", "work", "install", "installed", "new", "running", "making", "noise", "noises", "leaking", "fast", "slow",
+]);
+
 function extractSymptomMatch(tokens: string[]): { best?: ServiceSlug; candidates: ServiceSlug[] } {
   const scores = new Map<string, number>();
   const bySlug = new Map<string, ServiceSlug>();
   for (const entry of symptomIndex) {
-    const phraseTokens = entry.phrase.split(" ");
+    // Only distinctive words count toward a symptom match: "no" and "up" used
+    // to make a bare "no" recommend Emergency and "what's up" recommend Sewer.
+    const phraseTokens = entry.phrase.split(" ").filter((pt) => pt.length >= 3 && !WEAK_SYMPTOM_WORDS.has(pt));
     const overlap = phraseTokens.filter((pt) => tokens.includes(pt)).length;
-    if (overlap === 0) continue;
+    if (overlap === 0 || (phraseTokens.length >= 3 && overlap < 2)) continue;
     const key = entry.slug;
     const current = scores.get(key) ?? 0;
     scores.set(key, current + overlap * entry.weight);

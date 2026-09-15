@@ -75,7 +75,9 @@ export default function FloatingCenterIcon({
         </motion.div>
       </motion.button>
       <div>
-        <p className="whitespace-nowrap font-display text-base font-bold text-white sm:text-xl lg:text-[28px]">Puget Sound Region</p>
+        {/* Hidden on phones: at 320-390px it ran into the Renton marker, and the
+            section heading right above the map already names the region. */}
+        <p className="hidden whitespace-nowrap font-display text-base font-bold text-white sm:block sm:text-xl lg:text-[28px]">Puget Sound Region</p>
         {/* Redundant with the section subtitle directly above the map on
             mobile, and the tightest thing that was colliding with the Tacoma
             marker on short/narrow map cards - dropped there, kept from sm up

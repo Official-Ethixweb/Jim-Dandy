@@ -15,8 +15,12 @@ pnpm-debug.log*
 
 
 # environment variables
+# Astro/Vite also load *.local variants, so ignore those too - a stray
+# .env.local with a real TURNSTILE_SECRET must never reach a public repo.
 .env
+.env.local
 .env.production
+.env.*.local
 
 # macOS-specific files
 .DS_Store
@@ -27,3 +31,9 @@ _*.mjs
 
 # large media source files (kept locally, not deployed)
 _media-src/
+
+# Archived Figma/Wix design exports (~153MB, 290 files). These used to sit in
+# public/, which meant every one of them was deployed and publicly crawlable -
+# including internal mockups and design-review screenshots. Moved out of the
+# deploy and kept locally for reference; they should not enter a public repo.
+design-archive/

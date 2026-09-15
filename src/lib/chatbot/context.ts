@@ -1,6 +1,7 @@
 import type { ServiceSlug } from "@data/chatbot/knowledge";
 import type { IntentName } from "@data/chatbot/intents";
 import type { ChatbotLeadValues } from "@lib/schemas/chatLead";
+import type { KbLink } from "@data/chatbot/kb";
 
 export type WizardStep =
   | "problem"
@@ -11,6 +12,7 @@ export type WizardStep =
   | "name"
   | "phone"
   | "email"
+  | "consent"
   | "notes"
   | "confirm"
   | "submitting"
@@ -22,7 +24,20 @@ export type ChatMessage = {
   from: "bot" | "user";
   text: string;
   quickReplies?: { label: string; value: string }[];
+  /** Page links shown under a bot message (e.g. "Coupons", "Water Heaters details"). */
+  links?: KbLink[];
   timestamp: number;
+};
+
+/** Something the assistant just offered, so a bare "yes" / "sure" / "no" means something. */
+export type PendingOffer = "start_wizard" | "show_coupons" | "check_area" | "resume_wizard" | null;
+
+/** Details the visitor has shared anywhere in the conversation - pre-fills the lead form. */
+export type VisitorProfile = {
+  fullName?: string;
+  phone?: string;
+  email?: string;
+  city?: string;
 };
 
 export type PageContext = {
@@ -50,8 +65,16 @@ export type ChatContext = {
     step: WizardStep | null;
     answers: Partial<ChatbotLeadValues>;
     invalidAttempts: number;
+    /** Set while the visitor is correcting one field from the confirm summary. */
+    editing?: boolean;
   };
   messages: ChatMessage[];
+  pending: PendingOffer;
+  profile: VisitorProfile;
+  /** The visitor's own description of their problem, reused as the lead's "problem". */
+  lastProblem: string | null;
+  turn: number;
+  leadsSent: number;
 };
 
 export function initialContext(pageContext: PageContext): ChatContext {
@@ -67,6 +90,11 @@ export function initialContext(pageContext: PageContext): ChatContext {
     consecutiveUnknown: 0,
     wizard: { active: false, paused: false, step: null, answers: {}, invalidAttempts: 0 },
     messages: [],
+    pending: null,
+    profile: {},
+    lastProblem: null,
+    turn: 0,
+    leadsSent: 0,
   };
 }
 
@@ -169,7 +197,8 @@ export function chatReducer(state: ChatContext, action: ChatAction): ChatContext
   }
 }
 
-const STORAGE_KEY = "jimdandy:chat:v1";
+// v2: the context shape gained profile/pending/lastProblem; v1 sessions are ignored.
+const STORAGE_KEY = "jimdandy:chat:v2";
 
 export function saveContext(ctx: ChatContext): void {
   try {
@@ -185,7 +214,8 @@ export function loadContext(): ChatContext | null {
     if (typeof window === "undefined") return null;
     const raw = window.sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as ChatContext;
+    const parsed = JSON.parse(raw) as ChatContext;
+    return parsed && Array.isArray(parsed.messages) && parsed.profile ? parsed : null;
   } catch {
     return null;
   }

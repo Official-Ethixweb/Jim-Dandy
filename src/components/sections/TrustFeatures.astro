@@ -50,7 +50,9 @@ const iconMap: Record<string, FunctionComponent<LucideProps>> = {
               <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-green-50 text-brand-green-600 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
                 <Icon className="h-7 w-7" strokeWidth={1.75} aria-hidden="true" />
               </span>
-              <span class="font-badge text-3xl font-bold text-navy-100 transition-colors duration-300 group-hover:text-navy-200">
+              {/* #7d8d9e is the lightest tint of the navy scale that still clears the
+                WCAG 3:1 minimum for large text (3.4:1 on white); navy-100 was 1.21:1. */}
+              <span class="font-badge text-3xl font-bold text-[#7d8d9e] transition-colors duration-300 group-hover:text-navy-400" aria-hidden="true">
                 0{index + 1}
               </span>
             </div>

@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import { business, footerServiceLinks, footerSitemapLinks, secondaryNavLinks } from "@data/site";
+import { isRealProfileUrl } from "@lib/seo";
 import footerLogo from "@assets/logos/jim-dandy-logo-plain.webp";
 
 const year = new Date().getFullYear();
@@ -8,10 +9,10 @@ const year = new Date().getFullYear();
 
 <footer class="bg-navy-800 pt-16 text-white">
   <div class="container-page">
-    <div class="grid grid-cols-2 gap-x-6 gap-y-10 pb-12 sm:grid-cols-2 sm:gap-12 lg:grid-cols-4">
+    <div class="grid grid-cols-2 gap-x-6 gap-y-10 pb-24 sm:grid-cols-2 lg:pb-12 sm:gap-12 lg:grid-cols-4">
       <div class="col-span-2 flex flex-col gap-6 lg:col-span-1">
         <a href="/" aria-label="Jim Dandy Sewer & Plumbing, Home">
-          <Image src={footerLogo} alt="Jim Dandy Sewer & Plumbing" class="h-14 w-auto" />
+          <Image src={footerLogo} alt="Jim Dandy Sewer & Plumbing" class="h-auto max-h-14 w-auto max-w-full object-contain" />
         </a>
         <div class="flex flex-col gap-4">
           <span class="font-display text-sm font-bold uppercase tracking-[0.2em] text-white/60">
@@ -32,10 +33,10 @@ const year = new Date().getFullYear();
 
       <div>
         <h2 class="font-heading text-lg font-semibold text-white">Services</h2>
-        <ul class="mt-5 flex flex-col gap-1">
+        <ul class="mt-4 flex flex-col">
           {footerServiceLinks.map((link) => (
             <li>
-              <a href={link.href} class="-my-3 inline-flex min-h-11 items-center py-3 text-sm text-white/75 transition-colors hover:text-white">
+              <a href={link.href} class="inline-flex min-h-8 items-center text-sm text-white/75 transition-colors hover:text-white">
                 {link.label}
               </a>
             </li>
@@ -45,10 +46,10 @@ const year = new Date().getFullYear();
 
       <div>
         <h2 class="font-heading text-lg font-semibold text-white">Sitemap</h2>
-        <ul class="mt-5 flex flex-col gap-1">
+        <ul class="mt-4 flex flex-col">
           {[...footerSitemapLinks, ...secondaryNavLinks].map((link) => (
             <li>
-              <a href={link.href} class="-my-3 inline-flex min-h-11 items-center py-3 text-sm text-white/75 transition-colors hover:text-white">
+              <a href={link.href} class="inline-flex min-h-8 items-center text-sm text-white/75 transition-colors hover:text-white">
                 {link.label}
               </a>
             </li>
@@ -58,14 +59,14 @@ const year = new Date().getFullYear();
 
       <div class="col-span-2 sm:col-span-1">
         <h2 class="font-heading text-lg font-semibold text-white">Contact</h2>
-        <ul class="mt-5 flex flex-col gap-2 text-sm text-white/75">
+        <ul class="mt-4 flex flex-col gap-1 text-sm text-white/75">
           <li>
-            <a href={business.phoneHref} class="-my-2 inline-flex min-h-11 items-center py-2 font-display text-2xl font-bold text-white">
+            <a href={business.phoneHref} class="inline-flex min-h-11 items-center font-display text-2xl font-bold text-white">
               {business.phone}
             </a>
           </li>
           <li>
-            <a href={`mailto:${business.email}`} class="-my-3 inline-flex min-h-11 items-center py-3 hover:text-white">
+            <a href={`mailto:${business.email}`} class="inline-flex min-h-8 items-center hover:text-white">
               {business.email}
             </a>
           </li>
@@ -77,15 +78,20 @@ const year = new Date().getFullYear();
           </li>
         </ul>
         <div class="mt-5 flex gap-3">
-          <a
-            href={business.social.facebook}
-            aria-label="Jim Dandy on Facebook"
-            class="grid h-11 w-11 place-items-center rounded-full bg-white/10 transition-colors hover:bg-brand-green-500 hover:text-navy-900"
-          >
-            <svg viewBox="0 0 24 24" class="h-8 w-8" fill="currentColor" aria-hidden="true">
-              <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.23 10.44 22v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22C18.34 21.23 22 17.08 22 12.06z" />
-            </svg>
-          </a>
+          {/* social.facebook is still the placeholder "https://www.facebook.com/",
+              which would send every visitor to Facebook's homepage. The icon stays
+              hidden until a real profile URL is filled in in site.ts. */}
+          {isRealProfileUrl(business.social.facebook) && (
+            <a
+              href={business.social.facebook}
+              aria-label="Jim Dandy on Facebook"
+              class="grid h-11 w-11 place-items-center rounded-full bg-white/10 transition-colors hover:bg-brand-green-500 hover:text-navy-900"
+            >
+              <svg viewBox="0 0 24 24" class="h-8 w-8" fill="currentColor" aria-hidden="true">
+                <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.23 10.44 22v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22C18.34 21.23 22 17.08 22 12.06z" />
+              </svg>
+            </a>
+          )}
           <a
             href={business.social.google}
             aria-label="Jim Dandy on Google"
@@ -102,7 +108,7 @@ const year = new Date().getFullYear();
       end of the page it sat on top of this strip and the launchers landed on
       the social icons. StickyCta publishes its height here and the strip grows
       to match, keeping its own background under the reserved space. */}
-  <div class="bg-brand-green-500 pb-[var(--sticky-cta-reserve,0px)] lg:pb-0">
+  <div id="footer-legal" class="bg-brand-green-500 pb-[var(--sticky-cta-reserve,0px)] lg:pb-0">
     {/* Stays stacked and centred until lg: from sm to md this row was laid out
          edge-to-edge and "Terms of Service" ran under the chat launcher in the
          bottom-right corner. Centred, it clears both launchers. */}
@@ -115,3 +121,24 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script>
+  // The chat and accessibility launchers are fixed in the bottom corners, so on
+  // arrival at the end of the page they sat on the copyright line and the
+  // Privacy/Terms links. While this strip is on screen, publish its height and
+  // the launchers lift clear of it (they take max(this, the sticky CTA lift)).
+  function initFooterLift() {
+    const strip = document.getElementById("footer-legal");
+    if (!strip || !("IntersectionObserver" in window)) return;
+    const root = document.documentElement;
+    let visible = false;
+    const apply = () => root.style.setProperty("--footer-lift", visible ? `${Math.round(strip.getBoundingClientRect().height)}px` : "0px");
+    new IntersectionObserver((entries) => {
+      visible = entries.some((entry) => entry.isIntersecting);
+      apply();
+    }).observe(strip);
+    window.addEventListener("resize", apply, { passive: true });
+  }
+  if (document.readyState !== "loading") initFooterLift();
+  else document.addEventListener("DOMContentLoaded", initFooterLift);
+</script>

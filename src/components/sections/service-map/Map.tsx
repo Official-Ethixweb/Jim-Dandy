@@ -26,10 +26,10 @@ import type { CityPin } from "./types";
 const HUB: CityPin = { label: "Seattle", x: 50, y: 46 };
 
 const CITIES: CityPin[] = [
-  { label: "Everett", x: 52, y: 9 },
-  { label: "Kirkland", x: 66, y: 28 },
-  { label: "Bellevue", x: 78, y: 44 },
-  { label: "Renton", x: 70, y: 68 },
+  { label: "Everett", x: 42, y: 25 },
+  { label: "Kirkland", x: 68, y: 31 },
+  { label: "Bellevue", x: 84, y: 50 },
+  { label: "Renton", x: 72, y: 72 },
   { label: "Tacoma", x: 18, y: 86 },
 ];
 
@@ -98,7 +98,7 @@ export default function Map() {
   return (
     <div ref={outerRef} className="relative">
       <div
-        className="relative aspect-[16/9] w-full overflow-hidden rounded-[32px] bg-navy-900 sm:aspect-[2/1]"
+        className="relative aspect-[4/3] w-full overflow-hidden rounded-[32px] bg-navy-900 sm:aspect-[2/1]"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >

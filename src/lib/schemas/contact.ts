@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { fullNameField, emailField, phoneField, consentField } from "./shared";
+import { fullNameField, emailField, phoneField, consentField, shortTextField, sourcePageField } from "./shared";
 
 export const serviceOptions = [
   { value: "plumbing", label: "Plumbing", icon: "wrench" },
@@ -9,6 +9,10 @@ export const serviceOptions = [
   { value: "other", label: "Other", icon: "more-horizontal" },
 ] as const;
 
+export const serviceLabels: Record<(typeof serviceOptions)[number]["value"], string> = Object.fromEntries(
+  serviceOptions.map((o) => [o.value, o.label]),
+) as Record<(typeof serviceOptions)[number]["value"], string>;
+
 export const contactSchema = z
   .object({
     fullName: fullNameField,
@@ -16,9 +20,11 @@ export const contactSchema = z
     phone: phoneField,
     serviceNeeded: z
       .array(z.enum(["plumbing", "heating", "sewers", "commercial", "other"]))
-      .min(1, "Select at least one service"),
-    otherServiceDetail: z.string().trim().max(120).optional(),
+      .min(1, "Select at least one service")
+      .max(5),
+    otherServiceDetail: shortTextField(120).optional(),
     consent: consentField,
+    sourcePage: sourcePageField,
   })
   .refine((data) => !data.serviceNeeded.includes("other") || Boolean(data.otherServiceDetail?.trim()), {
     message: "Tell us briefly what you need",

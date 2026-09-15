@@ -1,5 +1,13 @@
 ---
-import { resolveCanonical, localBusinessSchema, SITE_NAME } from "@lib/seo";
+import {
+  resolveCanonical,
+  localBusinessSchema,
+  organizationSchema,
+  websiteSchema,
+  pathShowsReviews,
+  SITE_NAME,
+  SITE_SHORT_NAME,
+} from "@lib/seo";
 import type { SeoProps } from "@lib/seo";
 
 type Props = SeoProps;
@@ -7,14 +15,32 @@ type Props = SeoProps;
 const { title, description, path, image = "/shared/seo/og-default.jpg", noindex = false } = Astro.props;
 
 const canonical = resolveCanonical(path);
-const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+const fullTitle = title.includes(SITE_SHORT_NAME) ? title : `${title} | ${SITE_NAME}`;
 const ogImage = resolveCanonical(image);
+
+/**
+ * Preview and staging deploys must never be indexable, or they compete with
+ * production for the same content. Vercel sets VERCEL_ENV on every build
+ * ("production" | "preview" | "development"), so any non-production deploy is
+ * marked noindex automatically - nobody has to remember to set a flag.
+ * VERCEL_ENV is absent for local builds, which are never served publicly.
+ */
+const vercelEnv = process.env.VERCEL_ENV;
+const isNonProductionDeploy = vercelEnv !== undefined && vercelEnv !== "production";
+const shouldNoindex = noindex || isNonProductionDeploy;
+
+/** Star ratings are only asserted on pages that actually show reviews. */
+const includeRating = pathShowsReviews(path);
+
+/** Organization and WebSite describe the publisher and the site as a whole -
+ *  one declaration each, on the homepage, rather than repeated on every page. */
+const isHome = path === "/";
 ---
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{shouldNoindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={SITE_NAME} />
@@ -22,6 +48,11 @@ const ogImage = resolveCanonical(image);
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImage} />
+{/* Verified against public/shared/seo/og-default.jpg. Declaring the real size
+    lets Facebook/LinkedIn lay out the card before fetching the image. */}
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={`${SITE_NAME} - licensed plumbing and sewer service in Seattle and Puget Sound`} />
 <meta property="og:locale" content="en_US" />
 
 <meta name="twitter:card" content="summary_large_image" />
@@ -29,4 +60,16 @@ const ogImage = resolveCanonical(image);
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 
-<script type="application/ld+json" is:inline set:html={JSON.stringify(localBusinessSchema())} />
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={JSON.stringify(localBusinessSchema({ includeRating }))}
+/>
+{
+  isHome && (
+    <>
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(organizationSchema())} />
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(websiteSchema())} />
+    </>
+  )
+}

@@ -8,19 +8,21 @@ import { business } from "@data/site";
 
 <section class="hero-section relative overflow-hidden bg-navy-800 max-sm:flex max-sm:min-h-[calc(100svh-96px)] max-sm:flex-col">
   <div class="absolute inset-0 lg:hidden" aria-hidden="true">
+    {/* Decorative background at 30% opacity behind a gradient. The file is
+        attached by the script below only on the breakpoint that shows it (and
+        never on data-saver / slow connections), so neither video carries a
+        <source> in the markup - an empty one made Firefox log a failed load. */}
     <video
       class="hero-video h-full w-full object-cover opacity-[0.3]"
       data-media="(max-width: 1023.98px)"
-      autoplay
+      data-src="/pages/home/hero/seattle-hero.mp4"
+      data-lightweight
       muted
       loop
       playsinline
       preload="none"
-      poster="/pages/home/hero/seattle-hero-poster.jpg"
-      fetchpriority="high"
-    >
-      <source data-src="/pages/home/hero/seattle-hero.mp4" type="video/mp4" />
-    </video>
+      poster="/pages/home/hero/seattle-hero-poster.webp"
+    ></video>
     <div class="absolute inset-0 bg-gradient-to-b from-navy-900/55 via-navy-800/65 to-navy-900/90"></div>
   </div>
 
@@ -49,15 +51,13 @@ import { business } from "@data/site";
         <video
           class="hero-video hero-frame-video absolute inset-0 h-full w-full object-cover"
           data-media="(min-width: 1024px)"
-          autoplay
+          data-src="/pages/home/hero/seattle-hero.mp4"
           muted
           loop
           playsinline
           preload="none"
-          poster="/pages/home/hero/seattle-hero-poster.jpg"
-        >
-          <source data-src="/pages/home/hero/seattle-hero.mp4" type="video/mp4" />
-        </video>
+          poster="/pages/home/hero/seattle-hero-poster.webp"
+        ></video>
       </div>
     </div>
   </div>
@@ -159,10 +159,8 @@ import { business } from "@data/site";
      between them); any slack while typing sits above the headline as breathing
      room. Desktop/tablet keep the original top-aligned headline. */
   @media (max-width: 639px) {
-    .hero-section h1 > span {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+    .hero-section h1 .rh-live {
+      align-self: end;
     }
   }
 
@@ -203,24 +201,27 @@ import { business } from "@data/site";
   // twice, so the source is wired up per breakpoint instead.
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  // On phones the video is a 30%-opacity backdrop, so it is skipped entirely
+  // when the visitor has asked to save data or is on a slow connection - the
+  // poster already carries the look.
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  const constrained = Boolean(connection?.saveData) || /(^|-)(2g|3g)$/.test(connection?.effectiveType ?? "");
+
   const syncHeroVideos = () => {
     document.querySelectorAll<HTMLVideoElement>(".hero-video").forEach((video) => {
-      const source = video.querySelector("source");
       const query = video.dataset.media;
-      if (!source || !query) return;
+      const src = video.dataset.src;
+      if (!query || !src) return;
 
-      const wanted = !reduceMotion.matches && window.matchMedia(query).matches;
-      const src = source.dataset.src ?? "";
+      const skipForNetwork = constrained && video.hasAttribute("data-lightweight");
+      const wanted = !reduceMotion.matches && !skipForNetwork && window.matchMedia(query).matches;
 
       if (wanted) {
-        if (source.getAttribute("src") === src) return;
-        source.setAttribute("src", src);
-        video.load();
+        if (video.getAttribute("src") === src) return;
+        video.setAttribute("src", src);
         void video.play().catch(() => {});
-      } else {
-        if (!source.hasAttribute("src")) return;
+      } else if (video.hasAttribute("src")) {
         video.pause();
-        source.removeAttribute("src");
         video.removeAttribute("src");
         video.load();
       }

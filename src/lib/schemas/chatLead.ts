@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { fullNameField, emailField, phoneField, consentField } from "./shared";
+import { fullNameField, emailField, phoneField, consentField, shortTextField, sourcePageField } from "./shared";
 import type { ServiceSlug } from "@data/chatbot/knowledge";
 
 export const chatbotLeadSchema = z.object({
@@ -7,17 +7,30 @@ export const chatbotLeadSchema = z.object({
   email: emailField,
   phone: phoneField,
   serviceNeeded: z.enum(["plumbing", "heating", "sewers", "commercial", "other"]),
-  problem: z.string().trim().min(3, "Tell us briefly what's going on").max(300),
+  problem: shortTextField(300).min(3, "Tell us briefly what's going on"),
   urgency: z.enum(["emergency", "today", "this-week", "flexible"]),
   audience: z.enum(["residential", "commercial"]),
-  city: z.string().trim().min(2, "Let us know your city").max(60),
-  timing: z.string().trim().max(120).optional(),
-  notes: z.string().trim().max(500).optional(),
+  city: shortTextField(60).min(2, "Let us know your city"),
+  timing: shortTextField(120).optional(),
+  notes: shortTextField(500).optional(),
   consent: consentField,
   source: z.literal("chat"),
+  sourcePage: sourcePageField,
 });
 
 export type ChatbotLeadValues = z.infer<typeof chatbotLeadSchema>;
+
+export const urgencyLabels: Record<ChatbotLeadValues["urgency"], string> = {
+  emergency: "Emergency",
+  today: "Today",
+  "this-week": "This week",
+  flexible: "Flexible",
+};
+
+export const audienceLabels: Record<ChatbotLeadValues["audience"], string> = {
+  residential: "Residential",
+  commercial: "Commercial",
+};
 
 /** Maps a chatbot service slug to the shared serviceNeeded enum used by both lead forms. */
 export function serviceNeededFromSlug(slug: ServiceSlug): ChatbotLeadValues["serviceNeeded"] {

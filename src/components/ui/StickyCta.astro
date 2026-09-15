@@ -8,6 +8,7 @@ import { CalendarClock, Phone } from "lucide-react";
   class="pointer-events-none fixed inset-x-0 bottom-0 z-40 translate-y-full p-3 transition-transform duration-300 ease-brand lg:hidden"
   style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));"
   aria-hidden="true"
+  inert
 >
   <div class="pointer-events-auto mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-white/10 bg-navy-900/95 p-2 shadow-2xl backdrop-blur-md">
     <a
@@ -35,6 +36,9 @@ import { CalendarClock, Phone } from "lucide-react";
       const show = window.scrollY > 520;
       bar.classList.toggle("translate-y-full", !show);
       bar.setAttribute("aria-hidden", show ? "false" : "true");
+      // aria-hidden alone left both links in the tab order while the bar was
+      // off-screen; inert removes them from focus and the accessibility tree.
+      bar.inert = !show;
       // The chat and accessibility launchers are fixed in the same corners this
       // bar occupies, and at 375px they covered the left edge of "Call Now" and
       // half of "Schedule". Publish the bar's height so they can step above it.

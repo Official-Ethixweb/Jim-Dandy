@@ -50,7 +50,7 @@ export default function AccessibilityWidget() {
   const activeCount = Object.values(toggles).filter(Boolean).length + (textStep !== 1 ? 1 : 0);
 
   return (
-    <div className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom)+var(--sticky-cta-lift,0px))] left-4 z-[60] transition-[bottom] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:bottom-[calc(1.5rem+var(--sticky-cta-lift,0px))] sm:left-6">
+    <div className="floating-launcher fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom)+max(var(--sticky-cta-lift,0px),var(--footer-lift,0px)))] left-4 z-[60] transition-[bottom] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:bottom-[calc(1.5rem+max(var(--sticky-cta-lift,0px),var(--footer-lift,0px)))] sm:left-6">
       <AnimatePresence>
         {open && (
           <motion.div
@@ -70,7 +70,7 @@ export default function AccessibilityWidget() {
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-2 font-display text-lg font-bold leading-none">
                   Accessibility
-                  <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/80">
+                  <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-white/80">
                     Preview
                   </span>
                 </p>

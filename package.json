@@ -12,9 +12,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^6.0.1",
-    "@astrojs/sitemap": "^3.7.3",
-    "@astrojs/vercel": "^11.0.2",
+    "@astrojs/react": "^6.0.5",
+    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/vercel": "^11.0.10",
     "@fontsource/barlow-condensed": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/oswald": "^5.2.8",
@@ -24,22 +24,23 @@
     "@tailwindcss/vite": "^4.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "astro": "^7.0.7",
+    "astro": "^7.3.2",
     "framer-motion": "^12.42.2",
-    "gsap": "^3.15.0",
     "lucide-react": "^1.24.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.81.0",
-    "swiper": "^14.0.5",
     "tailwindcss": "^4.3.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "playwright": "^1.61.1",
-    "potrace": "^2.1.8",
-    "svgo": "^4.0.2",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "@vercel/routing-utils": {
+      "path-to-regexp": "6.3.0"
+    }
   }
 }

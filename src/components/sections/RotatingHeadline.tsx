@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 type Line = { question: string; answer: string };
@@ -36,26 +36,11 @@ function Highlight({ text }: { text: string }) {
 }
 
 export default function RotatingHeadline({ className }: { className?: string }) {
-  const [minHeight, setMinHeight] = useState<number>();
   const [reducedMotion, setReducedMotion] = useState(false);
   const [index, setIndex] = useState(0);
-  const measureRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      const container = measureRef.current;
-      if (!container) return;
-      const heights = Array.from(container.children).map((el) => (el as HTMLElement).offsetHeight);
-      setMinHeight(Math.max(...heights));
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    document.fonts?.ready?.then(measure);
-    return () => window.removeEventListener("resize", measure);
   }, []);
 
   useEffect(() => {
@@ -67,10 +52,28 @@ export default function RotatingHeadline({ className }: { className?: string }) 
   const line = lines[index];
 
   return (
-    <h1 className={className}>
-      {/* minHeight reserves the tallest of the five headlines, so shorter and
-          longer lines swap with zero layout shift. */}
-      <span className="relative block" style={minHeight ? { minHeight } : undefined}>
+    // Height is reserved by an in-flow sizer that stacks all five headlines
+    // into a single grid cell, so the row is always as tall as the tallest one.
+    // Doing this in CSS rather than a measured minHeight means the reserve is
+    // already correct in the server-rendered HTML - it survives hydration,
+    // webfont swap, and resize with zero layout shift.
+    //
+    // The sizer sits beside the <h1>, not inside it: inside, all five sentences
+    // were part of the page's H1 text for search engines and screen readers.
+    <div className={`rh-stack relative grid ${className ?? ""}`}>
+      <span className="rh-sizer invisible grid" aria-hidden="true">
+        {lines.map((l, i) => (
+          <span key={i} className="block">
+            {l.question}
+            <br />
+            {l.answer}
+          </span>
+        ))}
+      </span>
+
+      {/* font/colour inherit from the wrapper, which carries the type classes
+          (the global h1 rule would otherwise swap in the heading face). */}
+      <h1 className="rh-live relative m-0" style={{ font: "inherit", letterSpacing: "inherit", color: "inherit" }}>
         {reducedMotion ? (
           <span className="block">
             <Highlight text={lines[0].question} />
@@ -78,9 +81,8 @@ export default function RotatingHeadline({ className }: { className?: string }) 
             <Highlight text={lines[0].answer} />
           </span>
         ) : (
-          // popLayout keeps the incoming headline in normal flow (natural
-          // height, no CLS before minHeight resolves) while the outgoing one
-          // is popped out to crossfade over it.
+          // popLayout keeps the incoming headline in normal flow while the
+          // outgoing one is popped out to crossfade over it.
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
               key={index}
@@ -105,17 +107,7 @@ export default function RotatingHeadline({ className }: { className?: string }) 
             </motion.span>
           </AnimatePresence>
         )}
-
-        <span ref={measureRef} className="invisible absolute inset-x-0 top-0" aria-hidden="true">
-          {lines.map((l, i) => (
-            <span key={i} className="block">
-              {l.question}
-              <br />
-              {l.answer}
-            </span>
-          ))}
-        </span>
-      </span>
-    </h1>
+      </h1>
+    </div>
   );
 }

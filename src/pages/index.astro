@@ -9,11 +9,12 @@ import ReviewsSection from "@components/sections/ReviewsSection.astro";
 import ContactSection from "@components/sections/ContactSection.astro";
 import ServiceAreaSection from "@components/sections/ServiceAreaSection.astro";
 import FinalCta from "@components/sections/FinalCta.astro";
+import { business } from "@data/site";
 ---
 
 <Layout
   title="Seattle's Plumber Since 1908 | Jim Dandy Sewer & Plumbing"
-  description="Licensed plumbing & sewer experts serving the Puget Sound region 24/7. Upfront pricing, same-day service, and 118 years of trusted repairs."
+  description={`Licensed plumbing & sewer experts serving the Puget Sound region 24/7. Upfront pricing, same-day service, and ${business.yearsInBusiness} years of trusted repairs.`}
   path="/"
 >
   {/* Hero LCP assets, scoped to the breakpoint that actually renders them:
@@ -23,7 +24,7 @@ import FinalCta from "@components/sections/FinalCta.astro";
     slot="head"
     rel="preload"
     as="image"
-    href="/pages/home/hero/seattle-hero-poster.jpg"
+    href="/pages/home/hero/seattle-hero-poster.webp"
     media="(max-width: 1023px)"
   />
   <link

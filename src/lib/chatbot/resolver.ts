@@ -12,7 +12,8 @@ import {
   type ServiceSlug,
 } from "@data/chatbot/knowledge";
 import type { IntentMatch } from "./intent-engine";
-import type { ChatContext, WizardStep } from "./context";
+import type { ChatContext, PendingOffer, WizardStep } from "./context";
+import type { KbLink } from "@data/chatbot/kb";
 import type { IntentName } from "@data/chatbot/intents";
 
 export type QuickReply = { label: string; value: string };
@@ -23,6 +24,9 @@ export type ChatResponse = {
   startWizard?: WizardStep;
   setEntity?: { service?: ServiceSlug | null; city?: string | null; audience?: "residential" | "commercial" | null };
   emergency?: boolean;
+  /** What a bare "yes" should do next. */
+  pending?: PendingOffer;
+  links?: KbLink[];
 };
 
 const DEFAULT_QUICK_REPLIES: QuickReply[] = [
@@ -104,17 +108,18 @@ export function resolve(message: string, ctx: ChatContext, match: IntentMatch): 
       };
 
     case "GOODBYE":
-      return { text: "Take care! If anything comes up, I'll be right here - or call " + business.phone + " anytime." };
+      return { text: `Take care${ctx.profile?.fullName ? `, ${ctx.profile.fullName.split(" ")[0]}` : ""}! If anything comes up, I'm right here - or call ${business.phone} anytime. 👋` };
 
     case "THANK_YOU":
-      return { text: "You're welcome! Anything else I can help with?", quickReplies: DEFAULT_QUICK_REPLIES };
+      return { text: pick(["You're very welcome! Anything else I can help with?", "Happy to help! Anything else on your mind?", "Anytime! Let me know if there's anything else."], ctx.turn ?? 0), quickReplies: DEFAULT_QUICK_REPLIES };
 
     case "BOOK_SERVICE":
     case "GET_ESTIMATE": {
       const svc = entities.serviceSlug ?? ctx.activeService;
-      const lead = svc ? `Happy to help with your ${serviceBySlug.get(svc)?.label ?? "service"} request. ` : "Happy to help. ";
+      const label = svc ? serviceBySlug.get(svc)?.label.toLowerCase().replace(/^all /, "").replace(/s$/, "") : undefined;
+      const lead = label ? `Let's get your ${label} issue taken care of.` : "Happy to help.";
       return {
-        text: `${lead}I just need a few quick details and I'll get this to the team.`,
+        text: `${lead} Just a few quick details and I'll get this to the team.`,
         startWizard: "problem",
         setEntity: svc ? { service: svc } : undefined,
       };
@@ -127,16 +132,16 @@ export function resolve(message: string, ctx: ChatContext, match: IntentMatch): 
       };
 
     case "PHONE":
-      return { text: `Our number is ${business.phone} - available ${business.hours}.` };
+      return { text: `Our number is ${business.phone}. A live dispatcher answers 24/7 for emergencies; regular office hours are ${business.hours.split(" · ")[0]}.`, quickReplies: [{ label: `Call ${business.phone}`, value: "call" }] };
 
     case "EMAIL":
-      return { text: `You can email us at ${business.email}.` };
+      return { text: `You can email us at ${business.email} - we reply within one business day. For anything urgent, call ${business.phone}.` };
 
     case "ADDRESS":
-      return { text: `We're located at ${business.address.full}.` };
+      return { text: `We're based at ${business.address.full.replace(/, United States$/, "")}, and our technicians come to you anywhere in King, Snohomish, and Pierce Counties.`, links: [{ label: "Directions & contact", href: "/contact" }] };
 
     case "HOURS":
-      return { text: `${business.hours}. Emergencies are answered any hour, day or night.` };
+      return { text: `Office hours are ${business.hours.split(" · ")[0]}, and emergency service runs 24/7 - nights, weekends, and holidays included. Call ${business.phone} anytime.` };
 
     case "SERVICES":
       return {
@@ -187,6 +192,7 @@ export function resolve(message: string, ctx: ChatContext, match: IntentMatch): 
         const county = cityToCounty.get(city.toLowerCase());
         return {
           text: `Yes - we dispatch same-day in ${city}${county ? ` (${county})` : ""}. Want to get something scheduled?`,
+          pending: "start_wizard",
           quickReplies: [{ label: "Book a service", value: "Book a service" }, { label: "Get an estimate", value: "Get an estimate" }],
           setEntity: { city },
         };
@@ -202,7 +208,7 @@ export function resolve(message: string, ctx: ChatContext, match: IntentMatch): 
       const faq = allFaqs.find((f) => f.question.toLowerCase().includes("cost"));
       const svcNote = pricingSlug ? ` for your ${serviceBySlug.get(pricingSlug)?.label} request` : "";
       return {
-        text: `${faq?.answer ?? "We diagnose on-site and give flat-rate, upfront pricing before any work begins."} Want a free estimate${svcNote}?`,
+        text: `${faq?.answer ?? "We diagnose on-site and give flat-rate, upfront pricing before any work begins."} Want me to set up a visit${svcNote}?`,
         quickReplies: [{ label: "Get an estimate", value: "Get an estimate" }, { label: `Call ${business.phone}`, value: "call" }],
         setEntity: pricingSlug ? { service: pricingSlug } : undefined,
       };
@@ -233,7 +239,8 @@ export function resolve(message: string, ctx: ChatContext, match: IntentMatch): 
     case "REVIEWS_TESTIMONIALS":
       return {
         text: `We're rated ${business.rating.value}/5 from ${business.rating.count}+ reviews. Customers consistently mention our upfront pricing and same-day response.`,
-        quickReplies: [{ label: "Read reviews", value: "reviews page" }, { label: "Book a service", value: "Book a service" }],
+        quickReplies: [{ label: "Book a service", value: "Book a service" }],
+        links: [{ label: "Read reviews", href: "/reviews" }],
       };
 
     case "ABOUT_EXPERIENCE":
@@ -253,7 +260,7 @@ export function resolve(message: string, ctx: ChatContext, match: IntentMatch): 
     }
 
     case "CAREERS":
-      return { text: "We're always looking for good people. Check out our Careers page for open roles and what it's like to work here." };
+      return { text: "We're always looking for good people - licensed plumbers, apprentices, sewer & drain techs, and office/dispatch staff. The Careers page has the details.", links: [{ label: "Careers", href: "/careers" }] };
 
     case "COMPLAINT_HUMAN":
       return {

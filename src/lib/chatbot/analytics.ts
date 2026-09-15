@@ -1,9 +1,9 @@
 /**
- * No analytics/dataLayer integration exists in this project yet. pushEvent
- * pushes to window.dataLayer only if something else has already initialized
- * it (e.g. GTM added later); otherwise it's a silent no-op. Never assume or
- * fabricate an analytics integration.
+ * Chatbot funnel events. These delegate to the shared tracker in
+ * @lib/analytics, so they reach GA4 and/or GTM through exactly the same path
+ * as the contact form - and stay silent no-ops when neither is configured.
  */
+import { trackEvent } from "@lib/analytics";
 export const CHAT_EVENTS = {
   OPENED: "chat_opened",
   CLOSED: "chat_closed",
@@ -21,17 +21,6 @@ export const CHAT_EVENTS = {
   RESTARTED: "chat_restarted",
 } as const;
 
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-  }
-}
-
 export function pushEvent(name: string, payload?: Record<string, unknown>): void {
-  try {
-    if (typeof window === "undefined" || !Array.isArray(window.dataLayer)) return;
-    window.dataLayer.push({ event: name, ...payload });
-  } catch {
-    // Analytics must never break the chat experience.
-  }
+  trackEvent(name, payload ?? {});
 }

@@ -53,7 +53,7 @@ const items = [
 
 <Layout
   title="Project Gallery | Jim Dandy Sewer & Plumbing"
-  description="See real Jim Dandy plumbing and sewer work across the Puget Sound region - drain cleaning, trenchless sewer repair, repiping, water heaters, and our team in action."
+  description="Real Jim Dandy plumbing and sewer work across Puget Sound - drain cleaning, trenchless sewer repair, repiping, water heaters, and our team on the job."
   path="/gallery"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
@@ -97,7 +97,8 @@ const items = [
             aria-label={`View larger: ${item.caption}`}
           >
             {/* The wrapping button already announces the caption via aria-label,
-                so the image is decorative here - avoids triple-announcement. */}
+                and the caption is also visible text on hover, so the image stays
+                decorative here - a caption alt duplicates it (axe image-redundant-alt). */}
             <Image
               src={item.src}
               alt=""
@@ -183,7 +184,7 @@ const items = [
       const img = item.querySelector("img");
       if (!img || !lbImg) return;
       lbImg.src = img.currentSrc || img.src;
-      lbImg.alt = img.alt;
+      lbImg.alt = item.getAttribute("data-caption") || "";
       // Shipped without a src so the markup never contains an image that
       // cannot load; it is revealed once a real source is assigned.
       lbImg.hidden = false;

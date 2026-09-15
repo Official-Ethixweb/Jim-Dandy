@@ -90,7 +90,7 @@ export default function Marker({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 2 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="pointer-events-none absolute -top-9 whitespace-nowrap rounded-full bg-navy-900/90 px-3 py-1 text-[11px] font-semibold text-white shadow-lg"
+            className="pointer-events-none absolute -top-9 whitespace-nowrap rounded-full bg-navy-900/90 px-3 py-1 text-xs font-semibold text-white shadow-lg"
           >
             Click to view services
           </motion.span>

@@ -17,7 +17,15 @@ const { title, subtitle, eyebrow, align = "center", light = false, as: Tag = "h2
       {eyebrow}
     </span>
   )}
-  <div class:list={["flex w-screen items-center gap-4 sm:gap-6", align === "center" ? "justify-center" : "justify-start"]} style="margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);">
+  {/* Centered headings bleed their bars to both screen edges, which only works
+      when the heading spans the page container. A left-aligned heading sits in
+      a grid column (e.g. /reviews), where that bleed spilled across the
+      neighbouring card and pushed the page 271px wider than the viewport - so
+      it keeps its bars inside its own column instead. */}
+  <div
+    class:list={["flex items-center gap-4 sm:gap-6", align === "center" ? "w-screen justify-center" : "w-full justify-start"]}
+    style={align === "center" ? "margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);" : undefined}
+  >
     <span
       class:list={["hidden flex-1 sm:flex flex-col gap-2", align === "left" && "max-w-16"]}
       aria-hidden="true"

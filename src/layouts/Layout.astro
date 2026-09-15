@@ -1,4 +1,7 @@
 ---
+import barlowCondensed800Italic from "@fontsource/barlow-condensed/files/barlow-condensed-latin-800-italic.woff2?url";
+import interLatin400 from "@fontsource/inter/files/inter-latin-400-normal.woff2?url";
+import Analytics from "@components/layout/Analytics.astro";
 import Seo from "@components/layout/Seo.astro";
 import Header from "@components/layout/Header";
 import Footer from "@components/layout/Footer.astro";
@@ -18,8 +21,20 @@ const { title, description, path, image, noindex } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
+    {/* Safari ignores SVG for the home-screen icon, so the 180x180 raster is
+        required or iOS falls back to a screenshot of the page. */}
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#002244" />
+    {/* The two faces that paint above the fold on every page: the display face
+        used by every h1 and the body face. font-display:swap means an unloaded
+        face paints in the fallback first, and the metric difference reflows the
+        hero headline - preloading these removes that shift at the source. */}
+    <link rel="preload" as="font" type="font/woff2" href={barlowCondensed800Italic} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={interLatin400} crossorigin />
     <Seo title={title} description={description} path={path} image={image} noindex={noindex} />
+    <Analytics />
     <slot name="head" />
   </head>
   <body class="antialiased">

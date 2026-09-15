@@ -26,7 +26,12 @@
   --color-navy-100: #e6e9ec;
   --color-navy-50: #f5f7fa;
 
-  --color-brand-green-600: #4b871c;
+  /* Darkened from #4b871c. This token is used 23x as a text colour (section
+     eyebrows, link accents) and never as a fill, and at 14px it only reached
+     4.39:1 on white and 4.17:1 on --color-surface - both short of the WCAG AA
+     4.5:1 minimum for normal-size text. #457c17 is the same hue and clears AA
+     on both grounds (5.06:1 and 4.80:1). */
+  --color-brand-green-600: #457c17;
   --color-brand-green-500: #69be28;
   --color-brand-green-400: #87cb53;
   --color-brand-green-100: #dcffc2;
@@ -144,6 +149,17 @@
   color: transparent;
 }
 
+/* Rotating hero headline. The sizer and the live line share one grid cell, so
+   the cell is always as tall as the tallest of the five headlines - reserved in
+   the server-rendered HTML, before hydration or the webfont swap can shift it.
+   The sizer's own children also share a cell, making its height the max of the
+   five rather than their sum. */
+.rh-sizer > *,
+.rh-sizer,
+.rh-live {
+  grid-area: 1 / 1;
+}
+
 /* Scalloped "postage stamp" pill badge, matching the Figma license-badge mark. */
 .stamp-pill {
   position: relative;
@@ -179,4 +195,21 @@
 
 .stamp-pill::after {
   bottom: calc(var(--stamp-pill-size, 13px) / -2);
+}
+
+/* Floating chat + accessibility launchers step aside while the mobile menu is
+   open (Header toggles data-menu-open on <html>); otherwise they sat on top of
+   the last menu items. */
+html[data-menu-open] .floating-launcher {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* While the chat is open, the accessibility launcher steps aside so it never
+   sits on top of the chat panel (full-screen on phones). */
+html[data-chat-open] .floating-launcher:not(:has([role="dialog"])) {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
 }

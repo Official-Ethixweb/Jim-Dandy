@@ -2,13 +2,14 @@
 import Layout from "@layouts/Layout.astro";
 import Button from "@components/ui/Button.astro";
 import SectionHeading from "@components/ui/SectionHeading.astro";
+import Heading from "@components/ui/Heading.astro";
 import PageHero from "@components/sections/PageHero.astro";
 import FinalCta from "@components/sections/FinalCta.astro";
 import MotionInit from "@components/ui/MotionInit.astro";
 import StickyCta from "@components/ui/StickyCta.astro";
-import { business, reviews, extraReviews } from "@data/site";
+import { business, reviews, extraReviews, differentiators } from "@data/site";
 import { breadcrumbSchema } from "@lib/seo";
-import { Quote, Star } from "lucide-react";
+import { CheckCircle2, Quote, Star } from "lucide-react";
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -17,14 +18,11 @@ const crumbs = breadcrumbSchema([
 
 const allReviews = [...reviews, ...extraReviews];
 
-// Illustrative distribution that reconciles to the real 4.8 / 177 aggregate.
-const distribution = [
-  { stars: 5, pct: 88 },
-  { stars: 4, pct: 8 },
-  { stars: 3, pct: 2 },
-  { stars: 2, pct: 1 },
-  { stars: 1, pct: 1 },
-];
+// What customers consistently call out, stated as the business's own
+// commitments. The star-distribution bars that used to sit here were
+// illustrative percentages, not real Google data, so they were removed rather
+// than presented as review statistics.
+const promises = differentiators.slice(0, 3);
 ---
 
 <Layout
@@ -68,22 +66,21 @@ const distribution = [
       </div>
 
       <div class="flex flex-col gap-5" data-reveal="right">
-        <SectionHeading eyebrow="The Numbers" title="Trusted, Review After Review" align="left" />
-        <div class="flex flex-col gap-3">
-          {distribution.map((row) => (
-            <div class="flex items-center gap-3">
-              <span class="flex w-12 shrink-0 items-center gap-1 text-sm font-semibold text-navy-600">
-                {row.stars} <Star className="h-3.5 w-3.5 fill-[#fea500] text-[#fea500]" aria-hidden="true" />
+        <Heading eyebrow="Why Neighbors Rate Us" title="Trusted, Review After Review" />
+        <ul class="flex flex-col gap-4">
+          {promises.map((item) => (
+            <li class="flex items-start gap-3">
+              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green-50 text-brand-green-600">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
               </span>
-              <span class="h-3 flex-1 overflow-hidden rounded-full bg-navy-100">
-                <span class="block h-full rounded-full bg-brand-green-500" style={`width:${row.pct}%`}></span>
+              <span class="text-base leading-relaxed text-navy-700">
+                <strong class="font-semibold text-navy-900">{item.title}.</strong> {item.description}
               </span>
-              <span class="w-10 shrink-0 text-right text-sm text-navy-400">{row.pct}%</span>
-            </div>
+            </li>
           ))}
-        </div>
-        <p class="text-sm leading-relaxed text-navy-500">
-          Ratings reflect verified Google reviews from customers across the Puget Sound region.
+        </ul>
+        <p class="text-sm leading-relaxed text-navy-600">
+          Our {business.rating.value}-star rating comes from {business.rating.count} verified Google reviews from customers across the Puget Sound region.
         </p>
       </div>
     </div>

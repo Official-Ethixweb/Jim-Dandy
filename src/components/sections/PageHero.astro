@@ -75,7 +75,7 @@ const isSplit = align === "split" && !!image;
           <>
             {i > 0 && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-white/35" aria-hidden="true" />}
             {crumb.href ? (
-              <a href={crumb.href} class="transition-colors hover:text-white">{crumb.name}</a>
+              <a href={crumb.href} class="inline-flex min-h-6 items-center transition-colors hover:text-white">{crumb.name}</a>
             ) : (
               <span class="text-white">{crumb.name}</span>
             )}

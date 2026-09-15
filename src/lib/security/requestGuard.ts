@@ -38,8 +38,16 @@ export function isRateLimited(ip: string): boolean {
   return recent.length > RATE_LIMIT;
 }
 
+/**
+ * The client address for rate limiting. On Vercel, `x-vercel-forwarded-for`
+ * and `x-real-ip` are set by the platform edge and cannot be supplied by the
+ * caller, whereas a raw X-Forwarded-For can be prefixed with anything - so the
+ * platform headers win and XFF is only a fallback for other hosts and dev.
+ */
 export function clientIp(request: Request): string {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const platform = request.headers.get("x-vercel-forwarded-for") ?? request.headers.get("x-real-ip");
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0];
+  return (platform ?? forwarded)?.split(",")[0]?.trim() || "unknown";
 }
 
 /**

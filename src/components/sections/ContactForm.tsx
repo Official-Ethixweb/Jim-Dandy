@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { contactSchema, serviceOptions, type ContactFormValues } from "@lib/schemas/contact";
+import { CONSENT_TEXT } from "@lib/schemas/shared";
+import { business } from "@data/site";
+import { trackLeadConversion } from "@lib/analytics";
+import TurnstileWidget, { turnstileConfigured } from "@components/security/TurnstileWidget";
+
 import ServiceIcon from "@components/ui/ServiceIcon";
 import allPlumbingIcon from "@assets/icons/all-plumbing.svg";
 import waterHeatersIcon from "@assets/icons/water-heaters.svg";
@@ -20,25 +25,29 @@ const BRAND_ICONS: Partial<Record<(typeof serviceOptions)[number]["value"], { sr
   commercial: commercialIcon,
 };
 
-const CONSENT_TEXT =
-  "By submitting this form and signing up for texts, you consent to receive messages from " +
-  "Jim Dandy Sewer & Plumbing at the number provided regarding your request, updates " +
-  "about appointments and services or promotions and offers, including messages sent by " +
-  "autodialer. Consent is not a condition of purchase. Msg & data rates may apply. Msg " +
-  "frequency varies. Unsubscribe at any time by replying STOP. Reply HELP for help.";
-
 type Props = { onStepChange?: (step: number) => void };
 
 export default function ContactForm({ onStepChange }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [consentExpanded, setConsentExpanded] = useState(false);
+  // Our own success flag, set only after the server confirms the lead was
+  // delivered. react-hook-form's isSubmitSuccessful is true whenever the
+  // submit handler doesn't throw - which previously showed "You're all set!"
+  // on a 500 or a dropped connection, for a lead nobody received.
+  const [sent, setSent] = useState(false);
+  // Spam signals, kept outside react-hook-form so they never appear in the
+  // validation schema or surface an error to a real user.
+  const honeypotRef = useRef<HTMLInputElement>(null);
+  const mountedAtRef = useRef<number>(Date.now());
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     watch,
     setValue,
     reset,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: { consent: undefined, serviceNeeded: [] },
@@ -52,7 +61,7 @@ export default function ContactForm({ onStepChange }: Props) {
 
   const basicInfoDone = Boolean(fullName && email && phone);
   const serviceDone = selectedService.length > 0;
-  const step = isSubmitSuccessful ? 4 : !basicInfoDone ? 1 : !serviceDone ? 2 : 3;
+  const step = sent ? 4 : !basicInfoDone ? 1 : !serviceDone ? 2 : 3;
 
   useEffect(() => {
     onStepChange?.(step);
@@ -60,29 +69,58 @@ export default function ContactForm({ onStepChange }: Props) {
 
   const onSubmit = async (values: ContactFormValues) => {
     setSubmitError(null);
+    let res: Response;
     try {
-      const res = await fetch("/api/contact", {
+      res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          sourcePage: window.location.pathname,
+          company: honeypotRef.current?.value ?? "",
+          elapsedMs: Date.now() - mountedAtRef.current,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
-      if (!res.ok) {
-        throw new Error("Request failed");
-      }
-      reset();
     } catch {
-      setSubmitError("Something went wrong sending your request. Please call us instead - we're happy to help.");
+      setSubmitError(`We couldn't reach our server - check your connection and try again, or call us at ${business.phone}.`);
+      return;
     }
+
+    if (!res.ok) {
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        issues?: { path: string[]; message: string }[];
+      };
+      // Server-side validation that the browser missed: attach each message to
+      // its field so it renders exactly like a client-side error.
+      const fieldIssues = (data.issues ?? []).filter((issue) => issue.path[0] && issue.path[0] in values);
+      fieldIssues.forEach((issue) =>
+        setError(issue.path[0] as keyof ContactFormValues, { type: "server", message: issue.message }),
+      );
+      setSubmitError(
+        fieldIssues.length ? "Please check the highlighted fields." : (data.error ?? `Something went wrong sending your request. Please call us at ${business.phone}.`),
+      );
+      return;
+    }
+
+    // Conversion fires here and nowhere else - after the server confirmed the
+    // lead. Firing on click would report leads the client never received.
+    trackLeadConversion("contact_form", {
+      services: values.serviceNeeded,
+    });
+    reset();
+    setSent(true);
   };
 
-  if (isSubmitSuccessful) {
+  if (sent) {
     return (
-      <div className="flex min-h-[420px] flex-col items-center justify-center gap-4 rounded-[32px] bg-brand-green-50 p-10 text-center">
+      <div role="status" className="flex min-h-[420px] flex-col items-center justify-center gap-4 rounded-[32px] bg-brand-green-50 p-10 text-center">
         <CheckCircle2 className="h-14 w-14 text-brand-green-600" aria-hidden="true" />
         <h3 className="font-heading text-2xl font-bold text-navy-800">You're all set!</h3>
         <p className="max-w-sm text-navy-600">
           Thanks for reaching out - a Jim Dandy dispatcher will call or text you shortly to
-          confirm your appointment.
+          confirm your appointment. We've also emailed you a confirmation.
         </p>
       </div>
     );
@@ -90,6 +128,21 @@ export default function ContactForm({ onStepChange }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
+      {/* Honeypot. Off-screen rather than display:none (which some bots skip),
+          and removed from the tab order and the accessibility tree so no real
+          user - sighted, keyboard, or screen-reader - can ever reach it. */}
+      <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
+        <label htmlFor="company">Company (leave this field empty)</label>
+        <input
+          id="company"
+          type="text"
+          ref={honeypotRef}
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
+      </div>
+
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2 sm:col-span-2">
           <label htmlFor="fullName" className="font-sans text-sm font-semibold text-navy-700">
@@ -163,7 +216,7 @@ export default function ContactForm({ onStepChange }: Props) {
             return (
               <label
                 key={option.value}
-                className={`relative flex cursor-pointer items-center gap-2 rounded-lg border border-l-4 px-3 py-3.5 transition-all duration-150 ease-out active:scale-[0.98] sm:gap-2.5 sm:px-4 ${
+                className={`relative flex cursor-pointer items-center gap-2 rounded-lg border border-l-4 px-3 py-3.5 transition-all duration-150 ease-out active:scale-[0.98] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-green-500 sm:gap-2.5 sm:px-4 ${
                   isActive
                     ? "border-navy-800 border-l-navy-800 bg-navy-800 shadow-[0_8px_20px_-8px_rgba(0,34,68,0.6)]"
                     : "border-navy-200 border-l-navy-800 bg-white hover:border-navy-300 hover:shadow-md"
@@ -295,6 +348,10 @@ export default function ContactForm({ onStepChange }: Props) {
           </p>
         )}
       </div>
+
+      {turnstileConfigured && (
+        <TurnstileWidget onToken={setTurnstileToken} className="self-center" />
+      )}
 
       {submitError && <SubmitErrorBanner message={submitError} />}
       <SubmitState isSubmitting={isSubmitting} />

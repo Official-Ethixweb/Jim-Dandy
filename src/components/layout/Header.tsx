@@ -33,6 +33,7 @@ export default function Header({ currentPath = "/" }: Props) {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const servicesMenuId = useId();
   const mobileMenuId = useId();
 
@@ -105,6 +106,37 @@ export default function Header({ currentPath = "/" }: Props) {
     window.scrollTo({ top: scrollYRef.current, left: 0, behavior: "instant" });
   };
 
+  // While the mobile menu is open: the floating chat/accessibility launchers
+  // step aside (they were sitting on top of the last menu items), and Tab is
+  // kept inside the header so keyboard users can't wander into the frozen page
+  // behind the menu.
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-menu-open", isMobileOpen);
+    if (!isMobileOpen) return;
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !headerRef.current) return;
+      const focusables = Array.from(
+        headerRef.current.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+      ).filter((el) => el.offsetParent !== null);
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && (active === first || !headerRef.current.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !headerRef.current.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onTab);
+    return () => {
+      document.removeEventListener("keydown", onTab);
+      document.documentElement.removeAttribute("data-menu-open");
+    };
+  }, [isMobileOpen]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -128,6 +160,7 @@ export default function Header({ currentPath = "/" }: Props) {
 
   return (
     <header
+      ref={headerRef}
       className={`sticky top-0 z-50 w-full bg-navy-800 transition-shadow duration-300 ${
         solid
           ? "shadow-[0_2px_0_0_#69be28,0_10px_28px_-4px_rgba(105,190,40,0.55)] backdrop-blur-md"
@@ -292,7 +325,14 @@ export default function Header({ currentPath = "/" }: Props) {
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden border-t border-white/10 bg-navy-800 xl:hidden"
           >
-            <nav aria-label="Mobile" className="container-page flex flex-col gap-1 py-4">
+            {/* The page behind is frozen while the menu is open, so the panel
+                scrolls itself: on short phones (and with Services expanded) the
+                call and Schedule buttons at the bottom were otherwise
+                unreachable below the fold. */}
+            <nav
+              aria-label="Mobile"
+              className="container-page flex max-h-[calc(100dvh-88px)] flex-col gap-1 overflow-y-auto overscroll-contain py-4"
+            >
               {navLinks.map((link) =>
                 link.children ? (
                   <div key={link.label}>

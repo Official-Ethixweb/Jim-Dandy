@@ -15,6 +15,9 @@ export const business = {
   licenses: ["JIMDADE791MG", "JIMDADS879B3"],
   rating: { value: 4.8, count: 177 },
   scheduleUrl: "/contact",
+  // The "Get Financed" CTA in the hero and final CTA. This pointed at /coupons,
+  // which meant the FAQ answer telling customers to "use the Get Financed link
+  // to apply" landed them on a discounts page instead of the financing page.
   financingUrl: "/financing",
   social: {
     facebook: "https://www.facebook.com/",
@@ -141,6 +144,8 @@ export const services = [
       "Preventive maintenance contracts for multi-unit properties",
       "Grease trap, backflow, and code-compliance service",
       "Priority emergency response for commercial accounts",
+      "Commercial water heater and boiler service",
+      "Sewer and drain line maintenance for high-use buildings",
       "Detailed invoicing for property management and accounting",
     ],
     signs: [
@@ -163,7 +168,7 @@ export const navLinks: NavLink[] = [
       description: s.description,
     })),
   },
-  { label: "Commercial", href: "/commercial" },
+  { label: "Commercial", href: "/services/commercial" },
   { label: "Coupons", href: "/coupons" },
   { label: "Service Area", href: "/service-area" },
   { label: "About", href: "/about" },
@@ -176,13 +181,13 @@ export const footerServiceLinks = [
   { label: "Sewer Services", href: "/services/sewer-services" },
   { label: "Water Heaters", href: "/services/water-heaters" },
   { label: "All Plumbing", href: "/services/all-plumbing" },
-  { label: "Commercial", href: "/commercial" },
+  { label: "Commercial", href: "/services/commercial" },
 ];
 
 export const footerSitemapLinks = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
-  { label: "Commercial", href: "/commercial" },
+  { label: "Commercial", href: "/services/commercial" },
   { label: "Coupons", href: "/coupons" },
   { label: "Service Area", href: "/service-area" },
   { label: "About", href: "/about" },
@@ -473,18 +478,104 @@ export const serviceExtras: Record<
   },
 };
 
+/**
+ * Per-service SEO copy, keyed by slug.
+ *
+ * These were previously generated as `${label} Plumbing Services`, which read
+ * as "All Plumbing Plumbing Services" and "Sewer Services Plumbing Services",
+ * carried no geography at all, and produced descriptions past the ~160-char
+ * point where Google truncates. Written by hand so each page targets the
+ * phrase a customer actually searches, with the service area stated.
+ *
+ * Titles use the "Jim Dandy" short brand rather than the full legal name to
+ * keep the whole string inside the ~60-character SERP limit.
+ */
+export const serviceSeo: Record<string, { title: string; description: string; heading: string; short: string }> = {
+  emergency: {
+    heading: "Emergency Plumbing Services",
+    short: "Emergency Plumbing",
+    title: "Emergency Plumbing in Seattle & Puget Sound | Jim Dandy",
+    description:
+      "24/7 emergency plumbers in Seattle and across Puget Sound. Live dispatch day or night, most calls seen within the hour. Licensed and insured.",
+  },
+  "drains-clogs": {
+    heading: "Drain Cleaning & Clog Removal",
+    short: "Drain Cleaning",
+    title: "Drain Cleaning & Clog Removal in Seattle | Jim Dandy",
+    description:
+      "Slow, gurgling, or blocked drains cleared fast across Seattle and Puget Sound. Camera-verified so the clog stays gone. Same-day appointments.",
+  },
+  "sewer-services": {
+    heading: "Sewer Repair & Replacement",
+    short: "Sewer",
+    title: "Sewer Repair & Replacement in Seattle | Jim Dandy",
+    description:
+      "Sewer inspection, trenchless repair, and full line replacement across Seattle and Puget Sound. See the camera footage before any work begins.",
+  },
+  "water-heaters": {
+    heading: "Water Heater Repair & Installation",
+    short: "Water Heater",
+    title: "Water Heater Repair & Install in Seattle | Jim Dandy",
+    description:
+      "Water heater repair, replacement, and tankless conversion in Seattle and Puget Sound. Same-day swaps on most standard tank units.",
+  },
+  "all-plumbing": {
+    heading: "Residential Plumbing Services",
+    short: "Plumbing",
+    title: "Residential Plumbing in Seattle & Puget Sound | Jim Dandy",
+    description:
+      "Licensed residential plumbing across Seattle and Puget Sound - faucets, toilets, leak detection, repiping, and gas lines. Upfront flat-rate pricing.",
+  },
+  commercial: {
+    heading: "Commercial Plumbing Services",
+    short: "Commercial Plumbing",
+    title: "Commercial Plumbing in Seattle & Puget Sound | Jim Dandy",
+    description:
+      "Commercial plumbing for Seattle-area restaurants, retail, and multi-family properties. Maintenance plans and priority 24/7 emergency response.",
+  },
+};
+
+/**
+ * Optional "who this service is for" block, rendered on a service detail page
+ * when the slug has an entry. `icon` maps to the iconMap in services/[slug].astro.
+ * Only commercial needs it today - residential services speak to one audience.
+ */
+export const serviceAudiences: Record<
+  string,
+  {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    items: { icon: string; label: string; description: string }[];
+  }
+> = {
+  commercial: {
+    eyebrow: "Who We Serve",
+    title: "Built Around Your Operating Hours",
+    subtitle: "Commercial plumbing scheduled around your business, not ours.",
+    items: [
+      { icon: "building", label: "Multi-Family & Apartments", description: "Buildings, HOAs, and portfolios with shared systems and tenants who can't wait." },
+      { icon: "utensils", label: "Restaurants & Food Service", description: "Grease traps, high-use drains, and code compliance kept ahead of inspection day." },
+      { icon: "store", label: "Retail & Office Buildings", description: "Clean, discreet service scheduled around your customers and business hours." },
+      { icon: "clipboard", label: "Property Management", description: "One reliable vendor and clear invoicing across every property you manage." },
+    ],
+  },
+};
+
 /** Milestones for the About page timeline. */
 export const aboutMilestones = [
   { year: "1908", title: "Seattle's Original Plumbers", description: "Jim Dandy opens its doors, serving a young, growing Seattle with honest plumbing and sewer work." },
   { year: "1950s", title: "Postwar Puget Sound Boom", description: "As the suburbs expand, Jim Dandy grows with them - repiping new neighborhoods across King and Snohomish Counties." },
   { year: "1990s", title: "Trenchless Technology", description: "We invest in video inspection and trenchless repair, fixing sewer lines without tearing up the yard." },
-  { year: "Today", title: "118 Years and Counting", description: "Fully licensed, bonded, and insured, dispatching same-day across the Puget Sound region 24/7." },
+  // Derived from `business.yearsInBusiness` so it doesn't silently go stale on
+  // 1 January - the hardcoded "118" here would have been wrong all of 2027.
+  { year: "Today", title: `${business.yearsInBusiness} Years and Counting`, description: "Fully licensed, bonded, and insured, dispatching same-day across the Puget Sound region 24/7." },
 ];
 
 /** Counties in the coverage footprint, for the Service Area page. */
 export const serviceCounties = [
-  { name: "King County", cities: "Seattle, Bellevue, Redmond, Kirkland, Renton, Kent, Auburn, Federal Way, Burien" },
-  { name: "Snohomish County", cities: "Everett, Edmonds, Lynnwood, Bothell, Mountlake Terrace, Shoreline" },
+  { name: "King County", cities: "Seattle, Bellevue, Redmond, Kirkland, Renton, Kent, Auburn, Federal Way, Burien, Shoreline" },
+  { name: "Snohomish County", cities: "Everett, Edmonds, Lynnwood, Bothell, Mountlake Terrace" },
   { name: "Pierce County", cities: "Tacoma and the surrounding South Sound communities" },
 ];
 
