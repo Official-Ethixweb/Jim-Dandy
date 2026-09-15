@@ -39,16 +39,17 @@ function derivePageContext(currentPath: string): PageContext {
 }
 
 /**
- * Full-screen chat on phones in either orientation: anything under 768px wide,
- * plus short screens (a phone held sideways is ~340-430px tall - the floating
- * card there was squashed and pushed off the top). Tablets and desktops keep
- * the floating card. The launcher's `phone:` variant in global.css mirrors this.
+ * Full-screen chat everywhere the site shows its mobile layout: below 1024px
+ * (the `lg` breakpoint, where the sticky call bar appears and the header is
+ * already a hamburger), plus short screens - a phone held sideways is
+ * ~340-430px tall. Only desktop-width screens get the floating card. The
+ * launcher's `phone:` variant in global.css mirrors this.
  *
- * A phone showing the "Desktop site" lays the page out ~980px wide, so the
- * width query misses it - a touch-only device whose physical screen is
+ * A phone showing the "Desktop site" lays the page out ~980px wide or more, so
+ * the width query can miss it - a touch-only device whose physical screen is
  * phone-sized counts as a phone too.
  */
-const MOBILE_QUERY = "(max-width: 767.98px), (max-height: 540px)";
+const MOBILE_QUERY = "(max-width: 1023.98px), (max-height: 540px)";
 const TOUCH_QUERY = "(hover: none) and (pointer: coarse)";
 const isPhone = () =>
   window.matchMedia(MOBILE_QUERY).matches || (window.matchMedia(TOUCH_QUERY).matches && Math.min(screen.width, screen.height) < 600);
