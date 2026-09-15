@@ -1,0 +1,186 @@
+---
+/**
+ * Local preview of the lead emails - http://localhost:4321/dev/emails
+ *
+ * Injected only by `astro dev` (see devOnlyRoutes in astro.config.mjs), so it
+ * never exists in a build. Sample leads are built exactly like the real
+ * endpoints build them (src/pages/api/contact.ts, chat-lead.ts), with the
+ * same label maps and consent text.
+ */
+import { businessInfo } from "@lib/email/deliver";
+import { customerConfirmationEmail, leadNotificationEmail, type LeadRecord } from "@lib/email/templates";
+import { serviceLabels } from "@lib/schemas/contact";
+import { urgencyLabels, audienceLabels } from "@lib/schemas/chatLead";
+import { CONSENT_TEXT, CHAT_CONSENT_TEXT } from "@lib/schemas/shared";
+
+export const prerender = false;
+
+const submittedAt = new Date();
+
+const leads = {
+  contact: {
+    label: "Contact form",
+    lead: {
+      id: "3f6c2a91-8d4e-4b7a-9c1f-2e5d7a8b9c01",
+      source: "contact_form",
+      submittedAt,
+      fullName: "Sarah Mitchell",
+      email: "sarah.mitchell@example.com",
+      phone: "(206) 555-0142",
+      services: [serviceLabels.plumbing, serviceLabels.sewers],
+      sourcePage: "/contact",
+      consentText: CONSENT_TEXT,
+    },
+  },
+  chat: {
+    label: "Chat assistant",
+    lead: {
+      id: "a81d4e27-5b3c-4f9a-8e6d-1c2b3a4d5e02",
+      source: "chat",
+      submittedAt,
+      fullName: "David Chen",
+      email: "d.chen@example.com",
+      phone: "(425) 555-0187",
+      services: [serviceLabels.heating],
+      problem: "Water heater is leaking from the bottom and there's been no hot water since this morning.",
+      urgency: urgencyLabels.today,
+      isEmergency: false,
+      audience: audienceLabels.residential,
+      city: "Shoreline",
+      timing: "Weekday mornings",
+      notes: "Side gate code is 4821. Please text before arriving.",
+      sourcePage: "/services/water-heaters",
+      consentText: CHAT_CONSENT_TEXT,
+    },
+  },
+  emergency: {
+    label: "Chat - emergency",
+    lead: {
+      id: "c4e9f1b3-2a7d-4c8e-b5f6-9d0a1b2c3e03",
+      source: "chat",
+      submittedAt,
+      fullName: "Maria Lopez",
+      email: "maria.lopez@example.com",
+      phone: "(206) 555-0199",
+      services: [serviceLabels.sewers],
+      problem: "Sewage is backing up through the basement floor drain.",
+      urgency: urgencyLabels.emergency,
+      isEmergency: true,
+      audience: audienceLabels.residential,
+      city: "Seattle",
+      sourcePage: "/",
+      consentText: CHAT_CONSENT_TEXT,
+    },
+  },
+} satisfies Record<string, { label: string; lead: LeadRecord }>;
+
+const templates = {
+  notification: { label: "Office notification", to: "LEAD_TO_EMAIL (your office)", render: leadNotificationEmail },
+  confirmation: { label: "Customer confirmation", to: "The customer", render: customerConfirmationEmail },
+};
+
+type LeadKey = keyof typeof leads;
+type TemplateKey = keyof typeof templates;
+
+const params = Astro.url.searchParams;
+const pick = <K extends string>(value: string | null, options: Record<K, unknown>, fallback: K): K =>
+  value !== null && Object.hasOwn(options, value) ? (value as K) : fallback;
+const leadKey = pick<LeadKey>(params.get("lead"), leads, "contact");
+const templateKey = pick<TemplateKey>(params.get("email"), templates, "notification");
+const width = params.get("width") === "phone" ? "phone" : "desktop";
+const view = params.get("view") === "text" ? "text" : "html";
+
+const email = templates[templateKey].render(leads[leadKey].lead, businessInfo);
+
+// Real emails load the logo from the production domain; the preview loads the
+// same file from this dev server so it shows before that domain is live.
+if (params.get("raw") === "1") {
+  return new Response(email.html.replaceAll(`${businessInfo.siteUrl}/email/`, `${Astro.url.origin}/email/`), {
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
+const href = (next: Partial<Record<"lead" | "email" | "width" | "view", string>>) => {
+  const q = new URLSearchParams({ lead: leadKey, email: templateKey, width, view, ...next });
+  return `/dev/emails?${q}`;
+};
+const frameSrc = `/dev/emails?${new URLSearchParams({ lead: leadKey, email: templateKey, raw: "1" })}`;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Email preview - {templates[templateKey].label}</title>
+    <style>
+      :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      body { margin: 0; background: #e9edf2; color: #0a2c4e; }
+      header { background: #002244; color: #fff; padding: 14px 24px; border-bottom: 4px solid #69be28; }
+      header h1 { margin: 0; font-size: 17px; }
+      header p { margin: 2px 0 0; font-size: 13px; color: #b0bac5; }
+      .layout { display: grid; grid-template-columns: 250px 1fr; gap: 24px; padding: 24px; align-items: start; }
+      nav { background: #fff; border-radius: 14px; padding: 8px; position: sticky; top: 16px; }
+      nav h2 { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: #546b82; margin: 12px 10px 6px; }
+      nav a { display: block; padding: 9px 10px; border-radius: 9px; color: #0a2c4e; text-decoration: none; font-size: 14px; }
+      nav a:hover { background: #f0f9ea; }
+      nav a[aria-current="page"] { background: #002244; color: #fff; font-weight: 600; }
+      .meta { background: #fff; border-radius: 14px; padding: 14px 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; justify-content: space-between; }
+      .meta dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 14px; }
+      .meta dt { color: #546b82; }
+      .meta dd { margin: 0; font-weight: 600; word-break: break-word; }
+      .toggles { display: flex; gap: 8px; flex-wrap: wrap; }
+      .seg { display: inline-flex; background: #f5f7fa; border: 1px solid #e6e9ec; border-radius: 999px; padding: 3px; }
+      .seg a { padding: 6px 14px; border-radius: 999px; font-size: 13px; color: #334e69; text-decoration: none; }
+      .seg a[aria-current="page"] { background: #69be28; color: #001830; font-weight: 700; }
+      .stage { display: flex; justify-content: center; }
+      iframe { border: 0; background: #f5f7fa; border-radius: 14px; box-shadow: 0 10px 30px -12px rgba(0, 34, 68, 0.35); height: 1500px; width: 100%; max-width: 760px; }
+      iframe.phone { max-width: 375px; height: 1900px; }
+      pre { background: #fff; border-radius: 14px; padding: 20px; white-space: pre-wrap; font-size: 14px; line-height: 1.55; margin: 0; max-width: 760px; width: 100%; box-sizing: border-box; }
+      @media (max-width: 760px) { .layout { grid-template-columns: 1fr; padding: 16px; } nav { position: static; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Jim Dandy lead emails - local preview</h1>
+      <p>Only on the dev server. Sample leads, sent through the real templates.</p>
+    </header>
+    <div class="layout">
+      <nav aria-label="Emails">
+        {Object.entries(leads).map(([lk, { label }]) => (
+          <>
+            <h2>{label}</h2>
+            {Object.entries(templates).map(([tk, t]) => (
+              <a href={href({ lead: lk, email: tk })} aria-current={lk === leadKey && tk === templateKey ? "page" : undefined}>
+                {t.label}
+              </a>
+            ))}
+          </>
+        ))}
+      </nav>
+      <main>
+        <div class="meta">
+          <dl>
+            <dt>Subject</dt><dd>{email.subject}</dd>
+            <dt>To</dt><dd>{templates[templateKey].to}</dd>
+          </dl>
+          <div class="toggles">
+            <span class="seg">
+              <a href={href({ view: "html" })} aria-current={view === "html" ? "page" : undefined}>HTML</a>
+              <a href={href({ view: "text" })} aria-current={view === "text" ? "page" : undefined}>Plain text</a>
+            </span>
+            {view === "html" && (
+              <span class="seg">
+                <a href={href({ width: "desktop" })} aria-current={width === "desktop" ? "page" : undefined}>Desktop</a>
+                <a href={href({ width: "phone" })} aria-current={width === "phone" ? "page" : undefined}>Phone</a>
+              </span>
+            )}
+          </div>
+        </div>
+        <div class="stage">
+          {view === "html" ? <iframe src={frameSrc} class={width} title="Email preview" /> : <pre>{email.text}</pre>}
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -47,6 +47,21 @@ if (process.env.VERCEL_ENV === 'production') {
   }
 }
 
+// DEV-ONLY PAGES
+// Injected only by `astro dev`, so they never exist in a build or a deploy.
+// Their files live in src/dev/, outside src/pages/, for the same reason.
+/** @type {import('astro').AstroIntegration} */
+const devOnlyRoutes = {
+  name: 'dev-only-routes',
+  hooks: {
+    'astro:config:setup': ({ command, injectRoute }) => {
+      if (command !== 'dev') return;
+      // Lead email templates with sample data: http://localhost:4321/dev/emails
+      injectRoute({ pattern: '/dev/emails', entrypoint: './src/dev/email-preview.astro', prerender: false });
+    },
+  },
+};
+
 // https://astro.build/config
 export default defineConfig({
   // Production domain. This is the single source of truth for the site origin -
@@ -129,6 +144,7 @@ export default defineConfig({
     // express - they are handled by src/pages/blog/category/[...category].ts.
   },
   integrations: [
+    devOnlyRoutes,
     react(),
     sitemap({
       // /privacy-policy is served with `noindex`. Listing it here as well is a
