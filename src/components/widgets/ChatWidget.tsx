@@ -37,8 +37,13 @@ function derivePageContext(currentPath: string): PageContext {
   };
 }
 
-/** Phones get a full-screen chat; the floating card is for tablets and up. */
-const MOBILE_QUERY = "(max-width: 639.98px)";
+/**
+ * Full-screen chat on phones in either orientation: anything under 768px wide,
+ * plus short screens (a phone held sideways is ~340-430px tall - the floating
+ * card there was squashed and pushed off the top). Tablets and desktops keep
+ * the floating card.
+ */
+const MOBILE_QUERY = "(max-width: 767.98px), (max-height: 540px)";
 
 export default function ChatWidget({ currentPath = "/" }: Props) {
   const pageContext = useMemo(() => derivePageContext(currentPath), [currentPath]);
@@ -301,8 +306,8 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
                 </span>
               </span>
               <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-2 font-display text-lg font-bold leading-none">Jim Dandy Assistant</p>
-                <p className="mt-1 flex items-center gap-1.5 text-xs text-white/70">
+                <p className="truncate font-display text-lg font-bold leading-none">Jim Dandy Assistant</p>
+                <p className="mt-1 flex items-center gap-1.5 whitespace-nowrap text-xs text-white/70">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-green-400" />
@@ -336,8 +341,8 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
                   <p
                     className={
                       m.from === "user"
-                        ? "max-w-[85%] whitespace-pre-line break-words rounded-2xl rounded-br-md bg-[image:var(--btn-primary)] px-4 py-2.5 text-[15px] font-medium text-navy-900 shadow-sm sm:max-w-[80%] sm:text-sm"
-                        : "max-w-[90%] whitespace-pre-line break-words rounded-2xl rounded-bl-md border border-navy-100 bg-white px-4 py-2.5 text-[15px] leading-relaxed text-navy-800 shadow-sm sm:max-w-[85%] sm:text-sm"
+                        ? `whitespace-pre-line break-words rounded-2xl rounded-br-md bg-[image:var(--btn-primary)] px-4 py-2.5 font-medium text-navy-900 shadow-sm ${fullscreen ? "max-w-[85%] text-[15px]" : "max-w-[80%] text-sm"}`
+                        : `whitespace-pre-line break-words rounded-2xl rounded-bl-md border border-navy-100 bg-white px-4 py-2.5 leading-relaxed text-navy-800 shadow-sm ${fullscreen ? "max-w-[90%] text-[15px]" : "max-w-[85%] text-sm"}`
                     }
                   >
                     {m.text}
@@ -386,7 +391,7 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
                       key={q.label}
                       type="button"
                       onClick={() => handleQuickReply(q)}
-                      className="min-h-10 rounded-full border border-navy-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-navy-700 transition-colors hover:border-brand-green-500 hover:bg-brand-green-50 hover:text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-green-500 sm:min-h-0 sm:text-xs"
+                      className={`rounded-full border border-navy-200 bg-white px-3.5 py-2 font-semibold text-navy-700 transition-colors hover:border-brand-green-500 hover:bg-brand-green-50 hover:text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-green-500 ${fullscreen ? "min-h-10 text-[13px]" : "text-xs"}`}
                     >
                       {q.label}
                     </button>
@@ -423,13 +428,13 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
                 enterKeyHint="send"
                 autoComplete="off"
                 /* 16px on phones: iOS zooms the whole page into any smaller input on focus. */
-                className="min-w-0 flex-1 rounded-full border border-navy-200 bg-navy-50/60 px-4 py-2.5 text-base text-navy-900 outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white sm:text-sm"
+                className={`min-w-0 flex-1 rounded-full border border-navy-200 bg-navy-50/60 px-4 py-2.5 text-navy-900 outline-none transition-colors placeholder:text-navy-300 focus:border-brand-green-500 focus:bg-white ${fullscreen ? "text-base" : "text-sm"}`}
               />
               <button
                 type="submit"
                 aria-label="Send message"
                 disabled={busy || !draft.trim()}
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 sm:h-10 sm:w-10"
+                className={`grid shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[var(--shadow-pill-green)] transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 ${fullscreen ? "h-11 w-11" : "h-10 w-10"}`}
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
               </button>
