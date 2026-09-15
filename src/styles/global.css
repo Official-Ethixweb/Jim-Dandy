@@ -197,6 +197,14 @@
   bottom: calc(var(--stamp-pill-size, 13px) / -2);
 }
 
+/* Phones in either orientation - mirrors MOBILE_QUERY in ChatWidget.tsx, where
+   the chat goes full screen. */
+@custom-variant phone {
+  @media (max-width: 767.98px), (max-height: 540px) {
+    @slot;
+  }
+}
+
 /* Floating chat + accessibility launchers step aside while the mobile menu is
    open (Header toggles data-menu-open on <html>); otherwise they sat on top of
    the last menu items. */

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, MessageCircle, Send, X, RotateCcw } from "lucide-react";
 import { business, services } from "@data/site";
@@ -41,9 +42,19 @@ function derivePageContext(currentPath: string): PageContext {
  * Full-screen chat on phones in either orientation: anything under 768px wide,
  * plus short screens (a phone held sideways is ~340-430px tall - the floating
  * card there was squashed and pushed off the top). Tablets and desktops keep
- * the floating card.
+ * the floating card. The launcher's `phone:` variant in global.css mirrors this.
+ *
+ * A phone showing the "Desktop site" lays the page out ~980px wide, so the
+ * width query misses it - a touch-only device whose physical screen is
+ * phone-sized counts as a phone too.
  */
 const MOBILE_QUERY = "(max-width: 767.98px), (max-height: 540px)";
+const TOUCH_QUERY = "(hover: none) and (pointer: coarse)";
+const isPhone = () =>
+  window.matchMedia(MOBILE_QUERY).matches || (window.matchMedia(TOUCH_QUERY).matches && Math.min(screen.width, screen.height) < 600);
+
+/** The part of the page actually on screen, from the visual viewport. */
+type VisibleArea = { left: number; top: number; width: number; height: number; scale: number };
 
 export default function ChatWidget({ currentPath = "/" }: Props) {
   const pageContext = useMemo(() => derivePageContext(currentPath), [currentPath]);
@@ -65,7 +76,9 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
   const [draft, setDraft] = useState("");
   const [typing, setTyping] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [viewport, setViewport] = useState<{ height: number; top: number } | null>(null);
+  const [viewport, setViewport] = useState<VisibleArea | null>(null);
+  // Set after hydration - the full-screen chat renders into <body>.
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -89,16 +102,19 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
   }, [context]);
 
   useEffect(() => {
-    const mq = window.matchMedia(MOBILE_QUERY);
-    const update = () => setIsMobile(mq.matches);
+    setPortalTarget(document.body);
+    const queries = [window.matchMedia(MOBILE_QUERY), window.matchMedia(TOUCH_QUERY)];
+    const update = () => setIsMobile(isPhone());
     update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
+    queries.forEach((mq) => mq.addEventListener("change", update));
+    return () => queries.forEach((mq) => mq.removeEventListener("change", update));
   }, []);
 
   // Full-screen on phones: lock the page behind, hide the other floating
-  // launcher, and size the panel to the *visual* viewport so the input stays
-  // above the on-screen keyboard instead of being covered by it.
+  // launcher, and fit the panel to the *visual* viewport - the part of the
+  // page actually on screen. That keeps the input above the on-screen keyboard,
+  // and keeps the whole chat on screen when the page is pinch-zoomed in or
+  // (Desktop site) zoomed out.
   useEffect(() => {
     const fullscreen = open && isMobile;
     document.documentElement.toggleAttribute("data-chat-open", open);
@@ -116,7 +132,8 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
     body.style.width = "100%";
 
     const vv = window.visualViewport;
-    const sync = () => setViewport(vv ? { height: Math.round(vv.height), top: Math.round(vv.offsetTop) } : null);
+    const sync = () =>
+      setViewport(vv ? { left: vv.offsetLeft, top: vv.offsetTop, width: vv.width, height: vv.height, scale: vv.scale || 1 } : null);
     sync();
     vv?.addEventListener("resize", sync);
     vv?.addEventListener("scroll", sync);
@@ -260,29 +277,24 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const };
   const fullscreen = open && isMobile;
 
-  return (
-    <div className="floating-launcher fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom)+max(var(--sticky-cta-lift,0px),var(--footer-lift,0px)))] right-4 z-[60] transition-[bottom] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:bottom-[calc(1.5rem+max(var(--sticky-cta-lift,0px),var(--footer-lift,0px)))] sm:right-6">
-      <div ref={liveRegionRef} aria-live="polite" aria-atomic="false" className="sr-only" />
+  // Counter any page zoom so the chat reads at its normal size. `zoom` scales
+  // the panel's own box too, so the box is given in on-screen units.
+  const sheetStyle: CSSProperties | undefined = !viewport
+    ? undefined
+    : Math.abs(viewport.scale - 1) < 0.01
+      ? { left: viewport.left, top: viewport.top, width: viewport.width, height: viewport.height }
+      : {
+          left: viewport.left * viewport.scale,
+          top: viewport.top * viewport.scale,
+          width: viewport.width * viewport.scale,
+          height: viewport.height * viewport.scale,
+          zoom: 1 / viewport.scale,
+        };
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            key="panel"
-            ref={panelRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Jim Dandy chat assistant"
-            initial={fullscreen ? { opacity: 0, y: 40 } : { opacity: 0, y: 24, scale: 0.94 }}
-            animate={fullscreen ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, scale: 1 }}
-            exit={fullscreen ? { opacity: 0, y: 40 } : { opacity: 0, y: 24, scale: 0.94 }}
-            transition={transition}
-            style={fullscreen && viewport ? { height: viewport.height, top: viewport.top } : undefined}
-            className={
-              fullscreen
-                ? "fixed inset-x-0 top-0 z-[70] flex h-[100dvh] w-full flex-col overflow-hidden bg-white"
-                : "absolute bottom-[100px] right-0 flex h-[70vh] max-h-[560px] w-[calc(100vw-2rem)] max-w-[380px] origin-bottom-right flex-col overflow-hidden rounded-[28px] border border-navy-100 bg-white shadow-2xl"
-            }
-          >
+  const dialogProps = { ref: panelRef, role: "dialog", "aria-modal": true, "aria-label": "Jim Dandy chat assistant" } as const;
+
+  const panelContent = (
+          <>
             {/* header */}
             <div
               className="relative flex shrink-0 items-center gap-3 bg-[linear-gradient(135deg,#0a2c4e_0%,#002244_60%,#001830_100%)] px-5 py-4 text-white"
@@ -439,9 +451,65 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
                 <Send className="h-4 w-4" aria-hidden="true" />
               </button>
             </form>
+          </>
+  );
+
+  return (
+    <div className="floating-launcher fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom)+max(var(--sticky-cta-lift,0px),var(--footer-lift,0px)))] right-4 z-[60] transition-[bottom] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:bottom-[calc(1.5rem+max(var(--sticky-cta-lift,0px),var(--footer-lift,0px)))] sm:right-6">
+      <div ref={liveRegionRef} aria-live="polite" aria-atomic="false" className="sr-only" />
+
+      {/* Tablets and desktops: a floating card above the launcher. */}
+      <AnimatePresence>
+        {open && !isMobile && (
+          <motion.div
+            key="panel"
+            {...dialogProps}
+            initial={{ opacity: 0, y: 24, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.94 }}
+            transition={transition}
+            className="absolute bottom-[100px] right-0 flex h-[70vh] max-h-[560px] w-[calc(100vw-2rem)] max-w-[380px] origin-bottom-right flex-col overflow-hidden rounded-[28px] border border-navy-100 bg-white shadow-2xl"
+          >
+            {panelContent}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Phones: full screen, rendered straight into <body> so no ancestor's
+          stacking context, and nothing else fixed on the page, can sit on top
+          of it or shrink it. The backdrop covers the whole page - including
+          behind browser toolbars that float over content - while the panel
+          fits the part of the screen actually visible. */}
+      {portalTarget &&
+        createPortal(
+          <AnimatePresence>
+            {open &&
+              isMobile && [
+                <motion.div
+                  key="backdrop"
+                  aria-hidden="true"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={transition}
+                  className="fixed inset-0 z-[1000] min-h-lvh bg-white"
+                />,
+                <motion.div
+                  key="sheet"
+                  {...dialogProps}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 40 }}
+                  transition={transition}
+                  style={sheetStyle}
+                  className="fixed left-0 top-0 z-[1001] flex h-[100dvh] w-full flex-col overflow-hidden bg-white"
+                >
+                  {panelContent}
+                </motion.div>,
+              ]}
+          </AnimatePresence>,
+          portalTarget,
+        )}
 
       {/* launcher - hidden behind the full-screen chat on phones */}
       {/* AVATAR RESTORE (launcher): to bring the photo back exactly as before,
@@ -465,20 +533,20 @@ export default function ChatWidget({ currentPath = "/" }: Props) {
         onFocus={warmUp}
         aria-expanded={open}
         aria-label={open ? "Close chat assistant" : "Open chat assistant"}
-        className={`group relative grid h-[86px] w-[86px] place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[0_14px_32px_-8px_rgba(75,135,28,0.75)] transition-transform duration-200 hover:-translate-y-1 active:translate-y-0 ${fullscreen ? "invisible" : ""}`}
+        className={`group relative grid h-[86px] w-[86px] place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[0_14px_32px_-8px_rgba(75,135,28,0.75)] phone:h-[69px] phone:w-[69px] phone:shadow-[0_11px_26px_-6px_rgba(75,135,28,0.75)] transition-transform duration-200 hover:-translate-y-1 active:translate-y-0 ${fullscreen ? "invisible" : ""}`}
       >
         <AnimatePresence mode="wait" initial={false}>
           {open ? (
             <motion.span key="x" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: prefersReducedMotion ? 0 : 0.18 }}>
-              <X className="h-9 w-9" aria-hidden="true" />
+              <X className="h-9 w-9 phone:h-[29px] phone:w-[29px]" aria-hidden="true" />
             </motion.span>
           ) : (
             <motion.span key="chat" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: prefersReducedMotion ? 0 : 0.18 }}>
               {/* Inner navy disc sized like the old photo circle (h-20 inside
-                  the h-[86px] button) so the brand-green button still shows
-                  as a thin ring around it. */}
-              <span className="grid h-20 w-20 select-none place-items-center rounded-full bg-navy-900">
-                <MessageCircle className="h-9 w-9 text-white" aria-hidden="true" />
+                  the h-[86px] button; 20% smaller on phones) so the brand-green
+                  button still shows as a thin ring around it. */}
+              <span className="grid h-20 w-20 select-none place-items-center rounded-full bg-navy-900 phone:h-16 phone:w-16">
+                <MessageCircle className="h-9 w-9 text-white phone:h-[29px] phone:w-[29px]" aria-hidden="true" />
               </span>
             </motion.span>
           )}
