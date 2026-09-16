@@ -62,6 +62,23 @@ const devOnlyRoutes = {
   },
 };
 
+// BUILD-TIME IMAGES ONLY
+// Every page is prerendered, so images are optimized at build time and the
+// runtime /_image endpoint is never called. Astro's default endpoint would
+// still bundle sharp's ~17MB native binary into the serverless function of
+// every deployment (41MB -> 22MB per deploy), so builds swap in a 404 stub.
+// Dev keeps the real endpoint - it is what serves images under `astro dev`.
+/** @type {import('astro').AstroIntegration} */
+const buildTimeImagesOnly = {
+  name: 'build-time-images-only',
+  hooks: {
+    'astro:config:setup': ({ command, updateConfig }) => {
+      if (command !== 'build') return;
+      updateConfig({ image: { endpoint: { entrypoint: './src/lib/assets/no-runtime-image-endpoint.ts' } } });
+    },
+  },
+};
+
 // https://astro.build/config
 export default defineConfig({
   // Production domain. This is the single source of truth for the site origin -
@@ -145,6 +162,7 @@ export default defineConfig({
   },
   integrations: [
     devOnlyRoutes,
+    buildTimeImagesOnly,
     react(),
     sitemap({
       // /privacy-policy is served with `noindex`. Listing it here as well is a
