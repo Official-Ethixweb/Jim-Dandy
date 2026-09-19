@@ -12,6 +12,7 @@ import { customerConfirmationEmail, leadNotificationEmail, type LeadRecord } fro
 import { serviceLabels } from "@lib/schemas/contact";
 import { urgencyLabels, audienceLabels } from "@lib/schemas/chatLead";
 import { CONSENT_TEXT, CHAT_CONSENT_TEXT } from "@lib/schemas/shared";
+import { quickServiceLabel } from "@lib/schemas/quickLead";
 
 export const prerender = false;
 
@@ -29,6 +30,20 @@ const leads = {
       phone: "(206) 555-0142",
       services: [serviceLabels.plumbing, serviceLabels.sewers],
       sourcePage: "/contact",
+      consentText: CONSENT_TEXT,
+    },
+  },
+  quick: {
+    label: "Quick quote form",
+    lead: {
+      id: "5b2e8c14-7f3a-4d9b-a6e1-0c9d8e7f6a04",
+      source: "quick_form",
+      submittedAt,
+      fullName: "James Carter",
+      email: "j.carter@example.com",
+      phone: "(206) 555-0163",
+      services: [quickServiceLabel("drains-clogs"), quickServiceLabel("water-heaters")],
+      sourcePage: "/services/drains-clogs",
       consentText: CONSENT_TEXT,
     },
   },

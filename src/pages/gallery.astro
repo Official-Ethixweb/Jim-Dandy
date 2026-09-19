@@ -52,13 +52,14 @@ const items = [
 ---
 
 <Layout
-  title="Project Gallery | Jim Dandy Sewer & Plumbing"
+  title="Plumbing & Sewer Project Photos | Jim Dandy Seattle"
   description="Real Jim Dandy plumbing and sewer work across Puget Sound - drain cleaning, trenchless sewer repair, repiping, water heaters, and our team on the job."
   path="/gallery"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
   <PageHero
+    leadForm
     eyebrow="Our Work"
     title="See the Work Up Close"
     lead="From trenchless sewer replacements to same-day water heater swaps, this is the quality we bring to every Puget Sound home and business."
@@ -102,9 +103,9 @@ const items = [
             <Image
               src={item.src}
               alt=""
-              widths={[360, 560, 760]}
-              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-              quality={80}
+              widths={[480, 720, 960, 1280, 1600]}
+              sizes="(min-width: 1280px) 380px, (min-width: 1024px) 31vw, (min-width: 640px) 48vw, calc(100vw - 2.5rem)"
+              quality={85}
               loading="lazy"
               class="h-auto w-full object-cover transition-transform duration-500 ease-brand group-hover:scale-[1.05]"
             />

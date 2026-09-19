@@ -1,16 +1,14 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Button from "@components/ui/Button.astro";
 import SectionHeading from "@components/ui/SectionHeading.astro";
 import PageHero from "@components/sections/PageHero.astro";
 import ProcessSteps from "@components/sections/ProcessSteps.astro";
 import FinalCta from "@components/sections/FinalCta.astro";
 import MotionInit from "@components/ui/MotionInit.astro";
 import StickyCta from "@components/ui/StickyCta.astro";
-import { business } from "@data/site";
-import { coupons } from "@data/coupons";
+import { coupons, type Coupon } from "@data/coupons";
 import { breadcrumbSchema } from "@lib/seo";
-import { Scissors, Tag } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Check, Scissors } from "lucide-react";
 
 const crumbs = breadcrumbSchema([
   { name: "Home", path: "/" },
@@ -18,70 +16,138 @@ const crumbs = breadcrumbSchema([
 ]);
 
 const redeemSteps = [
-  { title: "Pick Your Offer", description: "Browse the current coupons below and choose the one that fits your repair or install." },
-  { title: "Mention It When You Book", description: "Tell your dispatcher or technician which offer you'd like to use when you schedule." },
+  { title: "Tap Your Offer", description: "Tap the coupon that fits your repair or install - it's added to the request form at the top of this page." },
+  { title: "Send Your Request", description: "Add your details and send. Your dispatcher sees the coupon with your request and confirms it when booking." },
   { title: "Save on Your Invoice", description: "We apply the discount to your final bill - just ask if you qualify for more than one." },
 ];
 ---
 
 <Layout
-  title="Coupons & Specials | Jim Dandy Sewer & Plumbing"
+  title="Plumbing Coupons & Specials | Jim Dandy Seattle"
   description="Current plumbing and sewer service coupons from Jim Dandy Sewer & Plumbing - savings on repairs, new customer discounts, and free inspections."
   path="/coupons"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
   <PageHero
+    leadForm
     eyebrow="Save With Jim Dandy"
     title="Coupons & Seasonal Specials"
-    lead="Real savings on trusted plumbing and sewer work. Mention any offer below when you call or schedule online - and ask your technician if you qualify for more than one."
+    lead="Real savings on trusted plumbing and sewer work. Tap any offer below and it's added to your request - or mention it when you call."
     crumbs={[{ name: "Home", href: "/" }, { name: "Coupons" }]}
-    ctas={[
-      { label: "Schedule & Save", href: business.scheduleUrl, variant: "primary" },
-      { label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" },
-    ]}
   />
 
-  <!-- Coupon tickets -->
+  <!-- Coupon tickets: each one applies itself to the quote form in the hero -->
   <section class="bg-surface py-20 lg:py-28">
     <div class="container-page flex flex-col gap-14">
       <div data-reveal>
-        <SectionHeading eyebrow="Current Offers" title="Clip & Save" subtitle="Valid for service within our Puget Sound coverage area." />
+        <SectionHeading eyebrow="Current Offers" title="Tap a Coupon to Apply It" subtitle="It's added to your request form instantly - valid across our Puget Sound coverage area." />
       </div>
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
-        {coupons.map((coupon) => (
-          <article class="group relative flex flex-col overflow-hidden rounded-[28px] border border-navy-200 bg-white shadow-card transition-transform duration-300 ease-brand hover:-translate-y-1.5">
-            <div class="flex flex-col gap-4 p-8">
-              <div class="flex items-center justify-between">
-                <span class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-green-50 text-brand-green-600 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
-                  <Tag className="h-6 w-6" aria-hidden="true" />
-                </span>
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-navy-900 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-green-400">
-                  <Scissors className="h-3.5 w-3.5" aria-hidden="true" /> Coupon
-                </span>
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2" data-reveal-group>
+        {(coupons as readonly Coupon[]).map((coupon) => (
+          <a
+            href={`/coupons?coupon=${coupon.id}#quick-quote`}
+            data-coupon={coupon.id}
+            class="coupon group relative flex rounded-[26px] border-2 border-dashed border-navy-300 p-2 transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-brand-green-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-green-500/50 active:translate-y-0 active:scale-[0.99] data-[applied]:border-solid data-[applied]:border-brand-green-500"
+          >
+            {/* scissors riding the cut line */}
+            <span class="absolute -top-3.5 left-8 grid h-7 w-7 place-items-center rounded-full bg-surface text-navy-400 transition-colors group-hover:text-brand-green-600" aria-hidden="true">
+              <Scissors className="h-4 w-4 -rotate-90" />
+            </span>
+
+            {/* Phones: the value stub is a band across the top and the tear line
+                runs sideways; from sm up it's the classic side stub. */}
+            <div class="relative flex min-h-[210px] w-full flex-col overflow-hidden rounded-[18px] bg-white sm:flex-row shadow-card transition-shadow duration-300 group-hover:shadow-[0_24px_40px_-18px_rgba(0,34,68,0.45)]">
+              {/* stub */}
+              <div class="relative flex shrink-0 flex-row flex-wrap items-baseline justify-center gap-x-3 gap-y-1 overflow-hidden bg-navy-800 px-4 py-5 text-center sm:w-[30%] sm:flex-col sm:items-center sm:justify-center sm:gap-1 sm:px-2 sm:py-6">
+                <div
+                  class="pointer-events-none absolute inset-0 opacity-[0.08]"
+                  style="background-image: repeating-linear-gradient(45deg, white 0 2px, transparent 2px 12px);"
+                  aria-hidden="true"
+                ></div>
+                <span class="relative font-display text-[40px] font-black italic leading-none text-brand-green-400 sm:text-[54px]">{coupon.value}</span>
+                <span class="relative font-display text-base font-bold uppercase leading-tight tracking-wider text-white sm:text-lg">{coupon.unit}</span>
+                <span class="relative rounded-full border border-white/20 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white/80 max-sm:self-center sm:mt-2">Jim Dandy</span>
               </div>
-              <h3 class="font-display text-2xl font-bold leading-tight text-navy-800">{coupon.title}</h3>
-              <p class="text-base leading-relaxed text-navy-600">{coupon.description}</p>
-            </div>
 
-            <div class="relative px-6" aria-hidden="true">
-              <span class="absolute -left-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-surface"></span>
-              <span class="absolute -right-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-surface"></span>
-              <div class="border-t-2 border-dashed border-navy-200"></div>
-            </div>
+              {/* perforation with punched notches */}
+              <div class="relative h-0 w-full sm:h-auto sm:w-0" aria-hidden="true">
+                <span class="absolute -left-3 -top-3 h-6 w-6 rounded-full bg-surface max-sm:-left-3 sm:-left-3"></span>
+                <span class="absolute -right-3 -top-3 h-6 w-6 rounded-full bg-surface sm:hidden"></span>
+                <span class="absolute -bottom-3 -left-3 hidden h-6 w-6 rounded-full bg-surface sm:block"></span>
+                <span class="absolute inset-x-5 top-0 border-t-2 border-dashed border-navy-200 sm:inset-x-auto sm:inset-y-4 sm:left-0 sm:border-l-2 sm:border-t-0"></span>
+              </div>
 
-            <div class="flex flex-col gap-4 p-8 pt-6">
-              <p class="text-xs leading-relaxed text-navy-400">{coupon.terms}</p>
-              <Button href={business.scheduleUrl} variant="ghost" size="md" class="self-start">Redeem This Offer</Button>
+              {/* body */}
+              <div class="flex min-w-0 flex-1 flex-col gap-2 p-5 sm:p-6">
+                <h3 class="font-display text-[22px] font-bold leading-tight text-navy-800 sm:text-2xl">{coupon.title}</h3>
+                <p class="text-sm leading-relaxed text-navy-600 sm:text-[15px]">{coupon.description}</p>
+                {coupon.eligibility && (
+                  <p class="inline-flex items-center gap-1.5 self-start rounded-full bg-navy-50 px-3.5 py-1.5 text-xs font-semibold text-navy-600">
+                    <BadgeCheck className="h-3.5 w-3.5 text-brand-green-600" aria-hidden="true" />
+                    Eligibility confirmed at booking
+                  </p>
+                )}
+                <p class="text-sm leading-snug text-navy-500">{coupon.terms}</p>
+
+                <div class="mt-auto flex flex-wrap items-center justify-between gap-3 pt-2">
+                  <span class="rounded-md border-2 border-dashed border-navy-200 bg-navy-50/60 px-2.5 py-1 font-mono text-xs font-bold tracking-widest text-navy-700">
+                    CODE: {coupon.code}
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-[image:var(--btn-primary)] px-4 py-2 font-display text-base text-navy-900 shadow-[var(--shadow-btn-green)] transition-transform group-hover:translate-x-0.5 group-data-[applied]:hidden">
+                    Tap to Apply
+                    <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span class="hidden items-center gap-1.5 rounded-full bg-navy-800 px-4 py-2 font-display text-base text-white group-data-[applied]:inline-flex">
+                    <Check className="h-4 w-4 text-brand-green-400" aria-hidden="true" />
+                    Applied
+                  </span>
+                </div>
+              </div>
+
+              <span class="pointer-events-none absolute right-3 top-3 hidden rotate-6 rounded-md border-2 border-brand-green-600 px-2 py-0.5 font-display text-sm font-bold uppercase tracking-wider text-brand-green-600 group-data-[applied]:block" aria-hidden="true">
+                Applied
+              </span>
             </div>
-          </article>
+            <span class="sr-only">- apply this coupon to the request form</span>
+          </a>
         ))}
       </div>
       <p class="mx-auto max-w-2xl text-center text-sm text-navy-400">
-        Offers subject to change without notice. Call {business.phone} to confirm current promotions before your appointment.
+        One offer per job unless noted. Offers subject to change without notice - your dispatcher confirms the coupon and eligibility when booking.
       </p>
     </div>
   </section>
+
+  <script>
+    import { COUPON_APPLY_EVENT, COUPON_CHANGED_EVENT } from "@data/coupons";
+
+    // Tapping a coupon applies it to the quote form in the hero and scrolls
+    // there. Without JS the link still works: ?coupon=<id> is read by the form.
+    const cards = Array.from(document.querySelectorAll<HTMLAnchorElement>("a[data-coupon]"));
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const markApplied = (id: string | null) => {
+      cards.forEach((card) => card.toggleAttribute("data-applied", card.dataset.coupon === id));
+    };
+
+    cards.forEach((card) =>
+      card.addEventListener("click", (event) => {
+        event.preventDefault();
+        const id = card.dataset.coupon!;
+        // Kept in the URL too, so a form that hasn't hydrated yet still picks it up.
+        const url = new URL(window.location.href);
+        url.searchParams.set("coupon", id);
+        window.history.replaceState(window.history.state, "", url);
+        window.dispatchEvent(new CustomEvent(COUPON_APPLY_EVENT, { detail: { id } }));
+        markApplied(id);
+        document.getElementById("quick-quote")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      }),
+    );
+
+    window.addEventListener(COUPON_CHANGED_EVENT, (event) => markApplied((event as CustomEvent<{ id: string | null }>).detail.id));
+    markApplied(new URLSearchParams(window.location.search).get("coupon"));
+  </script>
 
   <ProcessSteps
     eyebrow="Easy to Use"

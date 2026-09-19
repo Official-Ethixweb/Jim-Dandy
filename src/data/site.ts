@@ -14,7 +14,9 @@ export const business = {
   yearsInBusiness: new Date().getFullYear() - 1908,
   licenses: ["JIMDADE791MG", "JIMDADS879B3"],
   rating: { value: 4.8, count: 177 },
-  scheduleUrl: "/contact",
+  // Every "Schedule Online" button lands directly on the quote form at the
+  // top of the contact page, not on the page's first screen of copy.
+  scheduleUrl: "/contact#quick-quote",
   // The "Get Financed" CTA in the hero and final CTA. This pointed at /coupons,
   // which meant the FAQ answer telling customers to "use the Get Financed link
   // to apply" landed them on a discounts page instead of the financing page.
@@ -104,6 +106,7 @@ export const services = [
       "Tank and tankless install, repair, and replacement",
       "Same-day replacement for most standard tank units",
       "Gas, electric, and hybrid heat-pump systems",
+      "Boiler repair, maintenance, and replacement",
       "Manufacturer warranty registration handled for you",
     ],
     signs: [
@@ -122,9 +125,13 @@ export const services = [
       "Not every plumbing job is an emergency - sometimes it's a leaky faucet, a fixture install, or a repipe you've been putting off. Our licensed techs handle the full range of residential plumbing with the same upfront pricing and workmanship guarantee.",
     benefits: [
       "Faucet, toilet, and fixture installs or repairs",
-      "Whole-home and partial repiping",
+      "Whole-home and partial repiping (copper and galvanized to PEX)",
       "Leak detection and slab leak repair",
       "Gas line inspection, repair, and installation",
+      "Garbage disposal install, repair, and replacement",
+      "Sump pump install, repair, and annual maintenance",
+      "Whole-home water filtration and water softeners",
+      "Water line replacement from the meter to the house",
     ],
     signs: [
       "A dripping faucet or running toilet",
@@ -191,6 +198,7 @@ export const footerSitemapLinks = [
   { label: "Coupons", href: "/coupons" },
   { label: "Service Area", href: "/service-area" },
   { label: "About", href: "/about" },
+  { label: "Plumbing Tips", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -212,55 +220,43 @@ export const howItWorks = [
   },
 ] as const;
 
-export const reviews = [
-  {
-    name: "Aleen Pineda",
-    timeAgo: "7 months ago",
-    rating: 5,
-    text: "The team at Jim Dandy were super! I got my issues corrected before winter and 100% would recommend them. Jeremy did a great job, was kind, communicative, and very knowledgeable!",
-  },
-  {
-    name: "Marcus Webb",
-    timeAgo: "3 months ago",
-    rating: 5,
-    text: "Called at 11pm with a burst pipe and had a tech at the door within the hour. Upfront pricing, no games. This is who I'm calling from now on.",
-  },
-  {
-    name: "Priya Shah",
-    timeAgo: "1 month ago",
-    rating: 5,
-    text: "Replaced our water heater same day. Clean work, explained everything, and the price matched the quote exactly. Genuinely great experience.",
-  },
-  {
-    name: "David Ortiz",
-    timeAgo: "5 months ago",
-    rating: 5,
-    text: "Sewer line inspection and trenchless repair - they showed me the camera footage before recommending anything. Zero pressure, honest assessment.",
-  },
-  {
-    name: "Hannah Lee",
-    timeAgo: "2 weeks ago",
-    rating: 5,
-    text: "118 years in business shows. Professional from the first call to the final invoice. Highly recommend Jim Dandy for anything plumbing related.",
-  },
-] as const;
-
+/**
+ * Cities served. The first 25 are exactly the list on the previous
+ * jimdandysewerandplumbing.com (Service Area page, fetched 2026-09-19), which
+ * is the business's own published coverage. The last four came with the new
+ * design and are NOT on the old site - confirm with the client before launch.
+ * The first 10 appear as chips on the home page, so the busiest markets lead.
+ */
 export const serviceAreaCities = [
   "Seattle",
   "Bellevue",
-  "Redmond",
-  "Kirkland",
-  "Renton",
-  "Tacoma",
-  "Burien",
   "Mountlake Terrace",
   "Shoreline",
-  "Everett",
-  "Edmonds",
   "Lynnwood",
+  "Edmonds",
+  "Everett",
   "Bothell",
-  "Federal Way",
+  "Kirkland",
+  "Redmond",
+  "Ballard",
+  "Renton",
+  "Mercer Island",
+  "Medina",
+  "Sammamish",
+  "Newcastle",
+  "Woodinville",
+  "Cottage Lake",
+  "Brier",
+  "Mukilteo",
+  "Snohomish",
+  "Lake Stevens",
+  "Marysville",
+  "Arlington",
   "Auburn",
+  // Not on the previous site - confirm:
+  "Tacoma",
+  "Burien",
+  "Federal Way",
   "Kent",
 ];
 
@@ -574,8 +570,8 @@ export const aboutMilestones = [
 
 /** Counties in the coverage footprint, for the Service Area page. */
 export const serviceCounties = [
-  { name: "King County", cities: "Seattle, Bellevue, Redmond, Kirkland, Renton, Kent, Auburn, Federal Way, Burien, Shoreline" },
-  { name: "Snohomish County", cities: "Everett, Edmonds, Lynnwood, Bothell, Mountlake Terrace" },
+  { name: "King County", cities: "Seattle, Ballard, Bellevue, Mercer Island, Medina, Redmond, Kirkland, Sammamish, Woodinville, Renton, Newcastle, Kent, Auburn, Federal Way, Burien, Shoreline" },
+  { name: "Snohomish County", cities: "Everett, Edmonds, Lynnwood, Bothell, Mountlake Terrace, Brier, Mukilteo, Snohomish, Lake Stevens, Marysville, Arlington, Cottage Lake" },
   { name: "Pierce County", cities: "Tacoma and the surrounding South Sound communities" },
 ];
 
@@ -736,17 +732,6 @@ export const serviceGuides: Record<
     ],
   },
 };
-
-/** Additional testimonials shown on the dedicated Reviews page (with the homepage set). */
-export const extraReviews = [
-  { name: "Gregory Nolan", timeAgo: "4 months ago", rating: 5, text: "Had a main line back up on a Sunday. Jim Dandy answered on the second ring, had a tech out in under an hour, and showed me the camera footage before quoting. Fair price, zero drama. Lifelong customer now.", city: "Shoreline" },
-  { name: "Teresa Okafor", timeAgo: "6 months ago", rating: 5, text: "They repiped our 1950s house over three days and left it cleaner than they found it. Every person we dealt with was professional and patient with our questions. Worth every penny.", city: "Bellevue" },
-  { name: "Sam Whitaker", timeAgo: "2 months ago", rating: 5, text: "Tankless water heater conversion done right. They sized it properly, walked me through the warranty, and the price matched the quote exactly. Highly recommend.", city: "Kirkland" },
-  { name: "Denise Carrillo", timeAgo: "8 months ago", rating: 5, text: "Our restaurant's floor drains were backing up during dinner service. They came after hours, jetted the lines, and set us up on a maintenance plan so it never happens again. Absolute pros.", city: "Seattle" },
-  { name: "Owen Bradley", timeAgo: "3 weeks ago", rating: 5, text: "Trenchless sewer replacement without wrecking my landscaping - I honestly didn't think that was possible. The crew was on time every day and communicated the whole way through.", city: "Renton" },
-  { name: "Marisol Vega", timeAgo: "5 months ago", rating: 4, text: "Great work on a stubborn kitchen clog that two other plumbers couldn't fix. Camera inspection found the real problem. Only reason for four stars is they ran a little late, but they called ahead.", city: "Lynnwood" },
-  { name: "Curtis Hammond", timeAgo: "1 year ago", rating: 5, text: "118 years in business and it shows. Old-school honesty with modern equipment. They fixed a slab leak the same day and the price was exactly what they said. Can't ask for more.", city: "Everett" },
-] as const;
 
 /** Financing page content. Deliberately generic pending client's lender details. */
 export const financing = {

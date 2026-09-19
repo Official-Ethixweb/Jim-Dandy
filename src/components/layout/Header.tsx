@@ -163,7 +163,7 @@ export default function Header({ currentPath = "/" }: Props) {
       ref={headerRef}
       className={`sticky top-0 z-50 w-full bg-navy-800 transition-shadow duration-300 ${
         solid
-          ? "shadow-[0_2px_0_0_#69be28,0_10px_28px_-4px_rgba(105,190,40,0.55)] backdrop-blur-md"
+          ? "shadow-[0_2px_0_0_#69be28,0_14px_24px_-14px_rgba(0,24,48,0.5)] backdrop-blur-md"
           : ""
       }`}
     >

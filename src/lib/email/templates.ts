@@ -9,7 +9,7 @@
  * render consistently.
  */
 
-export type LeadSource = "contact_form" | "chat";
+export type LeadSource = "contact_form" | "quick_form" | "chat";
 
 export type LeadRecord = {
   id: string;
@@ -28,6 +28,8 @@ export type LeadRecord = {
   city?: string;
   timing?: string;
   notes?: string;
+  /** Offer the customer applied, e.g. "10% Off for New Customers (code NEW10)". */
+  coupon?: string;
   sourcePage?: string;
   consentText: string;
 };
@@ -171,7 +173,8 @@ function button(label: string, href: string, variant: "green" | "navy" = "green"
 }
 
 function sourceLabel(source: LeadSource): string {
-  return source === "chat" ? "Website chat assistant" : "Website contact form";
+  if (source === "chat") return "Website chat assistant";
+  return source === "quick_form" ? "Website quick quote form" : "Website contact form";
 }
 
 /** Internal notification: everything the dispatcher needs to call the customer back. */
@@ -213,6 +216,7 @@ export function leadNotificationEmail(lead: LeadRecord, business: BusinessInfo):
         ["City", lead.city],
         ["Preferred timing", lead.timing],
         ["Notes", lead.notes],
+        ["Coupon", lead.coupon, { strong: true }],
         ["Submitted from", pageUrl, pageUrl ? { href: pageUrl } : undefined],
         ["Consent", "Customer agreed to be contacted (call, text, email) about this request."],
         ["Reference", lead.id],
@@ -240,6 +244,7 @@ export function leadNotificationEmail(lead: LeadRecord, business: BusinessInfo):
     lead.city ? `City: ${lead.city}` : null,
     lead.timing ? `Preferred timing: ${lead.timing}` : null,
     lead.notes ? `Notes: ${lead.notes}` : null,
+    lead.coupon ? `Coupon: ${lead.coupon}` : null,
     pageUrl ? `Submitted from: ${pageUrl}` : null,
     "Consent: customer agreed to be contacted about this request.",
     `Reference: ${lead.id}`,
@@ -287,6 +292,7 @@ ${emergencyNote}
             ["Urgency", lead.urgency],
             ["City", lead.city],
             ["Preferred timing", lead.timing],
+            ["Coupon", lead.coupon, { strong: true }],
             ["Phone", lead.phone],
             ["Email", lead.email],
           ])}
@@ -335,6 +341,7 @@ ${emergencyNote}
     lead.otherServiceDetail || lead.problem ? `Details: ${lead.otherServiceDetail ?? lead.problem}` : null,
     lead.urgency ? `Urgency: ${lead.urgency}` : null,
     lead.city ? `City: ${lead.city}` : null,
+    lead.coupon ? `Coupon: ${lead.coupon}` : null,
     "",
     "What happens next:",
     "1. We call or text to confirm your appointment.",

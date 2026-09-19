@@ -61,7 +61,7 @@ function realProfileUrls() {
   return Object.values(business.social).filter(isRealProfileUrl);
 }
 
-/** The 16 cities actually advertised on /service-area, stated explicitly.
+/** The cities actually advertised on /service-area, stated explicitly.
  *  A GeoCircle was previously used instead, and its radius excluded Everett
  *  and Tacoma - both of which the site says are served. */
 function areaServed() {

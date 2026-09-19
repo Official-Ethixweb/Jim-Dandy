@@ -1,0 +1,28 @@
+---
+import QuickLeadForm from "./QuickLeadForm";
+import { business } from "@data/site";
+import { Phone } from "lucide-react";
+---
+
+{/* A band directly under the home hero rather than inside it: the hero is
+    tuned to fill exactly one screen on every phone and to keep its rating and
+    badge above the fold on desktop, and a form inside it would break both. */}
+<section id="quick-quote" aria-labelledby="quick-quote-title" class="relative scroll-mt-24 overflow-hidden bg-[image:var(--btn-primary)]">
+  <div
+    class="pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay"
+    style="background: radial-gradient(900px circle at 15% 0%, rgba(255,255,255,0.9), transparent 55%);"
+    aria-hidden="true"
+  ></div>
+  <div class="container-page relative flex flex-col gap-4 py-7 lg:py-8">
+    <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-1">
+      <h2 id="quick-quote-title" class="font-display text-[30px] font-extrabold italic leading-none text-navy-900 sm:text-[34px]">
+        Need a plumber? Get a quick quote.
+      </h2>
+      <a href={business.phoneHref} class="inline-flex min-h-11 items-center gap-2 text-base font-bold text-navy-900 hover:underline">
+        <Phone className="h-4 w-4" aria-hidden="true" />
+        Or call {business.phone}<span class="max-sm:hidden"> - dispatch answers 24/7</span>
+      </a>
+    </div>
+    <QuickLeadForm client:visible variant="ribbon" />
+  </div>
+</section>

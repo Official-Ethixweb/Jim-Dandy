@@ -118,7 +118,6 @@ export default defineConfig({
     // LEGACY SQUARESPACE URLS - every URL in the live site's sitemap.xml
     // (www.jimdandysewerandplumbing.com, fetched 2026-09-15), mapped to its
     // closest page here so search rankings and old bookmarks carry over.
-    // The blog is not being migrated; posts go to the service they covered.
     '/contact-us': { status: 301, destination: '/contact' },
     '/schedule-online': { status: 301, destination: '/contact' },
     '/jim-dandy-sewer-and-plumbing': { status: 301, destination: '/about' },
@@ -146,17 +145,9 @@ export default defineConfig({
     '/services/sewer/sewer-camera-inspection': { status: 301, destination: '/services/sewer-services' },
     '/services/sewer/trenchless-repair': { status: 301, destination: '/services/sewer-services' },
     '/services/sewer/trenchless-replacement': { status: 301, destination: '/services/sewer-services' },
-    '/blog': { status: 301, destination: '/services' },
-    '/blog/all-about-your-homes-water-pressure-too-high-or-too-low': { status: 301, destination: '/services/all-plumbing' },
-    '/blog/an-introduction-to-trenchless-sewer-repair-technology': { status: 301, destination: '/services/sewer-services' },
-    '/blog/how-do-sump-pumps-work': { status: 301, destination: '/services/all-plumbing' },
-    '/blog/is-your-water-heater-acting-up-when-to-repair-or-replace-in-seattle': { status: 301, destination: '/services/water-heaters' },
-    '/blog/plumbing-for-commercial-properties-what-you-need-to-know-in-seattle-washington': { status: 301, destination: '/services/commercial' },
-    '/blog/q8haeo8i14pe2x20db8ohgazfteclv': { status: 301, destination: '/services' },
-    '/blog/troubleshooting-guide-why-wont-your-hot-water-turn-on': { status: 301, destination: '/services/water-heaters' },
-    '/blog/understanding-your-homes-main-water-shut-off-valve': { status: 301, destination: '/services/all-plumbing' },
-    '/blog/what-are-the-benefits-of-drain-cleaning': { status: 301, destination: '/services/drains-clogs' },
-    '/blog/winter-plumbing-tips-protecting-your-pipes-from-seattles-cold-and-rain': { status: 301, destination: '/services/all-plumbing' },
+    // Blog articles live at their original URLs again (src/content/blog).
+    // Only the old post with a machine-generated slug moves to a readable one.
+    '/blog/q8haeo8i14pe2x20db8ohgazfteclv': { status: 301, destination: '/blog/understanding-sewer-line-blockages' },
     // /blog/category/* URLs contain "+", which redirect patterns cannot
     // express - they are handled by src/pages/blog/category/[...category].ts.
   },

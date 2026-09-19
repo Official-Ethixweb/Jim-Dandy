@@ -1,0 +1,178 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import FinalCta from "@components/sections/FinalCta.astro";
+import StickyCta from "@components/ui/StickyCta.astro";
+import QuickLeadForm from "@components/sections/QuickLeadForm";
+import Button from "@components/ui/Button.astro";
+import { business, services } from "@data/site";
+import { breadcrumbSchema, resolveCanonical } from "@lib/seo";
+import { ArrowLeft, ChevronRight, Clock, Phone } from "lucide-react";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const service = services.find((s) => s.slug === post.data.service)!;
+const related = (await getCollection("blog"))
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => Number(b.data.service === post.data.service) - Number(a.data.service === post.data.service) || b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3);
+const fmt = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+const minutes = Math.max(2, Math.round((post.body ?? "").split(/\s+/).length / 220));
+const path = `/blog/${post.id}`;
+
+const crumbs = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Plumbing Tips", path: "/blog" },
+  { name: post.data.title, path },
+]);
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  mainEntityOfPage: resolveCanonical(path),
+  author: { "@type": "Organization", name: business.name },
+  publisher: { "@type": "Organization", name: business.name },
+};
+---
+
+<Layout title={`${post.data.title} | Jim Dandy`} description={post.data.description} path={path}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(articleSchema)} slot="head" />
+
+  <section class="relative overflow-hidden bg-navy-900">
+    <div
+      class="pointer-events-none absolute inset-0 opacity-50"
+      style="background: radial-gradient(620px circle at 12% 18%, rgba(105,190,40,0.20), transparent 60%);"
+      aria-hidden="true"
+    ></div>
+    <div class="container-page relative flex flex-col items-start gap-5 py-14 lg:py-20">
+      <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-sm text-white/60">
+        <a href="/" class="-my-2.5 inline-flex min-h-11 items-center hover:text-white">Home</a>
+        <ChevronRight className="h-3.5 w-3.5 text-white/35" aria-hidden="true" />
+        <a href="/blog" class="-my-2.5 inline-flex min-h-11 items-center hover:text-white">Plumbing Tips</a>
+      </nav>
+      <span class="rounded-full border border-brand-green-500/40 bg-brand-green-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-brand-green-400">
+        {post.data.category}
+      </span>
+      <h1 class="max-w-4xl text-balance font-display text-[36px] font-black italic leading-[1.05] text-cloud sm:text-[48px] lg:text-[54px]">{post.data.title}</h1>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-white/75">
+        <time datetime={post.data.pubDate.toISOString()}>{fmt.format(post.data.pubDate)}</time>
+        <span class="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" aria-hidden="true" /> {minutes} min read</span>
+        <span>By the Jim Dandy team</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white py-14 lg:py-20">
+    <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-14">
+      <article class="article-body min-w-0 max-w-[68ch]">
+        <Content />
+        <div class="mt-12 flex flex-col gap-4 rounded-[24px] border border-brand-green-500/30 bg-brand-green-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="font-display text-xl font-bold text-navy-800">Need help with {service.label.toLowerCase()}?</p>
+            <p class="text-base text-navy-600">A licensed Jim Dandy plumber can take a look - upfront price, no surprises.</p>
+          </div>
+          <Button href={`/services/${service.slug}`} variant="primary" size="md" class="shrink-0">See {service.label}</Button>
+        </div>
+      </article>
+
+      <aside class="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
+        <div id="quick-quote" class="scroll-mt-28">
+          <QuickLeadForm client:visible defaultService={post.data.service} />
+        </div>
+        <a href={business.phoneHref} class="flex items-center gap-4 rounded-2xl bg-navy-900 p-5 text-white transition-colors hover:bg-navy-800">
+          <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900">
+            <Phone className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <span class="flex flex-col">
+            <span class="text-sm font-semibold uppercase tracking-[0.12em] text-brand-green-400">Call 24/7</span>
+            <span class="font-display text-2xl font-bold leading-none">{business.phone}</span>
+          </span>
+        </a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="bg-surface py-16 lg:py-20">
+    <div class="container-page flex flex-col gap-8">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 class="font-heading text-3xl font-bold text-navy-800">More Plumbing Tips</h2>
+        <a href="/blog" class="inline-flex min-h-11 items-center gap-2 font-semibold text-navy-700 hover:text-brand-green-600">
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" /> All articles
+        </a>
+      </div>
+      <ul class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {related.map((p) => (
+          <li>
+            <a href={`/blog/${p.id}`} class="flex h-full flex-col gap-3 rounded-[22px] border border-navy-200 bg-white p-6 transition-all hover:-translate-y-1 hover:border-brand-green-500 hover:shadow-card">
+              <span class="self-start rounded-full bg-brand-green-50 px-3.5 py-1.5 text-sm font-semibold text-brand-green-600">{p.data.category}</span>
+              <h3 class="font-display text-xl font-bold leading-tight text-navy-800">{p.data.title}</h3>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <FinalCta />
+  <StickyCta />
+</Layout>
+
+<style is:global>
+  .article-body {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--color-navy-700);
+  }
+  .article-body > * + * {
+    margin-top: 1.1em;
+  }
+  .article-body h2 {
+    margin-top: 1.9em;
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--color-navy-800);
+  }
+  .article-body h3 {
+    margin-top: 1.5em;
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--color-navy-800);
+  }
+  .article-body ul,
+  .article-body ol {
+    padding-left: 1.4em;
+  }
+  .article-body ul {
+    list-style: disc;
+  }
+  .article-body ol {
+    list-style: decimal;
+  }
+  .article-body li + li {
+    margin-top: 0.5em;
+  }
+  .article-body li::marker {
+    color: var(--color-brand-green-600);
+  }
+  .article-body strong {
+    color: var(--color-navy-900);
+  }
+  /* Inline links in the article text only - not buttons placed inside it. */
+  .article-body :is(p, li) > a {
+    color: var(--color-brand-green-600);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

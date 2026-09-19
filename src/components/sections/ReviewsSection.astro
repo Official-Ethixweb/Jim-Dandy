@@ -19,7 +19,8 @@ import { Star } from "lucide-react";
       </p>
     </div>
 
-    <div class="w-full">
+    {/* Full-bleed so the cards drift in from the screen edges. */}
+    <div class="w-screen max-w-none">
       <Reviews client:visible />
     </div>
 

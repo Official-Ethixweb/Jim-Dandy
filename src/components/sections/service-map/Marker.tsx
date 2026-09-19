@@ -65,7 +65,7 @@ export default function Marker({
   return (
     <motion.button
       type="button"
-      className="absolute z-20 flex -translate-x-1/2 -translate-y-full touch-manipulation min-h-11 flex-col items-center justify-end gap-1.5 rounded-lg px-2 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-green-400"
+      className="absolute z-20 flex -translate-x-1/2 -translate-y-full touch-manipulation min-h-11 min-w-11 flex-col items-center justify-end gap-1.5 rounded-lg px-2 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-green-400"
       style={{ left: `${x}%`, top: `${y}%` }}
       initial={{ opacity: 0, scale: 0.4, y: 10 }}
       animate={
@@ -98,7 +98,7 @@ export default function Marker({
       </AnimatePresence>
 
       <motion.span
-        className={`whitespace-nowrap text-xs font-semibold transition-colors duration-200 ${
+        className={`whitespace-nowrap text-sm font-semibold transition-colors duration-200 ${
           emphasized ? "text-white" : "text-navy-200"
         }`}
         style={{ transformOrigin: "50% 100%" }}

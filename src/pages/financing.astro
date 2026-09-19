@@ -28,7 +28,7 @@ const whyFinance = [
 ---
 
 <Layout
-  title="Plumbing Financing | Jim Dandy Sewer & Plumbing"
+  title="Plumbing & Sewer Financing | Jim Dandy Seattle"
   description="Flexible financing for water heaters, sewer repair, repiping, and major plumbing work across Puget Sound. Fix it now, pay over time in monthly payments."
   path="/financing"
 >
@@ -36,6 +36,7 @@ const whyFinance = [
   <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema(financing.faqs))} slot="head" />
 
   <PageHero
+    leadForm
     eyebrow="Flexible Monthly Payments"
     title="Fix It Now, Pay Over Time"
     lead={financing.intro}
@@ -59,7 +60,7 @@ const whyFinance = [
           const Icon = financeIcons[i] ?? Wrench;
           return (
             <div class="group flex flex-col gap-4 rounded-[28px] border border-navy-200 bg-surface p-7 transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-navy-800 hover:bg-white hover:shadow-card">
-              <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-green-50 text-brand-green-600 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+              <span class="grid h-14 w-14 place-items-center rounded-2xl icon-chip transition-all duration-300 group-hover:icon-chip-green">
                 <Icon className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
               </span>
               <p class="font-display text-lg font-bold text-navy-800">{item.label}</p>
@@ -93,7 +94,7 @@ const whyFinance = [
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3" data-reveal-group>
         {whyFinance.map(({ icon: Icon, title, description }) => (
           <div class="flex flex-col gap-4 rounded-[28px] border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
-            <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-green-500/15 text-brand-green-400">
+            <span class="grid h-14 w-14 place-items-center rounded-2xl icon-chip-glass">
               <Icon className="h-7 w-7" aria-hidden="true" />
             </span>
             <h3 class="font-display text-xl font-bold text-white">{title}</h3>

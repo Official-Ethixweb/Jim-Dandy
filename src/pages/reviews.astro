@@ -7,7 +7,8 @@ import PageHero from "@components/sections/PageHero.astro";
 import FinalCta from "@components/sections/FinalCta.astro";
 import MotionInit from "@components/ui/MotionInit.astro";
 import StickyCta from "@components/ui/StickyCta.astro";
-import { business, reviews, extraReviews, differentiators } from "@data/site";
+import { business, differentiators } from "@data/site";
+import { googleReviews, reviewAge } from "@data/reviews";
 import { breadcrumbSchema } from "@lib/seo";
 import { CheckCircle2, Quote, Star } from "lucide-react";
 
@@ -16,7 +17,7 @@ const crumbs = breadcrumbSchema([
   { name: "Reviews", path: "/reviews" },
 ]);
 
-const allReviews = [...reviews, ...extraReviews];
+const allReviews = googleReviews;
 
 // What customers consistently call out, stated as the business's own
 // commitments. The star-distribution bars that used to sit here were
@@ -26,13 +27,14 @@ const promises = differentiators.slice(0, 3);
 ---
 
 <Layout
-  title="Customer Reviews | Jim Dandy Sewer & Plumbing"
+  title={`${business.rating.value}-Star Plumber Reviews | Jim Dandy Sewer & Plumbing`}
   description={`Read why Puget Sound homeowners rate Jim Dandy Sewer & Plumbing ${business.rating.value} stars across ${business.rating.count}+ Google reviews. Honest pricing, fast service, guaranteed work.`}
   path="/reviews"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
   <PageHero
+    leadForm
     eyebrow={`Rated ${business.rating.value} on Google`}
     title="What Puget Sound Says About Us"
     lead="Since 1908, our reputation has been built one honest repair at a time. Here's what your neighbors have to say about the crew at their door."
@@ -70,7 +72,7 @@ const promises = differentiators.slice(0, 3);
         <ul class="flex flex-col gap-4">
           {promises.map((item) => (
             <li class="flex items-start gap-3">
-              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green-50 text-brand-green-600">
+              <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full icon-chip">
                 <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
               </span>
               <span class="text-base leading-relaxed text-navy-700">
@@ -90,7 +92,7 @@ const promises = differentiators.slice(0, 3);
   <section class="bg-surface py-20 lg:py-28">
     <div class="container-page flex flex-col gap-14">
       <div data-reveal>
-        <SectionHeading eyebrow="In Their Words" title="Real Reviews, Real Neighbors" subtitle="A few of the many reasons customers keep calling Jim Dandy." />
+        <SectionHeading eyebrow="In Their Words" title="Real Reviews, Real Neighbors" subtitle={`${googleReviews.length} real Google reviews from customers across the Puget Sound - unedited.`} />
       </div>
       <div class="columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6 [&>*]:break-inside-avoid" data-reveal-group data-reveal-step="60">
         {allReviews.map((review) => (
@@ -108,7 +110,7 @@ const promises = differentiators.slice(0, 3);
               <div class="leading-tight">
                 <p class="font-sans font-semibold text-navy-900">{review.name}</p>
                 <p class="text-xs text-navy-400">
-                  {"city" in review && review.city ? `${review.city} · ` : ""}{review.timeAgo}
+                  {reviewAge(review.date)}
                 </p>
               </div>
               <svg viewBox="0 0 24 24" class="h-6 w-6 shrink-0" aria-hidden="true">

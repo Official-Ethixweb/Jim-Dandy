@@ -39,7 +39,7 @@ export default function ContactProgress({ steps, current }: { steps: Step[]; cur
               </div>
 
               <p
-                className={`relative z-10 bg-white px-1.5 font-sans text-sm font-semibold transition-colors duration-300 ${
+                className={`relative z-10 bg-white px-3 font-sans text-sm font-semibold transition-colors duration-300 ${
                   isActive || isDone ? "text-navy-800" : "text-navy-400"
                 }`}
               >

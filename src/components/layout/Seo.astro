@@ -39,7 +39,9 @@ const isHome = path === "/";
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
+{/* Pages that ask not to be indexed (404, privacy) get no canonical: a 404
+    declaring itself the canonical URL of a missing path is contradictory. */}
+{!noindex && <link rel="canonical" href={canonical} />}
 {shouldNoindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content="website" />

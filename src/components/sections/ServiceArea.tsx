@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, ArrowRight } from "lucide-react";
 import { business, serviceAreaCities } from "@data/site";
 import Map from "./service-map/Map";
 
-export default function ServiceArea() {
+/** `linkToPage` is off on /service-area itself, where the link pointed at the page you were on. */
+export default function ServiceArea({ linkToPage = true }: { linkToPage?: boolean }) {
   const [query, setQuery] = useState("");
 
   const filteredCities = useMemo(() => {
@@ -53,12 +54,14 @@ export default function ServiceArea() {
             ))}
             {/* Mobile: the link rides in the grid's last row, filling the empty
                 cells beside the final chip. sm+ uses the centred link below. */}
-            <a
-              href="/service-area"
-              className="col-span-2 hidden items-center justify-center gap-1 font-semibold text-navy-700 hover:text-brand-green-600 max-sm:flex"
-            >
-              See Full Service Area →
-            </a>
+            {linkToPage && (
+              <a
+                href="/service-area"
+                className="col-span-2 hidden min-h-12 items-center justify-center gap-1 font-semibold text-navy-700 hover:text-brand-green-600 max-sm:flex"
+              >
+                See Full Service Area <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+            )}
           </>
         ) : (
           <p className="text-sm text-navy-400 max-sm:col-span-3">
@@ -71,11 +74,13 @@ export default function ServiceArea() {
         )}
       </div>
 
-      <div className="text-center max-sm:hidden">
-        <a href="/service-area" className="inline-flex items-center gap-1 font-semibold text-navy-700 hover:text-brand-green-600">
-          See Full Service Area →
-        </a>
-      </div>
+      {linkToPage && (
+        <div className="text-center max-sm:hidden">
+          <a href="/service-area" className="inline-flex min-h-11 items-center gap-1 font-semibold text-navy-700 hover:text-brand-green-600">
+            See Full Service Area <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </a>
+        </div>
+      )}
     </div>
   );
 }

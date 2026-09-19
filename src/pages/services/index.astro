@@ -23,13 +23,14 @@ const processSteps = howItWorks.map((s) => ({ title: s.title, description: s.des
 ---
 
 <Layout
-  title="Plumbing Services | Jim Dandy Sewer & Plumbing"
+  title="Plumbing & Sewer Services in Seattle | Jim Dandy"
   description="Emergency plumbing, drain cleaning, sewer repair, water heaters, and full-service plumbing across the Puget Sound region. Licensed, insured, available 24/7."
   path="/services"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
   <PageHero
+    leadForm
     eyebrow="Plumbing & Sewer Experts"
     title="Every Job. One Trusted Team."
     lead="From same-hour emergencies to planned upgrades, our licensed technicians cover the full range of residential and commercial plumbing - with upfront pricing every single time."
@@ -51,7 +52,7 @@ const processSteps = howItWorks.map((s) => ({ title: s.title, description: s.des
   <ProcessSteps
     eyebrow="Simple Process"
     title="How Jim Dandy Works"
-    subtitle="Four straightforward steps from your first call to a problem solved."
+    subtitle="Three straightforward steps from your first call to a problem solved."
     steps={processSteps}
   />
 

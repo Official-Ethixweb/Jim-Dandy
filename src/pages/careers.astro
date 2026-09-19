@@ -24,13 +24,14 @@ const applyHref = `mailto:${business.email}?subject=${encodeURIComponent("Career
 ---
 
 <Layout
-  title="Careers | Jim Dandy Sewer & Plumbing"
+  title="Plumber Jobs in Seattle | Careers at Jim Dandy"
   description="Join a plumbing company Puget Sound has trusted since 1908. Competitive pay, training, stocked trucks, and a clear path from apprentice to master. Apply today."
   path="/careers"
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(crumbs)} slot="head" />
 
   <PageHero
+    leadForm
     eyebrow="Join the Team"
     title="Build a Career That Lasts"
     lead={careers.intro}
@@ -55,7 +56,7 @@ const applyHref = `mailto:${business.email}?subject=${encodeURIComponent("Career
           const Icon = valueIcons[i] ?? Hammer;
           return (
             <div class="group flex flex-col gap-4 rounded-[28px] border border-navy-200 bg-surface p-7 transition-all duration-300 ease-brand hover:-translate-y-1.5 hover:border-navy-800 hover:bg-white hover:shadow-card">
-              <span class="grid h-14 w-14 place-items-center rounded-2xl bg-brand-green-50 text-brand-green-600 transition-colors duration-300 group-hover:bg-brand-green-500 group-hover:text-navy-900">
+              <span class="grid h-14 w-14 place-items-center rounded-2xl icon-chip transition-all duration-300 group-hover:icon-chip-green">
                 <Icon className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
               </span>
               <p class="font-display text-lg font-bold text-navy-800">{value.title}</p>
@@ -71,20 +72,17 @@ const applyHref = `mailto:${business.email}?subject=${encodeURIComponent("Career
   <section class="bg-surface py-20 lg:py-28">
     <div class="container-page grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
       <div class="relative order-first" data-reveal="left">
-        <div
-          class="pointer-events-none absolute -inset-5 -z-0 rounded-[44px] opacity-70 blur-2xl"
-          style="background: radial-gradient(circle at 30% 30%, rgba(105,190,40,0.20), transparent 70%);"
-          aria-hidden="true"
-        ></div>
-        <div class="relative overflow-hidden rounded-[32px] border border-navy-100 shadow-card">
+        {/* Whole photo at its own aspect ratio (no crop), and never wider than
+              half its file width so it stays sharp on 2x screens. */}
+          <div class="relative mx-auto overflow-hidden rounded-[32px] border border-navy-100 shadow-card" style={{ maxWidth: `${Math.floor(technician.width / 2)}px` }}>
           <Image
             src={technician}
             alt="A Jim Dandy technician smiling from a company truck"
-            widths={[480, 720, 960]}
-            sizes="(min-width: 1024px) 45vw, 100vw"
-            quality={82}
+            widths={[480, 720, 960, 1280, 1600]}
+            sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, calc(100vw - 2.5rem)"
+            quality={85}
             loading="lazy"
-            class="aspect-[4/3] h-full w-full object-cover"
+            class="h-auto w-full"
           />
         </div>
       </div>
@@ -115,7 +113,7 @@ const applyHref = `mailto:${business.email}?subject=${encodeURIComponent("Career
           const Icon = roleIcons[i] ?? Wrench;
           return (
             <div class="flex items-start gap-5 rounded-[28px] border border-navy-200 bg-surface p-7 transition-all duration-300 ease-brand hover:-translate-y-1 hover:border-navy-800 hover:bg-white hover:shadow-card">
-              <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-navy-900 text-brand-green-400">
+              <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl icon-chip">
                 <Icon className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
               </span>
               <div>

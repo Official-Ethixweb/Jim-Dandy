@@ -3,7 +3,9 @@ import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import Button from "@components/ui/Button.astro";
 import { business } from "@data/site";
-import { ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronRight, Phone } from "lucide-react";
+import QuickLeadForm from "./QuickLeadForm";
+import type { QuickServiceValue } from "@lib/schemas/quickLead";
 
 type Crumb = { name: string; href?: string };
 type Cta = { label: string; href: string; variant?: "primary" | "secondary" };
@@ -18,6 +20,21 @@ type Props = {
   align?: "left" | "split";
   ctas?: Cta[] | false;
   showRating?: boolean;
+  /**
+   * Puts the short quote form in the hero's right column: `true` for no
+   * preselected service, or a service slug / "other" to preselect it. The
+   * page's own photo is not shown in the hero: text and form are near-equal
+   * heights, and a photo under the text left the form floating beside a tall
+   * column. Each page shows its photos in its own content sections instead.
+   */
+  leadForm?: QuickServiceValue | true;
+  /** "chips" shows tappable, multi-select service tiles instead of the dropdown. */
+  leadFormStyle?: "dropdown" | "chips";
+  /**
+   * Short reassurance points shown under the copy, plus a large call card.
+   * Balances the left column against a tall form (the contact page).
+   */
+  highlights?: string[];
   class?: string;
 };
 
@@ -31,18 +48,31 @@ const {
   align = image ? "split" : "left",
   ctas,
   showRating = true,
+  leadForm,
+  leadFormStyle = "dropdown",
+  highlights,
   class: className = "",
 } = Astro.props;
 
+const hasForm = leadForm !== undefined;
+const formService = typeof leadForm === "string" ? leadForm : undefined;
+
+// With the form in the hero it is the primary action, so the default buttons
+// drop "Schedule Online" and keep the phone number.
 const resolvedCtas: Cta[] =
   ctas === false
     ? []
-    : ctas ?? [
-        { label: "Schedule Online", href: business.scheduleUrl, variant: "primary" },
-        { label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" },
-      ];
+    : highlights
+      ? []
+      : ctas ??
+      (hasForm
+        ? [{ label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" }]
+        : [
+            { label: "Schedule Online", href: business.scheduleUrl, variant: "primary" },
+            { label: `Call ${business.phone}`, href: business.phoneHref, variant: "secondary" },
+          ]);
 
-const isSplit = align === "split" && !!image;
+const isSplit = !hasForm && align === "split" && !!image;
 ---
 
 <section class:list={["relative overflow-hidden bg-navy-900", className]}>
@@ -63,19 +93,30 @@ const isSplit = align === "split" && !!image;
 
   <div
     class:list={[
-      "container-page relative py-16 lg:py-24",
-      isSplit
-        ? "grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]"
-        : "flex flex-col items-start",
+      "container-page relative py-16",
+      leadFormStyle === "chips" ? "lg:pb-20 lg:pt-14" : "lg:py-24",
+      hasForm
+        ? [
+            "grid grid-cols-1 gap-y-8 lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:gap-y-6",
+            leadFormStyle === "chips" ? "lg:grid-cols-[0.85fr_minmax(0,1.15fr)] xl:grid-cols-[1fr_minmax(0,1fr)]" : "lg:grid-cols-[1.1fr_minmax(0,0.9fr)]",
+          ]
+        : isSplit
+          ? "grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]"
+          : "flex flex-col items-start",
     ]}
   >
-    <div class="flex flex-col items-start gap-6">
+    {/* With the form, the copy splits in two so phones read title -> form ->
+        details (the form lands near the top, not under a long paragraph),
+        while desktop places the form in the right column across both rows.
+        Without the form both wrappers are display:contents - layout unchanged. */}
+    <div class={hasForm ? "contents" : "flex flex-col items-start gap-6"}>
+     <div class={hasForm ? "flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-1 lg:self-start" : "contents"}>
       <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-sm text-white/60">
         {crumbs.map((crumb, i) => (
           <>
             {i > 0 && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-white/35" aria-hidden="true" />}
             {crumb.href ? (
-              <a href={crumb.href} class="inline-flex min-h-6 items-center transition-colors hover:text-white">{crumb.name}</a>
+              <a href={crumb.href} class="-my-2.5 inline-flex min-h-11 items-center transition-colors hover:text-white">{crumb.name}</a>
             ) : (
               <span class="text-white">{crumb.name}</span>
             )}
@@ -93,6 +134,29 @@ const isSplit = align === "split" && !!image;
       <h1 class="max-w-2xl text-balance font-display text-[38px] font-black italic leading-[1.03] text-cloud sm:text-[52px] lg:text-[58px]">
         {title}
       </h1>
+     </div>
+
+      {hasForm && (
+        <div
+          id="quick-quote"
+          class:list={[
+            "relative w-full scroll-mt-28 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start lg:justify-self-end",
+            // The service tiles need a little more room than the dropdown.
+            leadFormStyle === "chips" ? "lg:max-w-[600px]" : "lg:max-w-xl",
+          ]}
+        >
+          <div
+            class="pointer-events-none absolute -inset-6 rounded-[48px] opacity-60 blur-2xl"
+            style="background: radial-gradient(circle at 70% 30%, rgba(105,190,40,0.28), transparent 70%);"
+            aria-hidden="true"
+          ></div>
+          <div class="relative">
+            <QuickLeadForm client:idle defaultService={formService} serviceStyle={leadFormStyle} />
+          </div>
+        </div>
+      )}
+
+     <div class={hasForm ? "flex flex-col items-start gap-6 lg:col-start-1 lg:row-start-2 lg:self-start" : "contents"}>
 
       {lead && (
         <p class="max-w-xl text-lg leading-relaxed text-white/80">{lead}</p>
@@ -104,6 +168,32 @@ const isSplit = align === "split" && !!image;
             <Button href={cta.href} variant={cta.variant ?? "primary"}>{cta.label}</Button>
           ))}
         </div>
+      )}
+
+      {highlights && highlights.length > 0 && (
+        <ul class="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          {highlights.map((item) => (
+            <li class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 text-base font-semibold leading-snug text-white">
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-green-400" aria-hidden="true" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {highlights && (
+        <a
+          href={business.phoneHref}
+          class="group flex w-full items-center gap-4 rounded-2xl border border-brand-green-500/40 bg-brand-green-500/10 p-5 transition-colors hover:bg-brand-green-500/20"
+        >
+          <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[image:var(--btn-primary)] text-navy-900 shadow-[var(--shadow-btn-green)]">
+            <Phone className="h-6 w-6" aria-hidden="true" />
+          </span>
+          <span class="flex flex-col">
+            <span class="text-sm font-semibold uppercase tracking-[0.12em] text-brand-green-400">Call us 24/7</span>
+            <span class="font-display text-[32px] font-bold leading-none text-white">{business.phone}</span>
+          </span>
+        </a>
       )}
 
       {showRating && (
@@ -127,6 +217,8 @@ const isSplit = align === "split" && !!image;
           <span class="text-sm font-semibold text-white/70">Serving Puget Sound since {business.founded}</span>
         </div>
       )}
+
+     </div>
     </div>
 
     {isSplit && image && (
@@ -140,9 +232,9 @@ const isSplit = align === "split" && !!image;
           <Image
             src={image}
             alt={imageAlt}
-            widths={[480, 720, 960]}
-            sizes="(min-width: 1024px) 45vw, 100vw"
-            quality={82}
+            widths={[480, 720, 960, 1280, 1600]}
+            sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, calc(100vw - 2.5rem)"
+            quality={85}
             loading="eager"
             class="aspect-[4/3] h-full w-full object-cover"
           />

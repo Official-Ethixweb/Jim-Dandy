@@ -39,6 +39,6 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}): 
  * submit-click would report conversions for submissions that never landed,
  * which corrupts Ads/GA4 optimisation with leads the client never received.
  */
-export function trackLeadConversion(source: "contact_form" | "chat_widget", params: Record<string, unknown> = {}): void {
+export function trackLeadConversion(source: "contact_form" | "quick_form" | "chat_widget", params: Record<string, unknown> = {}): void {
   trackEvent(LEAD_CONVERSION, { lead_source: source, ...params });
 }

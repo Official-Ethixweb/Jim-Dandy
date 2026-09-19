@@ -1,6 +1,6 @@
 ---
 import AnimatedCounter from "@components/ui/AnimatedCounter";
-import { business } from "@data/site";
+import { business, serviceAreaCities } from "@data/site";
 
 type Stat = { target: number; decimals?: number; suffix?: string; label: string };
 
@@ -12,9 +12,10 @@ type Props = {
 const {
   stats = [
     { target: business.yearsInBusiness, label: "Years in Business" },
-    { target: business.rating.value, decimals: 1, suffix: " / 5", label: "Google Rating" },
-    { target: business.rating.count, suffix: "+", label: "5-Star Reviews" },
-    { target: 25, suffix: "+", label: "Cities Served" },
+    { target: business.rating.value, decimals: 1, suffix: "/ 5", label: "Google Rating" },
+    // Total Google reviews (the 4.8 average means not every one is 5 stars).
+    { target: business.rating.count, suffix: "+", label: "Google Reviews" },
+    { target: serviceAreaCities.length, suffix: "+", label: "Cities Served" },
   ],
   tone = "navy",
 } = Astro.props;
@@ -31,16 +32,18 @@ const isNavy = tone === "navy";
     ></div>
   )}
   <div class="container-page relative py-14 lg:py-16">
-    <dl class="grid grid-cols-2 gap-y-10 gap-x-4 sm:grid-cols-4" data-reveal-group data-reveal-step="70">
+    <dl class="grid grid-cols-2 gap-y-10 gap-x-4 lg:grid-cols-4" data-reveal-group data-reveal-step="70">
       {stats.map((stat, i) => (
-        <div class:list={["flex flex-col items-center gap-1.5 text-center", i > 0 && "sm:border-l", isNavy ? "sm:border-white/10" : "sm:border-navy-100"]}>
-          <dd class:list={["flex items-baseline font-badge text-4xl font-bold sm:text-[44px]", isNavy ? "text-white" : "text-navy-800"]}>
-            <AnimatedCounter client:visible target={stat.target} decimals={stat.decimals ?? 0} />
-            {stat.suffix && <span class="text-brand-green-400">{stat.suffix}</span>}
-          </dd>
-          <dt class:list={["text-xs font-bold uppercase tracking-[0.14em] sm:text-sm", isNavy ? "text-white/60" : "text-navy-500"]}>
+        <div class:list={["flex flex-col-reverse items-center justify-end gap-1.5 px-4 text-center", i > 0 && "lg:border-l", isNavy ? "lg:border-white/10" : "lg:border-navy-100"]}>
+          {/* dt before dd for screen readers; flex-col-reverse keeps the number on top. */}
+          <dt class:list={["text-sm font-bold uppercase leading-snug tracking-[0.12em]", isNavy ? "text-white/75" : "text-navy-500"]}>
             {stat.label}
           </dt>
+          <dd class:list={["flex items-baseline font-badge text-4xl font-bold sm:text-[44px]", isNavy ? "text-white" : "text-navy-800"]}>
+            <AnimatedCounter client:visible target={stat.target} decimals={stat.decimals ?? 0} />
+            {/* "/ 5" gets a space ("4.8 / 5"); "+" hugs its number ("177+"). */}
+            {stat.suffix && <span class:list={["text-brand-green-400", stat.suffix.startsWith("/") && "ml-2"]}>{stat.suffix}</span>}
+          </dd>
         </div>
       ))}
     </dl>

@@ -51,5 +51,14 @@ const { title, description, path, image, noindex } = Astro.props;
     <Footer />
     <AccessibilityWidget client:idle />
     <ChatWidget client:idle currentPath={Astro.url.pathname} />
+    <script>
+      // "Schedule" buttons point at the contact page's quote form. When this
+      // page has its own form, send them there instead of leaving the page.
+      if (document.getElementById("quick-quote")) {
+        document.querySelectorAll<HTMLAnchorElement>('a[href="/contact#quick-quote"]').forEach((link) => {
+          link.href = "#quick-quote";
+        });
+      }
+    </script>
   </body>
 </html>

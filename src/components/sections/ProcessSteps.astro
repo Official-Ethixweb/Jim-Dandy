@@ -20,6 +20,9 @@ const {
 } = Astro.props;
 
 const bg = tone === "surface" ? "bg-surface" : "bg-white";
+// One column per step on desktop - a 3-step process in a 4-column grid left an
+// empty slot and looked unfinished.
+const lgCols = { 2: "lg:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" }[steps.length] ?? "lg:grid-cols-4";
 const cardBg = tone === "surface" ? "bg-white" : "bg-surface";
 ---
 
@@ -29,7 +32,7 @@ const cardBg = tone === "surface" ? "bg-white" : "bg-surface";
       <SectionHeading title={title} subtitle={subtitle} eyebrow={eyebrow} />
     </div>
 
-    <ol class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+    <ol class:list={["grid grid-cols-1 gap-6", steps.length === 3 ? "md:grid-cols-3" : "sm:grid-cols-2", lgCols]} data-reveal-group>
       {steps.map((step, index) => (
         <li class="group relative flex flex-col gap-4">
           {index < steps.length - 1 && (
@@ -51,7 +54,7 @@ const cardBg = tone === "surface" ? "bg-white" : "bg-surface";
               <span class="h-px flex-1 bg-navy-100"></span>
             </div>
             <h3 class="font-display text-xl font-bold leading-tight text-navy-800">{step.title}</h3>
-            <p class="text-sm leading-relaxed text-navy-600">{step.description}</p>
+            <p class="text-base leading-relaxed text-navy-600">{step.description}</p>
           </div>
         </li>
       ))}

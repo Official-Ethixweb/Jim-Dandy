@@ -5,7 +5,8 @@ export const prerender = false;
 /**
  * Legacy Squarespace blog category URLs (e.g. /blog/category/Water+Heaters).
  * The "+" in them can't be expressed as a static redirect in astro.config.mjs,
- * so they are resolved here and sent to the matching service page with a 301.
+ * so they are resolved here and sent to the blog with a 301 (categories are
+ * a filter on the blog index, not separate pages).
  */
 const destinations: Record<string, string> = {
   "commercial plumbing": "/services/commercial",
@@ -20,5 +21,5 @@ export const GET: APIRoute = ({ params, redirect }) => {
     .replace(/\+/g, " ")
     .trim()
     .toLowerCase();
-  return redirect(destinations[key] ?? "/services", 301);
+  return redirect(key in destinations ? "/blog" : "/blog", 301);
 };

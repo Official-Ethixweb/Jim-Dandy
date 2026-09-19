@@ -15,11 +15,23 @@
 @import "@fontsource/roboto-slab/700.css";
 
 @theme {
+  /* Readability for an older audience (most visitors are 50+): the two small
+     steps of the type scale are lifted site-wide - 12px -> 13px and 14px ->
+     15px - so labels, card copy, footers and fine print stay legible without
+     restyling every component. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: calc(1.15 / 0.8125);
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: calc(1.4 / 0.9375);
+
   /* Brand color scale, extracted from Figma variables */
   --color-navy-900: #001830;
   --color-navy-800: #002244;
   --color-navy-700: #0a2c4e;
   --color-navy-600: #334e69;
+  /* Used by 13 captions/labels but missing from the scale, so they fell back to
+     the inherited near-black. Midway between 600 and 400; 6.5:1 on white. */
+  --color-navy-500: #445c75;
   --color-navy-400: #546b82;
   --color-navy-300: #8a99a9;
   --color-navy-200: #b0bac5;
@@ -56,7 +68,9 @@
   --shadow-brutal-sm: 0px 4px 0px 0px var(--color-ink);
   --shadow-brutal: 0px 5px 0px 0px var(--color-ink);
   --shadow-brutal-navy: 0px 5px 0px 0px var(--color-navy-800);
-  --shadow-card: 0px 12px 16px 0px rgba(0, 34, 68, 0.16), 0px 5px 0px 0px var(--color-navy-800);
+  /* Soft, layered lift. It used to end in a hard 5px navy offset, which on
+     rounded cards showed as a dark crescent under the bottom corners. */
+  --shadow-card: 0px 1px 2px 0px rgba(0, 34, 68, 0.06), 0px 8px 18px -6px rgba(0, 34, 68, 0.16), 0px 22px 36px -18px rgba(0, 34, 68, 0.22);
   --shadow-pill-green: 0px 0px 12px 0px rgba(135, 203, 83, 0.5), 0px 0px 2px 0px rgba(0, 0, 0, 0.1), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
   --shadow-pill-navy: 0px 0px 12px 0px rgba(0, 34, 68, 0.5), 0px 0px 2px 0px rgba(0, 0, 0, 0.1), 0px 1px 8px 0px rgba(0, 0, 0, 0.1);
 
@@ -220,4 +234,58 @@ html[data-chat-open] .floating-launcher:not(:has([role="dialog"])) {
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+}
+
+/* Moving review cards (Reviews.tsx). Each row holds its cards twice, so a
+   -50% slide loops seamlessly. The speed is per card count, so rows of any
+   length drift at the same comfortable reading pace. */
+.review-row {
+  animation: review-slide 90s linear infinite;
+}
+.review-row-reverse {
+  animation-direction: reverse;
+  animation-duration: 100s;
+}
+.review-marquee[data-hover] .review-row,
+.review-marquee[data-paused] .review-row,
+.review-marquee:focus-within .review-row {
+  animation-play-state: paused;
+}
+@keyframes review-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 0.75rem));
+  }
+}
+
+/* Premium icon chips - the same finish as the chat and accessibility
+   launchers: a glossy gradient fill, a bright rim along the top edge and a
+   soft, contained glow (no hard offset). Use on the element that wraps an
+   icon; size and radius stay on the element itself. */
+@utility icon-chip {
+  background-image: linear-gradient(160deg, #1d3b5a 0%, #0a2c4e 45%, #001830 100%);
+  color: var(--color-brand-green-400);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(0, 24, 48, 0.06),
+    0 6px 14px -6px rgba(0, 34, 68, 0.55);
+}
+@utility icon-chip-green {
+  background-image: var(--btn-primary);
+  color: var(--color-navy-900);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.3),
+    0 6px 14px -6px rgba(75, 135, 28, 0.6);
+}
+/* On navy backgrounds: frosted glass with the same rim. */
+@utility icon-chip-glass {
+  background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+  color: var(--color-brand-green-400);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
 }

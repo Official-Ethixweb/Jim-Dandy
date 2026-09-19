@@ -41,15 +41,16 @@ export default function ContactPanel() {
               </div>
             </div>
           </div>
-          {/* Mobile keeps only the Google rating beside the CTA; the heading,
-              subtitle, and progress tracker are desktop/tablet elements. */}
-          <h3 className="font-display text-[48px] font-black leading-[1.08] text-navy-800 max-md:hidden">
+          {/* Below lg the aside stacks under the form, so it keeps only the
+              Google rating; the heading and progress tracker need the side
+              column beside the form to make sense. */}
+          <h3 className="font-display text-[48px] font-black leading-[1.08] text-navy-800 max-lg:hidden">
             Jim Dandy To The Rescue!
           </h3>
-          <p className="text-lg text-navy-600 max-md:hidden">Fully Licensed &amp; Insured</p>
+          <p className="text-lg text-navy-600 max-lg:hidden">Fully Licensed &amp; Insured</p>
         </div>
 
-        <div className="max-md:hidden">
+        <div className="max-lg:hidden">
           <ContactProgress steps={progressSteps} current={step} />
         </div>
       </aside>
